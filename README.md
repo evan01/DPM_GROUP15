@@ -13,4 +13,15 @@ After you press the sync button, you can open eclipse and all of the new files a
 
 Before we do this however, some setup has to happen. 
 
-//TODO write the steps for this...
+1. Open eclipse
+2. Go to file>switch worskpace and open up the DPM_GROUP15 folder
+3. Hopefully you should see the lastest code and such there... 
+
+
+##NORMAL USE
+Just open the github app and press sync when you want to get what's in the remote repository (our shared folder online)
+If you make some changes, commit them in the github app with a message with what you did (TRY NOT TO COMMIT REALLY USELESS CHANGES, but commiting often is a good thing :)
+
+IF something breaks or doesn't work just message me and hopefully we can fix it. It's hard to mess up with git because even if you do mess up you should always be able to get back to a previous version of things.
+
+That's it! Cheers!
