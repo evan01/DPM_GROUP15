@@ -2,3 +2,11 @@
 .DS_Store
 RemoteSystemsTempFiles/
 .recommenders/
+#Ignore the intellij files and folders
+DPM_FINAL/.idea/
+.idea/
+DPM_FINAL/DPM_FINAL.eml
+DPM_FINAL/DPM_FINAL.iml
+#Not sure about this one...
+.project
+DPM_FINAL/.classpath
