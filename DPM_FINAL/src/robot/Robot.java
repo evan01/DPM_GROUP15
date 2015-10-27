@@ -1,16 +1,19 @@
 package robot;
 
-public interface Robot {
-	public void moveTo();
+/**
+ * This abstract class will allow us to define the methods that our robot needs to be able to do
+ */
+public abstract class Robot {
+	public abstract void moveTo();
 	
-	public void turnTo(int angle);
+	public abstract void turnTo(int angle);
 	
-	public int usScan();
+	public abstract int usScan();
 	
-	public int colorScan();
+	public abstract int colorScan();
 	
-	public void capture();
+	public abstract void capture();
 	
-	public void localize();
+	public abstract void localize();
 	
 }

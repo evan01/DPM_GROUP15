@@ -23,5 +23,7 @@ Just open the github app and press sync when you want to get what's in the remot
 If you make some changes, commit them in the github app with a message with what you did (TRY NOT TO COMMIT REALLY USELESS CHANGES, but commiting often is a good thing :)
 
 IF something breaks or doesn't work just message me and hopefully we can fix it. It's hard to mess up with git because even if you do mess up you should always be able to get back to a previous version of things.
-
+https://help.github.com/desktop/guides/contributing/syncing-your-branch/ will also work when things don't quite work out
+You can ask someone at github to help you out :)
 That's it! Cheers!
+Evan
