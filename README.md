@@ -11,14 +11,15 @@ The goal is that you can open the Github desktop app, press sync, and then you w
 
 After you press the sync button, you can open eclipse and all of the new files and folders that were created by other people will be there.
 
-Before we do this however, some setup has to happen. 
+Before we do this however, some setup has to happen.
 
+###SETUP
 1. Open eclipse
 2. Go to file>switch worskpace and open up the DPM_GROUP15 folder
 3. Hopefully you should see the lastest code and such there... 
 
 
-##NORMAL USE
+###NORMAL USE
 Just open the github app and press sync when you want to get what's in the remote repository (our shared folder online)
 If you make some changes, commit them in the github app with a message with what you did (TRY NOT TO COMMIT REALLY USELESS CHANGES, but commiting often is a good thing :)
 
