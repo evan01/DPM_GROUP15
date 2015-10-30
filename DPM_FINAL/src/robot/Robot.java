@@ -6,6 +6,10 @@ package robot;
 public abstract class Robot {
 	public abstract void moveTo();
 	
+	/**
+	 * This will rotate the robot to whatever angle is specified
+	 * @param angle
+	 */
 	public abstract void turnTo(int angle);
 	
 	public abstract int usScan();
