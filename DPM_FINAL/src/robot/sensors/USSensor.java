@@ -1,5 +1,99 @@
 package robot.sensors;
 
-public class USSensor {
+import lejos.hardware.sensor.EV3UltrasonicSensor;
+import lejos.hardware.sensor.SensorMode;
+import lejos.robotics.SampleProvider;
+import robot.constants.Constants;
+import lejos.hardware.port.Port;
+
+/**
+ * This class represents the Ultrasonic sensor, you can order the sensor to continuously sense things or only scan at
+ * certain moments.
+ */
+public class USSensor implements Runnable{
+
+    //This is a singleton class, get the
+    private static USSensor ourInstance = new USSensor();
+
+    public static USSensor getInstance() {
+        return ourInstance;
+    }
+
+    private static EV3UltrasonicSensor usSensor;
+    private static SampleProvider us;
+    private static float[] usData;
+    private int distance;
+    int collisionsDetected;
+
+    private boolean threadRunning;
+
+    private USSensor() {
+        Port port = Constants.usPort;
+        usSensor = new EV3UltrasonicSensor(port);
+        us = usSensor.getDistanceMode();
+        usData = new float[usSensor.sampleSize()];
+    }
+
+    @Override
+    public void run() {
+        threadRunning = true;
+        while (threadRunning) {
+            fetchSample();
+            try {
+                Thread.sleep(40);
+            } catch (Exception e) {
+            }
+        }
+    }
+
+    public synchronized void fetchSample(){
+        us.fetchSample(usData, 0); // acquire data
+        distance = (int) (usData[0] * 100.0);
+    }
+
+    //this method allows for tailored usage of the ultrasonic sensor
+    public synchronized int scan(){
+        us.fetchSample(usData, 0); // acquire data
+        return (int) (usData[0] * 100.0);
+    }
+
+    public static float filterSample(float sample){
+        if (sample > 30) {                                                                        // filter out large
+            // values
+            sample = 30;
+        }// thus makes
+        // anything above the threshold distance irrelevant
+
+        return sample;
+    }
+
+    public synchronized boolean isThreadRunning() {
+        return threadRunning;
+    }
+
+    public synchronized void setThreadRunning(boolean threadRunning) {
+        this.threadRunning = threadRunning;
+    }
+
+    public synchronized int getDistance() {
+        return distance;
+    }
+
+    public synchronized void setDistance(int distance) {
+        this.distance = distance;
+    }
+
+    public synchronized void turnOffSensor(){
+        this.usSensor.disable();
+    }
+
+
+
+
 
 }
+// Setup ultrasonic sensor, there are 4 steps involved:
+// 1. Create a port object attached to a physical port (done already above)
+// 2. Create a sensor instance and attach to port
+// 3. Create a sample provider instance for the above and initialize operating mode
+// 4. Create a buffer for the sensor data
