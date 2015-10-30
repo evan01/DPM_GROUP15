@@ -148,55 +148,7 @@ public class Navigator implements Runnable {
         Button.LEDPattern(7);
         while(getUSReading()<Constants.USWARNINGDISTANCE){
 
-            leftMotor.setSpeed(Constants.MOTOR_STRAIGHT);
-            rightMotor.setSpeed(Constants.MOTOR_STRAIGHT);
-
-            leftMotor.backward();																		//obstacle in path .. move backwards to be able to rotate
-            rightMotor.backward();
-
-            Timer myTimer = new Timer();																//The timer is to make the bot move backwards effectively
-            try{
-                Thread.sleep(1000); 																	//Should cause our thread to sleep for a 1s
-            }catch(Exception e){
-
-            }
-            stopMoving();
-
-            leftMotor.setSpeed(Constants.ROTATE_SPEED);													//robot stopped and rotate speed is set
-            rightMotor.setSpeed(Constants.ROTATE_SPEED);
-
-            leftMotor.rotate(convertAngle(Constants.WHEEL_RADIUS, Constants.TRACK, -90), true); 		//robot is rotated 90 degrees clockwise
-            rightMotor.rotate(-convertAngle(Constants.WHEEL_RADIUS, Constants.TRACK, -90), false);
-
-            leftMotor.setSpeed(Constants.MOTOR_STRAIGHT);
-            rightMotor.setSpeed(Constants.MOTOR_STRAIGHT);
-
-            leftMotor.rotate(convertDistance(Constants.WHEEL_RADIUS, 28), true); 						//robot travels forward by 28
-            rightMotor.rotate(convertDistance(Constants.WHEEL_RADIUS, 28), false);
-
-            leftMotor.setSpeed(Constants.ROTATE_SPEED);													//robot stopped and rotate speed is set
-            rightMotor.setSpeed(Constants.ROTATE_SPEED);
-
-            leftMotor.rotate(-convertAngle(Constants.WHEEL_RADIUS, Constants.TRACK, -90),true); 		//robot rotates 90 degrees counterclockwise
-            rightMotor.rotate(convertAngle(Constants.WHEEL_RADIUS, Constants.TRACK, -90),false);
-
-            leftMotor.setSpeed(Constants.MOTOR_STRAIGHT);
-            rightMotor.setSpeed(Constants.MOTOR_STRAIGHT);
-
-            leftMotor.rotate(convertDistance(Constants.WHEEL_RADIUS, 45), true);						//robot travels forward by 45
-            rightMotor.rotate(convertDistance(Constants.WHEEL_RADIUS, 45), false);
-
-            leftMotor.setSpeed(Constants.ROTATE_SPEED);													//robot stopped and rotate speed is set
-            rightMotor.setSpeed(Constants.ROTATE_SPEED);
-
-            leftMotor.rotate(-convertAngle(Constants.WHEEL_RADIUS, Constants.TRACK, -90),true); 		//robot rotates 90 degrees counterclockwise
-            rightMotor.rotate(convertAngle(Constants.WHEEL_RADIUS, Constants.TRACK, -90),false);
-
-            leftMotor.setSpeed(Constants.MOTOR_STRAIGHT);
-            rightMotor.setSpeed(Constants.MOTOR_STRAIGHT);
-
-            leftMotor.rotate(convertDistance(Constants.WHEEL_RADIUS, 28), true); 						//robot travels forward by 28
-            rightMotor.rotate(convertDistance(Constants.WHEEL_RADIUS, 28), false);
+          
         }
         //We should now be good to rotate back towards our initial heading
         //turnTo(goal.getTheta());
