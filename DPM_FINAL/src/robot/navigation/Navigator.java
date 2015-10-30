@@ -1,135 +1,148 @@
 package robot.navigation;
 
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
+
+import robot.constants.Constants;
+import lejos.hardware.Button;
+import lejos.hardware.Sound;
+import lejos.hardware.motor.EV3LargeRegulatedMotor;
+import robot.constants.NavInstruction;
+import robot.constants.Position;
+import robot.sensors.USSensor;
 /**
  * The navigator class is in charge of the motors of the robot. ALL the motors, including the arms to capture blocks,
  * arguably, this is the single most important class in the entire project, all commands sent to the navigator will
  * be executed
  */
-/*
- * This class will actually be controlling the navigation, odometer and collision detection of the robot
- *
- * We have to be able to interupt the navigator if say there's an object in the way
- *
- */
-
-
-
-
-import java.util.Timer;
-import java.util.concurrent.BlockingQueue;
-
-import robot.constants.Constants;
-import lejos.hardware.Button;
-import lejos.hardware.Sound;
-import lejos.hardware.ev3.LocalEV3;
-import lejos.hardware.lcd.TextLCD;
-import lejos.hardware.motor.EV3LargeRegulatedMotor;
-import robot.sensors.USSensor;
-
 public class Navigator implements Runnable {
+
+    //this is a singleton class
+    private static Navigator ourInstance = new Navigator();
+    public static Navigator getInstance(){return ourInstance;}
+
+
     // Motors
     private static EV3LargeRegulatedMotor rightMotor = Motors.getInstance().getRightMotor();
     private static EV3LargeRegulatedMotor leftMotor = Motors.getInstance().getLeftMotor();
 
     // class variables
-    private static boolean isNavigating = true;
-    private static Odometer odometer = new Odometer();
-    private static USSensor us;
-    private static boolean collisionDetected = false;
+    private static Odometer odometer = Odometer.getInstance();
+    private static USSensor us = USSensor.getInstance();
     private static boolean collisionDetectionEnabled = false;
-    private static int numIterations = 0;
-    private static final TextLCD t = LocalEV3.get().getTextLCD();
+    private static boolean isNavigating = true; //Always true to start
+    private static boolean movingInX;
+    private static boolean movingInY;
+
     // lock object
     private Object lock = new Object();
 
-    // Queue that holds the instructions to execute! ie: the locations that we
-    // need to navigate to (it's a blocking queue so we can update it from
-    // outside classes)
-    private static BlockingQueue<NavVector> instructions;
+    /**
+     * Queue that holds the instructions to execute! ie: the locations that we
+     * need to navigate to (it's a blocking queue so we can update it from
+     *outside classes)
+     */
+    private static BlockingQueue<NavInstruction> instructions = new LinkedBlockingQueue<NavInstruction>();
 
     // Double array that holds the current goal ie: the position that we want to
-    // go to
-    private static NavVector goal;
+    private static NavInstruction goal;
 
     // NavVector that holds our current position
-    private static NavVector currentPosition;
+    private static Position currentPosition;
 
-    // Constructor for the object
-    public Navigator(BlockingQueue<NavVector> q) {
-        instructions = q;// This takes the instructions given when the
-        try {
-            // Take the first task and assign it as the goal to accomplish
-            goal = instructions.take(); // Convert first instruction to the first goal!
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-    }
-
-    // This is the launch method of the navigator thread
-    public void run() {
-        int distFront;
-
-        // first start odometer thread, and collisionDetection thread
-        startOdometer();
-        startCollisionDetection();
+    /**
+     * This is the main navigation loop for the robot, as it moves, the loop will run always!
+     * If there are no places to go to, then the thread will wait until something notifies it to continue (assuming
+     * that whatever notifies it adds more information to the blocking queue before resuming the thread)
+     * Another thread MUST call the notify() function for this thread to be activated
+     */
+    public void run(){
 
         while (isNavigating) {
+            currentPosition = odometer.getPosition();
 
-            // Get information to act on! Odometer, + US
-            distFront = getUSReading();											// Will check for imminent collisions
-            currentPosition = odometer.getReading();
-
-            // Display the readings for debugging purposes
-            displayNavData(currentPosition, goal, distFront);
-
-            if (collisionDetected) { 											// Only ever (could be) true if collision detection
+            //First check for a collision avoidance routine
+            if (isUpcomingColision()) {
                 stopMoving();
-                avoidCollision();												// Once is avoided, robot will now head to it's desired goal normally (waypoints)
+                avoidCollision();
             }
 
-            // calculate distance from the goal
-            double errorX = goal.getX() - odometer.getX();
-            double errorY = goal.getY() - odometer.getY();
-
             // If we haven't reached the goal yet, then continue to 'travelto' the goal
-            if (Math.abs(errorX) > Constants.THRESHOLD_DISTANCE_ERROR
-                    || Math.abs(errorY) > Constants.THRESHOLD_DISTANCE_ERROR) {
-                this.travelTo(goal.getX(), goal.getY());
-            } else {
+            if (isRobotAtDestination(currentPosition)) {
                 // Stop the motors, we're at the location!
                 stopMoving();
-                // Time for the next instruction! (not for purposes of this Lab! We're looking ahead here)
-                try {
-                    if (instructions.size() < 1) {
-                        Button.LEDPattern(2);									// Then we have no instructions left!
-                        isNavigating = false;									// i.e. No longer Navigating
-                    } else {
-                        // if we were to take another instruction , Take the instruction and set it as our goal
-                        this.goal = instructions.take();
-                    }
 
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
+                //Check to see if there is another instruction, calling fetch will take instruction from queue
+                if (fetchNextInstruction()==false){
+                    //Then we are done traveling all together, wait until next instruction given
+                    try {
+                        this.wait();
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
                 }
+
+            } else {
+                travelTo(goal,currentPosition);
             }
 
             try {
                 Thread.sleep(200);
             } catch (Exception e) {
             }
-            numIterations++;													//debugging tool
         }
     }
 
-    public void startOdometer() {
-        new Thread(odometer).start();
+    /**
+     * This method will determine whether or not there is an object along the robots path
+     * @return must return whether we are about to collide with an object or not based on the us sensor
+     */
+    private boolean isUpcomingColision() {
+
+
+
+        return false;
     }
 
-    public void startCollisionDetection() {
-        // If collision detection is enabled, then start that thread as well
-        if (collisionDetectionEnabled) {
-            colDetect = new CollisionDetector(Constants.getUsdistance(), Constants.getUsdata());
-            new Thread(colDetect).start();
+    /**
+     *
+     * @return a boolean indicating if there is an instruction to fetch or not
+     */
+    private boolean fetchNextInstruction(){
+        try {
+            synchronized (this) {
+                if (instructions.size() > 1) {
+                    this.goal = instructions.take();
+                    return true;
+                } else {
+                    return false;
+                }
+            }
+
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        return false; //Just in case, return false
+    }
+
+    /**
+     *
+     * @param currentPosition pass in our current position
+     * @return whether or not we are there yet
+     */
+    private boolean isRobotAtDestination(Position currentPosition){
+        // calculate distance from the goal
+        double error;
+        if(goal.movingInX){
+            error = goal.coordinate - currentPosition.getX();
+        }else{
+            error = goal.coordinate - currentPosition.getY();
+        }
+
+        if (Math.abs(error) > Constants.THRESHOLD_DISTANCE_ERROR) {
+            return false;
+        }else{
+            return true;
         }
     }
 
@@ -141,21 +154,12 @@ public class Navigator implements Runnable {
         rightMotor.forward();
     }
 
-    // This method gets called when the US senses an imminent collision.
-    public void avoidCollision() {																		// The method will allow the robot to avoid an object
+    /**
+     * This method will be called when the robot needs to avoid a collision
+     */
+    public void avoidCollision() {
 
         Sound.twoBeeps(); // To show we are running this specific method
-        Button.LEDPattern(7);
-        while(getUSReading()<Constants.USWARNINGDISTANCE){
-
-          
-        }
-        //We should now be good to rotate back towards our initial heading
-        //turnTo(goal.getTheta());
-        //travelTo(goal.getX(),goal.getY());
-
-        // At the end of this method, object has been dealt with
-        collisionDetected = false;																    	// Continue with navigation normally !
     }
 
     private int convertDistance(double radius, double distance) {
@@ -168,13 +172,28 @@ public class Navigator implements Runnable {
         return convertDistance(radius, Math.PI * width * angle / 360.0);
     }
 
-    /* This method will move our robot to the x and y position */
-    public void travelTo(double x, double y) {
-        double DTheta = calcAngle(x, y); // pass x and y values to calculate the
-        // angle
+    /**
+     * This method will move our robot in either the x or y direction, but not both,
+     * @param goal , the goal that we need to travel towards
+     * As the robot is travelling, odometry correction should be working.
+     */
+    public void travelTo(NavInstruction goal,Position currentPosition) {
 
-        turnTo(DTheta); // pass angle calculated to turnTo --> robot rotates to
-        // correct heading
+        if (goal.movingInX){
+            this.movingInX = true;
+            if(currentPosition.getX()<goal.coordinate){
+                turnTo(0);
+            }else{
+                turnTo(180);
+            }
+        }else{
+            this.movingInX = true;
+            if (currentPosition.getY()<goal.coordinate){
+                turnTo(90);
+            }else{
+                turnTo(270);
+            }
+        }
 
         // robot will travel straight towards heading achieved by turnTo method
         leftMotor.setSpeed(Constants.MOTOR_STRAIGHT);
@@ -240,50 +259,25 @@ public class Navigator implements Runnable {
         return minAngle;
     }
 
-    public boolean isNavigating() {
-        return isNavigating;
+    //Getters and setters for the positions
+
+    public synchronized void addInstructions(NavInstruction instruction){
+        instructions.add(instruction);
     }
 
-    public int getUSReading() {
-        // This method gets the ultrasonic sensor reading
-        if (this.isCollisionDetectionEnabled()) {
-            int distance = colDetect.getDistance();
-
-            if (colDetect.getNumCollisionDetected() > Constants.MAX_ALARM_READINGS) {
-                // After so many alarming readings, we really need to invoke the
-                // collision avoidance routine
-                this.setCollisionDetected(true);
-                // Reset the collisionDetection mechanism
-                colDetect.setNumCollisionDetected(0);
-            } else
-                this.setCollisionDetected(false);
-
-            return distance;
-        } else {
-            return Constants.STANDARDULTRASONICDIST;
-        }
-
+    public static boolean isMovingInX() {
+        return movingInX;
     }
 
-    // Getter and Setter Methods
-    public static boolean isCollisionDetected() {
-        return collisionDetected;
+    public static void setMovingInX(boolean movingInX) {
+        Navigator.movingInX = movingInX;
     }
 
-    public static void setCollisionDetected(boolean collisionDetected) {
-        Navigator.collisionDetected = collisionDetected;
+    public static boolean isMovingInY() {
+        return movingInY;
     }
 
-    public static boolean isCollisionDetectionEnabled() {
-        return collisionDetectionEnabled;
+    public static void setMovingInY(boolean movingInY) {
+        Navigator.movingInY = movingInY;
     }
-
-    public static void setCollisionDetectionEnabled(boolean collisionDetectionEnabled) {
-        Navigator.collisionDetectionEnabled = collisionDetectionEnabled;
-    }
-
-    public static void setNavigating(boolean isNavigating) {
-        Navigator.isNavigating = isNavigating;
-    }
-
 }
