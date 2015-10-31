@@ -16,14 +16,10 @@ public class Main {
 
 		//Start the game!
 		Robot robot = new GameRobot();
-		Stage1 s1 = new Stage1(robot);
-		s1.start();
+//		Stage1 s1 = new Stage1(robot);
+//		s1.start();
 //		Stage2 s2 = new Stage2(robot);
 //		Stage3 s3 = new Stage3(robot);
-
-
-
-		//testing git in main.java
 
 	}
 

@@ -20,10 +20,8 @@ public class Stage1 {
 	 * 
 	 */
     public void start(){
-<<<<<<< Updated upstream
         robot.localize(); //First thing is to localize..
         //test
-=======
     	//Stage 1 begins by localizing
         robot.localize();
         
@@ -33,8 +31,6 @@ public class Stage1 {
         //to center of that tile
         robot.moveTo(odo.getX()-(odo.getX()%SQUARE_WIDTH)+SQUARE_CENTER, odo.getY()-(odo.getY()%SQUARE_WIDTH)+SQUARE_CENTER);
         
-
->>>>>>> Stashed changes
     }
 
 }

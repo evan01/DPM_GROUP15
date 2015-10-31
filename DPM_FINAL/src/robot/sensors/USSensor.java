@@ -2,8 +2,11 @@ package robot.sensors;
 
 import lejos.hardware.sensor.EV3UltrasonicSensor;
 import lejos.hardware.sensor.SensorMode;
+import lejos.hardware.sensor.SensorModes;
 import lejos.robotics.SampleProvider;
 import robot.constants.Constants;
+import lejos.hardware.Button;
+import lejos.hardware.ev3.LocalEV3;
 import lejos.hardware.port.Port;
 
 /**
@@ -13,7 +16,7 @@ import lejos.hardware.port.Port;
 public class USSensor implements Runnable{
 
     //This is a singleton class, get the
-    private static USSensor ourInstance = new USSensor();
+    private static final USSensor ourInstance = new USSensor();
 
     public static USSensor getInstance() {
         return ourInstance;
@@ -28,7 +31,7 @@ public class USSensor implements Runnable{
     private boolean threadRunning;
 
     private USSensor() {
-        Port port = Constants.usPort;
+    	Port port = Constants.usPort;
         usSensor = new EV3UltrasonicSensor(port);
         us = usSensor.getDistanceMode();
         usData = new float[usSensor.sampleSize()];
@@ -82,14 +85,6 @@ public class USSensor implements Runnable{
     public synchronized void setDistance(int distance) {
         this.distance = distance;
     }
-
-    public synchronized void turnOffSensor(){
-        this.usSensor.disable();
-    }
-
-
-
-
 
 }
 // Setup ultrasonic sensor, there are 4 steps involved:
