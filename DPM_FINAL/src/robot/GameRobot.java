@@ -3,7 +3,10 @@ package robot;
  * Created by evanknox on 2015-10-27.
  */
 
+import robot.constants.NavInstruction;
+import robot.constants.Position;
 import robot.navigation.Capturer;
+import robot.navigation.Navigator;
 
 /**
  * This class represents our actual implementation of the robot class, we may have multiple implementations if
@@ -11,8 +14,14 @@ import robot.navigation.Capturer;
  */
 public class GameRobot extends Robot {
     @Override
-    public void moveTo() {
+    public void moveTo(double x, double y) {
+        //In theory the navigator thread should have already been started!!
+        Navigator nav = Navigator.getInstance();
+        NavInstruction xDistance = new NavInstruction();
+        NavInstruction yDistance = new NavInstruction();
 
+        nav.addInstructions(xDistance);
+        nav.addInstructions(yDistance);
     }
 
     @Override
