@@ -11,7 +11,7 @@ public class Constants {
 		// Motors
 		public static final Port leftMotorPort = LocalEV3.get().getPort("A");
 		public static final Port rightMotorPort = LocalEV3.get().getPort("D");
-		public static final Port armPort = LocalEV3.get().getPort("B");
+		public static final Port armPort = LocalEV3.get().getPort("C");
 		//Ultrasonic Sensor
 		public static final Port usPort = LocalEV3.get().getPort("S1");
 		//Color Sensor

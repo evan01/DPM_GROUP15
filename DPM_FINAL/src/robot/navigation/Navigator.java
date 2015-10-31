@@ -10,274 +10,434 @@ import lejos.hardware.motor.EV3LargeRegulatedMotor;
 import robot.constants.NavInstruction;
 import robot.constants.Position;
 import robot.sensors.USSensor;
+
 /**
- * The navigator class is in charge of the motors of the robot. ALL the motors, including the arms to capture blocks,
- * arguably, this is the single most important class in the entire project, all commands sent to the navigator will
- * be executed
+ * The navigator class is in charge of the motors of the robot. ALL the motors,
+ * including the arms to capture blocks, arguably, this is the single most
+ * important class in the entire project, all commands sent to the navigator
+ * will be executed
  */
 public class Navigator implements Runnable {
 
-    //this is a singleton class
-    private static Navigator ourInstance = new Navigator();
-    public static Navigator getInstance(){return ourInstance;}
+	// this is a singleton class
+	private static Navigator ourInstance = new Navigator();
 
+	public static Navigator getInstance() {
+		return ourInstance;
+	}
 
-    // Motors
-    private static EV3LargeRegulatedMotor rightMotor = Motors.getInstance().getRightMotor();
-    private static EV3LargeRegulatedMotor leftMotor = Motors.getInstance().getLeftMotor();
+	// Motors
+	private static EV3LargeRegulatedMotor rightMotor = Motors.getInstance().getRightMotor();
+	private static EV3LargeRegulatedMotor leftMotor = Motors.getInstance().getLeftMotor();
 
-    // class variables
-    private static Odometer odometer = Odometer.getInstance();
-    private static USSensor us = USSensor.getInstance();
-    private static boolean collisionDetectionEnabled = false;
-    private static boolean isNavigating = true; //Always true to start
-    private static boolean movingInX;
-    private static boolean movingInY;
+	// class variables
+	private static Odometer odometer = Odometer.getInstance();
+	private static USSensor us = USSensor.getInstance();
+	private static boolean collisionDetectionEnabled = false;
+	private static boolean isNavigating = true; // Always true to start
+	private static boolean movingInX;
+	private static boolean movingInY;
+	private float rotationSpeed;
+	final static int FAST = 200, SLOW = 100, ACCELERATION = 4000;
+	final static double DEG_ERR = 10, CM_ERR = 1.0;
+	private double RADIUS = Constants.WHEEL_RADIUS;
+	private double TRACK = Constants.TRACK;
+	private int SEARCH_SPEED = 20;
 
-    // lock object
-    private Object lock = new Object();
+	// lock object
+	private Object lock = new Object();
 
-    /**
-     * Queue that holds the instructions to execute! ie: the locations that we
-     * need to navigate to (it's a blocking queue so we can update it from
-     *outside classes)
-     */
-    private static BlockingQueue<NavInstruction> instructions = new LinkedBlockingQueue<NavInstruction>();
+	/**
+	 * Queue that holds the instructions to execute! ie: the locations that we
+	 * need to navigate to (it's a blocking queue so we can update it from
+	 * outside classes)
+	 */
+	private static BlockingQueue<NavInstruction> instructions = new LinkedBlockingQueue<NavInstruction>();
 
-    // Double array that holds the current goal ie: the position that we want to
-    private static NavInstruction goal;
+	// Double array that holds the current goal ie: the position that we want to
+	private static NavInstruction goal;
 
-    // NavVector that holds our current position
-    private static Position currentPosition;
+	// NavVector that holds our current position
+	private static Position currentPosition;
 
-    /**
-     * This is the main navigation loop for the robot, as it moves, the loop will run always!
-     * If there are no places to go to, then the thread will wait until something notifies it to continue (assuming
-     * that whatever notifies it adds more information to the blocking queue before resuming the thread)
-     * Another thread MUST call the notify() function for this thread to be activated
-     */
-    public void run(){
+	/**
+	 * This is the main navigation loop for the robot, as it moves, the loop
+	 * will run always! If there are no places to go to, then the thread will
+	 * wait until something notifies it to continue (assuming that whatever
+	 * notifies it adds more information to the blocking queue before resuming
+	 * the thread) Another thread MUST call the notify() function for this
+	 * thread to be activated
+	 */
+	public void run() {
+		if (goal == null) {
+			fetchNextInstruction();
+		}
 
-        while (isNavigating) {
-            currentPosition = odometer.getPosition();
+		while (isNavigating) {
+			currentPosition = odometer.getPosition();
 
-            //First check for a collision avoidance routine
-            if (isUpcomingColision()) {
-                stopMoving();
-                avoidCollision();
-            }
+			// First check for a collision avoidance routine
+			if (isUpcomingColision()) {
+				stopMoving();
+				avoidCollision();
+			}
 
-            // If we haven't reached the goal yet, then continue to 'travelto' the goal
-            if (isRobotAtDestination(currentPosition)) {
-                // Stop the motors, we're at the location!
-                stopMoving();
+			// If we haven't reached the goal yet, then continue to goal
+			if (isRobotAtDestination(currentPosition)) {
+				// Stop the motors, we're at the location!
+				stopMoving();
 
-                //Check to see if there is another instruction, calling fetch will take instruction from queue
-                if (fetchNextInstruction()==false){
-                    //Then we are done traveling all together, wait until next instruction given
-                    try {
-                        this.wait();
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                }
+				// Check to see if there is another instruction, calling fetch
+				if (fetchNextInstruction() == false) {
+					// Then we are done traveling all together, wait until next instruction
+					try {
+						this.wait();
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
+				}
 
-            } else {
-                travelTo(goal,currentPosition);
-            }
+			} else {
+				//We need to travel to one of the goals we've set
+				if(goal.movingInX){
+					travelTo(goal.coordinate,0);
+				}else{
+					travelTo(0,goal.coordinate);
+				}
+			}
 
-            try {
-                Thread.sleep(200);
-            } catch (Exception e) {
-            }
-        }
-    }
+			try {
+				Thread.sleep(200);
+			} catch (Exception e) {
+			}
+		}
+	}
 
-    /**
-     * This method will determine whether or not there is an object along the robots path
-     * @return must return whether we are about to collide with an object or not based on the us sensor
-     */
-    private boolean isUpcomingColision() {
+	/**
+	 * This method will determine whether or not there is an object along the
+	 * robots path
+	 * 
+	 * @return must return whether we are about to collide with an object or not
+	 *         based on the us sensor
+	 */
+	private boolean isUpcomingColision() {
 
+		return false;
+	}
 
+	/**
+	 *
+	 * @return a boolean indicating if there is an instruction to fetch or not
+	 */
+	private boolean fetchNextInstruction() {
+		try {
+			synchronized (this) {
+				if (instructions.size() > 1) {
+					Navigator.goal = instructions.take();
+					return true;
+				} else {
+					return false;
+				}
+			}
 
-        return false;
-    }
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+		return false; // Just in case, return false
+	}
 
-    /**
-     *
-     * @return a boolean indicating if there is an instruction to fetch or not
-     */
-    private boolean fetchNextInstruction(){
-        try {
-            synchronized (this) {
-                if (instructions.size() > 1) {
-                    this.goal = instructions.take();
-                    return true;
-                } else {
-                    return false;
-                }
-            }
+	/**
+	 *
+	 * @param currentPosition
+	 *            pass in our current position
+	 * @return whether or not we are there yet
+	 */
+	private boolean isRobotAtDestination(Position currentPosition) {
+		// calculate distance from the goal
+		double error;
+		if (goal.movingInX) {
+			error = goal.coordinate - currentPosition.getX();
+		} else {
+			error = goal.coordinate - currentPosition.getY();
+		}
 
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        return false; //Just in case, return false
-    }
+		if (Math.abs(error) > Constants.THRESHOLD_DISTANCE_ERROR) {
+			return false;
+		} else {
+			return true;
+		}
+	}
 
-    /**
-     *
-     * @param currentPosition pass in our current position
-     * @return whether or not we are there yet
-     */
-    private boolean isRobotAtDestination(Position currentPosition){
-        // calculate distance from the goal
-        double error;
-        if(goal.movingInX){
-            error = goal.coordinate - currentPosition.getX();
-        }else{
-            error = goal.coordinate - currentPosition.getY();
-        }
+	/**
+	 * This method will be called when the robot needs to avoid a collision
+	 */
+	public void avoidCollision() {
 
-        if (Math.abs(error) > Constants.THRESHOLD_DISTANCE_ERROR) {
-            return false;
-        }else{
-            return true;
-        }
-    }
+		Sound.twoBeeps(); // To show we are running this specific method
+	}
 
-    public void stopMoving() {																	 		// This method will just stop the motors
+	private int convertAngle(double radius, double width, double angle) {
+		// tells robot how much it should turn in degrees.
+		return convertDistance(radius, Math.PI * width * angle / 360.0);
+	}
 
-        rightMotor.setSpeed(0);
-        leftMotor.setSpeed(0);
-        leftMotor.forward();
-        rightMotor.forward();
-    }
+	public double calcAngle(double x, double y) {
+		// calculating changes in X and Y
+		double dX = x - odometer.getX();
+		double dY = y - odometer.getY();
+		double angle; // angle to be calculated initialized
 
-    /**
-     * This method will be called when the robot needs to avoid a collision
-     */
-    public void avoidCollision() {
+		// the following statements ensures that the calculated angle is between
+		// PI and -PI.
+		if (dY >= 0) {
+			angle = Math.atan(dX / dY);
+		} else if (dY <= 0 && dX >= 0) {
+			angle = Math.atan(dX / dY) + Math.PI;
+		} else {
+			angle = Math.atan(dX / dY) - Math.PI;
+		}
 
-        Sound.twoBeeps(); // To show we are running this specific method
-    }
+		return angle;
+	}
 
-    private int convertDistance(double radius, double distance) {
-        // tells robot how much to move forward
-        return (int) ((180.0 * distance) / (Math.PI * radius));
-    }
+	/*
+	 * Functions to set the motor speeds jointly
+	 */
 
-    private int convertAngle(double radius, double width, double angle) {
-        // tells robot how much it should turn in degrees.
-        return convertDistance(radius, Math.PI * width * angle / 360.0);
-    }
+	public void setSpeeds(int lSpd, int rSpd) {
+		Navigator.leftMotor.setSpeed(lSpd);
+		Navigator.rightMotor.setSpeed(rSpd);
+		if (lSpd < 0)
+			Navigator.leftMotor.backward();
+		else
+			Navigator.leftMotor.forward();
+		if (rSpd < 0)
+			Navigator.rightMotor.backward();
+		else
+			Navigator.rightMotor.forward();
+	}
 
-    /**
-     * This method will move our robot in either the x or y direction, but not both,
-     * @param goal , the goal that we need to travel towards
-     * As the robot is travelling, odometry correction should be working.
-     */
-    public void travelTo(NavInstruction goal,Position currentPosition) {
+	public void setSpeeds(float lSpd, float rSpd) {
+		Navigator.leftMotor.setSpeed(lSpd);
+		Navigator.rightMotor.setSpeed(rSpd);
+		if (lSpd < 0)
+			Navigator.leftMotor.backward();
+		else
+			Navigator.leftMotor.forward();
+		if (rSpd < 0)
+			Navigator.rightMotor.backward();
+		else
+			Navigator.rightMotor.forward();
+	}
 
-        if (goal.movingInX){
-            this.movingInX = true;
-            if(currentPosition.getX()<goal.coordinate){
-                turnTo(0);
-            }else{
-                turnTo(180);
-            }
-        }else{
-            this.movingInX = true;
-            if (currentPosition.getY()<goal.coordinate){
-                turnTo(90);
-            }else{
-                turnTo(270);
-            }
-        }
+	/*
+	 * Float the two motors jointly
+	 */
+	public void setFloat() {
+		Navigator.leftMotor.stop();
+		Navigator.rightMotor.stop();
+		Navigator.leftMotor.flt(true);
+		Navigator.rightMotor.flt(true);
+	}
 
-        // robot will travel straight towards heading achieved by turnTo method
-        leftMotor.setSpeed(Constants.MOTOR_STRAIGHT);
-        rightMotor.setSpeed(Constants.MOTOR_STRAIGHT);
-        leftMotor.forward();
-        rightMotor.forward();
+	public void stopMoving() { // This method will just stop the motors
 
-    }
+		Navigator.rightMotor.setSpeed(0);
+		Navigator.leftMotor.setSpeed(0);
+		Navigator.leftMotor.forward();
+		Navigator.rightMotor.forward();
+	}
 
-    public double calcAngle(double x, double y) {
-        // calculating changes in X and Y
-        double dX = x - odometer.getX();
-        double dY = y - odometer.getY();
-        double angle; // angle to be calculated initialized
+	/*
+	 * TravelTo function which takes as arguments the x and y position in cm
+	 * Will travel to designated position, while constantly updating it's
+	 * heading
+	 */
+	public void travelTo(double x, double y) {
+		double minAng;
+		while (Math.abs(x - odometer.getX()) > CM_ERR || Math.abs(y - odometer.getY()) > CM_ERR) {
+			minAng = (Math.atan2(y - odometer.getY(), x - odometer.getX())) * (180.0 / Math.PI);
+			if (minAng < 0)
+				minAng += 360.0;
+			this.turnTo(minAng, false);
+			// this.setSpeeds(FAST, FAST);
+			// calculates magnitude to travel
+			double distance = Math.sqrt(Math.pow((y - odometer.getY()), 2) + Math.pow((x - odometer.getX()), 2));
+			goForward(distance);
+		}
+		this.setSpeeds(0, 0);
+	}
 
-        // the following statements ensures that the calculated angle is between
-        // PI and -PI.
-        if (dY >= 0) {
-            angle = Math.atan(dX / dY);
-        } else if (dY <= 0 && dX >= 0) {
-            angle = Math.atan(dX / dY) + Math.PI;
-        } else {
-            angle = Math.atan(dX / dY) - Math.PI;
-        }
+	/*
+	 * TurnTo function which takes an angle and boolean as arguments The boolean
+	 * controls whether or not to stop the motors when the turn is completed
+	 */
+	public void turnTo(double angle, boolean stop) {
 
+		double error = angle - Navigator.odometer.getAng();
 
-        return angle;
-    }
+		while (Math.abs(error) > DEG_ERR) {
 
-    public void turnTo(double theta) {
+			error = angle - Navigator.odometer.getAng();
 
+			if (error < -180.0) {
+				this.setSpeeds(-SLOW, SLOW);
+			} else if (error < 0.0) {
+				this.setSpeeds(SLOW, -SLOW);
+			} else if (error > 180.0) {
+				this.setSpeeds(SLOW, -SLOW);
+			} else {
+				this.setSpeeds(-SLOW, SLOW);
+			}
+		}
 
-        rightMotor.setSpeed(Constants.ROTATE_SPEED);												// prepare to rotate
-        leftMotor.setSpeed(Constants.ROTATE_SPEED);
+		if (stop) {
+			this.setSpeeds(0, 0);
+		}
+	}
 
-        double changeInT = changeInTheta(theta);													// determine wheel directions for rotations based on angle
+	/*
+	 * Go foward a set distance in cm
+	 */
+	public void goForward(double distance) {
+		;
+		leftMotor.setSpeed(SLOW);
+		rightMotor.setSpeed(SLOW);
+		isNavigating = true;
 
-        if ((changeInT > 0 && changeInT < Math.PI) || (changeInT < 0 && changeInT < -Math.PI)) {	// Only head to theta E [-PI,PI]
-            leftMotor.forward();
-            rightMotor.backward();
-        } else {
-            leftMotor.backward();
-            rightMotor.forward();
-        }
-        // if theta was not within angle error threshold
-        while (Math.abs(changeInT) > Constants.THRESHOLD_ERROR) {									// Redo the calculation (always head with correct theta)
-            Button.LEDPattern(3); 																	// debugging tool..
-            changeInT = changeInTheta(theta); 														// REDO
-        }
-    }
-    //This method returns the minimal desired angle to heading
-    public double changeInTheta(double angle) {
-        double minAngle = angle - odometer.getAng();
+		leftMotor.rotate(convertDistance(RADIUS, distance), true);
+		rightMotor.rotate(convertDistance(RADIUS, distance), true);
 
-        if (minAngle < Math.PI && minAngle > -Math.PI)												// the statements make sure the calculated angle is between PI and -PI
-            minAngle = minAngle;																	// so that the robot takes ONLY the MINIMAL angle
-        else if (minAngle > Math.PI) {
-            minAngle = minAngle - 2 * Math.PI;
-        } else if (minAngle < -Math.PI) {
-            minAngle = minAngle + 2 * Math.PI;
-        }
+		isNavigating = false;
+	}
 
-        return minAngle;
-    }
+	public void goForward(double distance, boolean returnImmediately) {
 
-    //Getters and setters for the positions
+		leftMotor.setSpeed(SLOW);
+		rightMotor.setSpeed(SLOW);
+		isNavigating = true;
 
-    public synchronized void addInstructions(NavInstruction instruction){
-        instructions.add(instruction);
-    }
+		leftMotor.rotate(convertDistance(RADIUS, distance), true);
+		rightMotor.rotate(convertDistance(RADIUS, distance), returnImmediately);
 
-    public static boolean isMovingInX() {
-        return movingInX;
-    }
+		isNavigating = false;
+	}
 
-    public static void setMovingInX(boolean movingInX) {
-        Navigator.movingInX = movingInX;
-    }
+	/*
+	 * Go Backward a set distance in cm
+	 */
+	public void goBackward(double distance) {
 
-    public static boolean isMovingInY() {
-        return movingInY;
-    }
+		leftMotor.setSpeed(SLOW);
+		rightMotor.setSpeed(SLOW);
+		Sound.beep();
+		isNavigating = true;
 
-    public static void setMovingInY(boolean movingInY) {
-        Navigator.movingInY = movingInY;
-    }
+		leftMotor.rotate(-convertDistance(RADIUS, distance), true);
+		rightMotor.rotate(-convertDistance(RADIUS, distance), false);
+
+		isNavigating = false;
+	}
+
+	// Motor Setters (FOR ROTATING)
+	public void setRotationSpeed(float speed) {
+		rotationSpeed = speed;
+		setSpeeds(rotationSpeed, -rotationSpeed);
+
+	}
+
+	private static int convertDistance(double radius, double distance) {
+		return (int) ((180.0 * distance) / (Math.PI * radius));
+	}
+
+	public boolean isNavigating() {
+		return Navigator.isNavigating;
+	}
+
+	// Getters and setters for the positions
+
+	public synchronized void addInstructions(NavInstruction instruction) {
+		instructions.add(instruction);
+	}
+
+	public static boolean isMovingInX() {
+		return movingInX;
+	}
+
+	public static void setMovingInX(boolean movingInX) {
+		Navigator.movingInX = movingInX;
+	}
+
+	public static boolean isMovingInY() {
+		return movingInY;
+	}
+
+	public static void setMovingInY(boolean movingInY) {
+		Navigator.movingInY = movingInY;
+	}
 }
+
+//// Takes a sweep to detect a block (controlled by main)
+// public void search (boolean forward){
+// leftMotor.setSpeed(SEARCH_SPEED);
+// rightMotor.setSpeed(SEARCH_SPEED);
+// if (forward){
+// leftMotor.forward();
+// rightMotor.backward();
+// } else {
+// leftMotor.backward();
+// rightMotor.forward();
+// }
+// }
+
+//// arm motor will grab the block
+// public void grab(){
+// this.goForward(3);
+// armMotor.backward();
+// armMotor.setSpeed(150);
+// armMotor.rotate(180);
+// Delay.msDelay(250);
+// armMotor.stop();
+// this.hasStyro = true;
+// }
+
+/// **
+// * This method will move our robot in either the x or y direction, but not
+/// both,
+// * @param goal , the goal that we need to travel towards
+// * As the robot is travelling, odometry correction should be working.
+// */
+// public void travelTo(NavInstruction goal,Position currentPosition) {
+//
+// if (goal.movingInX){
+// this.movingInX = true;
+// if(currentPosition.getX()<goal.coordinate){
+// turnTo(0,true);
+// }else{
+// turnTo(180,true);
+// }
+// }else{
+// this.movingInX = true;
+// if (currentPosition.getY()<goal.coordinate){
+// turnTo(90,true);
+// }else{
+// turnTo(270,true);
+// }
+// }
+//
+// // robot will travel straight towards heading achieved by turnTo method
+// leftMotor.setSpeed(Constants.MOTOR_STRAIGHT);
+// rightMotor.setSpeed(Constants.MOTOR_STRAIGHT);
+// leftMotor.forward();
+// rightMotor.forward();
+//
+// }
+
+/*
+ * Go foward a set distance in cm
+ */
+// public void goForward(double distance) {
+// this.travelTo(Math.cos(Math.toRadians(this.odometer.getAng())) * distance,
+// Math.cos(Math.toRadians(this.odometer.getAng())) * distance);
+//
+// }
