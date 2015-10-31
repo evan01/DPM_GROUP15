@@ -77,13 +77,13 @@ public class Display implements TimerListener{
 	 * Classic display, useful readings and space for debug messages
 	 */
 	public void displayStandard(){
-		Position p = odo.getPosition();
+//		Position p = odo.getPosition();
 		LCD.clear();
 		LCD.drawString(stage,0,0);
 		LCD.drawString(stage,0,1);
 		LCD.drawString(stage,0,2);
 		LCD.drawString("---------------",0,3);
-		LCD.drawString(p.toString(), 0, 4);
+//		LCD.drawString(p.toString(), 0, 4);
 		if(US_ON){
 			//If the ultrasonic sensor is on
 			LCD.drawString("USSensor: ", 0, 5);

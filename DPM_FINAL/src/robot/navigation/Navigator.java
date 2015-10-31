@@ -74,7 +74,7 @@ public class Navigator implements Runnable {
 		}
 
 		while (isNavigating) {
-			currentPosition = odometer.getPosition();
+			//currentPosition = odometer.getPosition();
 
 			// First check for a collision avoidance routine
 			if (isUpcomingColision()) {

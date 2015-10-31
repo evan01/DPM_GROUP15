@@ -5,6 +5,7 @@ import robot.navigation.Localizer;
 import robot.navigation.Navigation;
 import robot.navigation.Navigator;
 import robot.navigation.Odometer;
+import robot.navigation.USLocalizer;
 import robot.sensors.USSensor;
 
 public class NavigationTest {
@@ -14,10 +15,8 @@ public class NavigationTest {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-//		testMoveTo(50,50);
 		testLocalization();
-		testNavigation();
-		
+		testNavigation();	
 	}
 	
 	public static void testMoveTo(double x, double y){
@@ -39,7 +38,7 @@ public class NavigationTest {
 	
 	public static void testNavigation(){
 		Odometer odo = Odometer.getInstance();
-		Navigation nav = new Navigation (odo);
+		Navigation nav = Navigation.getInstance();
 		nav.travelTo(50, 0);
 		nav.travelTo(50, 50);
 		nav.travelTo(0, 50);
@@ -50,9 +49,9 @@ public class NavigationTest {
 		Odometer odo = Odometer.getInstance();
 		USSensor us = USSensor.getInstance();
 		new Thread(us).start();
-		Navigation nav = new Navigation(odo);
+		Navigation nav = Navigation.getInstance();
 		
-		Localizer loc = new Localizer(odo,Localizer.LocalizationType.FALLING_EDGE);
+		USLocalizer loc = new USLocalizer(odo,USLocalizer.LocalizationType.FALLING_EDGE);
 		loc.doLocalization();
 		nav.travelTo(0, 0);
 		nav.turnTo(0, true);

@@ -30,7 +30,7 @@ public class GameRobot extends Robot {
     @Override
    public void turnTo(int angle) {
     	Navigator nav = Navigator.getInstance();
-    	nav.turnTo(angle, true);
+
     }
 
     @Override

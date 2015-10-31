@@ -1,14 +1,5 @@
 package robot.navigation;
-/*
- * File: Navigation.java
- * Written by: Sean Lawlor
- * ECSE 211 - Design Principles and Methods, Head TA
- * Fall 2011
- * Ported to EV3 by: Francois Ouellet Delorme
- * Fall 2015
- * 
- * Movement control class (turnTo, travelTo, flt, localize)
- */
+
 import lejos.hardware.Sound;
 import lejos.hardware.lcd.LCD;
 import lejos.hardware.motor.EV3LargeRegulatedMotor;
@@ -16,19 +7,28 @@ import lejos.hardware.motor.EV3MediumRegulatedMotor;
 import lejos.utility.Delay;
 
 public class Navigation {
+
 	final static int FAST = 200, SLOW = 100, ACCELERATION = 4000;
 	final static double DEG_ERR = 3.0, CM_ERR = 1.0;
 	private Odometer odometer;
 	private EV3LargeRegulatedMotor leftMotor, rightMotor;
 	private EV3MediumRegulatedMotor armMotor;
-	private float rotationSpeed ;
+	private float rotationSpeed;
 	private double RADIUS = 2.2, TRACK = 11.5;
 	private int SEARCH_SPEED = 20;
 	private boolean isNavigating;
 	public boolean hasStyro = false;
 
-	public Navigation(Odometer odo) {
-		this.odometer = odo;
+	// this is a singleton class
+	private static final Navigation ourInstance = new Navigation();
+
+	public static Navigation getInstance() {
+		return ourInstance;
+	}
+
+	private Navigation() {
+
+		this.odometer = Odometer.getInstance();
 
 		EV3LargeRegulatedMotor[] motors = new EV3LargeRegulatedMotor[2];
 		motors = this.odometer.getMotors();
@@ -80,19 +80,19 @@ public class Navigation {
 		this.leftMotor.flt(true);
 		this.rightMotor.flt(true);
 	}
-	
-	public void stopMoving() {																	 		// This method will just stop the motors
-		
+
+	public void stopMoving() { // This method will just stop the motors
+
 		this.rightMotor.setSpeed(0);
 		this.leftMotor.setSpeed(0);
 		this.leftMotor.forward();
 		this.rightMotor.forward();
 	}
 
-
 	/*
-	 * TravelTo function which takes as arguments the x and y position in cm Will travel to designated position, while
-	 * constantly updating it's heading
+	 * TravelTo function which takes as arguments the x and y position in cm
+	 * Will travel to designated position, while constantly updating it's
+	 * heading
 	 */
 	public void travelTo(double x, double y) {
 		double minAng;
@@ -101,17 +101,17 @@ public class Navigation {
 			if (minAng < 0)
 				minAng += 360.0;
 			this.turnTo(minAng, false);
-		//	this.setSpeeds(FAST, FAST);
-			//calculates magnitude to travel
-			double distance  = Math.sqrt(Math.pow((y-odometer.getY()), 2) + Math.pow((x-odometer.getX()),2));
+			// this.setSpeeds(FAST, FAST);
+			// calculates magnitude to travel
+			double distance = Math.sqrt(Math.pow((y - odometer.getY()), 2) + Math.pow((x - odometer.getX()), 2));
 			goForward(distance);
 		}
 		this.setSpeeds(0, 0);
 	}
 
 	/*
-	 * TurnTo function which takes an angle and boolean as arguments The boolean controls whether or not to stop the
-	 * motors when the turn is completed
+	 * TurnTo function which takes an angle and boolean as arguments The boolean
+	 * controls whether or not to stop the motors when the turn is completed
 	 */
 	public void turnTo(double angle, boolean stop) {
 
@@ -131,7 +131,6 @@ public class Navigation {
 				this.setSpeeds(-SLOW, SLOW);
 			}
 		}
-				
 
 		if (stop) {
 			this.setSpeeds(0, 0);
@@ -140,76 +139,81 @@ public class Navigation {
 	/*
 	 * Go foward a set distance in cm
 	 */
-//	public void goForward(double distance) {
-//		this.travelTo(Math.cos(Math.toRadians(this.odometer.getAng())) * distance, Math.cos(Math.toRadians(this.odometer.getAng())) * distance);
-//
-//	}
-	
+	// public void goForward(double distance) {
+	// this.travelTo(Math.cos(Math.toRadians(this.odometer.getAng())) *
+	// distance, Math.cos(Math.toRadians(this.odometer.getAng())) * distance);
+	//
+	// }
+
 	/*
 	 * Go foward a set distance in cm
 	 */
-	public void goForward(double distance){
+	public void goForward(double distance) {
 		;
 		leftMotor.setSpeed(SLOW);
 		rightMotor.setSpeed(SLOW);
 		isNavigating = true;
-		
+
 		leftMotor.rotate(convertDistance(RADIUS, distance), true);
 		rightMotor.rotate(convertDistance(RADIUS, distance), true);
-		
+
 		isNavigating = false;
 	}
-	public void goForward(double distance, boolean returnImmediately){
-		
+
+	public void goForward(double distance, boolean returnImmediately) {
+
 		leftMotor.setSpeed(SLOW);
 		rightMotor.setSpeed(SLOW);
 		isNavigating = true;
-		
+
 		leftMotor.rotate(convertDistance(RADIUS, distance), true);
 		rightMotor.rotate(convertDistance(RADIUS, distance), returnImmediately);
-		
+
 		isNavigating = false;
 	}
+
 	/*
 	 * Go Backward a set distance in cm
 	 */
-	public void goBackward(double distance){
+	public void goBackward(double distance) {
 
 		leftMotor.setSpeed(SLOW);
 		rightMotor.setSpeed(SLOW);
 		Sound.beep();
 		isNavigating = true;
-		
+
 		leftMotor.rotate(-convertDistance(RADIUS, distance), true);
 		rightMotor.rotate(-convertDistance(RADIUS, distance), false);
-		
+
 		isNavigating = false;
 	}
-	
-	//Motor Setters (FOR ROTATING)
+
+	// Motor Setters (FOR ROTATING)
 	public void setRotationSpeed(float speed) {
 		rotationSpeed = speed;
 		setSpeeds(rotationSpeed, -rotationSpeed);
-		
+
 	}
+
 	// Takes a sweep to detect a block (controlled by main)
-	public void search (boolean forward){
+	public void search(boolean forward) {
 		leftMotor.setSpeed(SEARCH_SPEED);
 		rightMotor.setSpeed(SEARCH_SPEED);
-		if (forward){
+		if (forward) {
 			leftMotor.forward();
 			rightMotor.backward();
-		} else { 
+		} else {
 			leftMotor.backward();
 			rightMotor.forward();
 		}
 	}
-	
+
 	private static int convertDistance(double radius, double distance) {
 		return (int) ((180.0 * distance) / (Math.PI * radius));
 	}
+
 	// arm motor will grab the block
-	public void grab(){
+	public void grab() {
 		this.goForward(3);
 		armMotor.backward();
 		armMotor.setSpeed(150);
@@ -218,15 +222,17 @@ public class Navigation {
 		armMotor.stop();
 		this.hasStyro = true;
 	}
-	
+
 	public boolean hasStyro() {
 		boolean foo;
-		synchronized(this){ foo = hasStyro;}
+		synchronized (this) {
+			foo = hasStyro;
+		}
 		return foo;
 	}
-	
-	public boolean isNavigating(){
+
+	public boolean isNavigating() {
 		return this.isNavigating;
-	}	
-	
+	}
+
 }
