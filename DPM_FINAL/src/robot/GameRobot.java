@@ -26,7 +26,8 @@ public class GameRobot extends Robot {
 
     @Override
     public void turnTo(int angle) {
-
+    	Navigator nav = Navigator.getInstance();
+    	nav.turnTo(angle);
     }
 
     @Override
@@ -48,4 +49,10 @@ public class GameRobot extends Robot {
     public void localize() {
 
     }
+
+	@Override
+	public Position getOdometerReading() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }
