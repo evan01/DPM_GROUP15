@@ -2,6 +2,9 @@ package robot.constants;/*
  * Created by evanknox on 2015-10-10.
  */
 
+/**
+ * Abstract position class that has a x, y and theta value. Used by odometer when returning position.
+ */
 public class Position {
     private double x;
     private double y;

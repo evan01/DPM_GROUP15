@@ -6,6 +6,9 @@ import lejos.hardware.motor.EV3LargeRegulatedMotor;
 import lejos.hardware.motor.EV3MediumRegulatedMotor;
 import lejos.utility.Delay;
 
+/**
+ * This is another implementation of the navigation class, will travel using a direct path instead of straight path
+ */
 public class Navigation {
 
 	final static int FAST = 200, SLOW = 100, ACCELERATION = 4000;
@@ -26,6 +29,9 @@ public class Navigation {
 		return ourInstance;
 	}
 
+	/**
+	 * Constructor
+	 */
 	private Navigation() {
 
 		this.odometer = Odometer.getInstance();
@@ -42,7 +48,7 @@ public class Navigation {
 		this.rightMotor.setAcceleration(ACCELERATION);
 	}
 
-	/*
+	/**
 	 * Functions to set the motor speeds jointly
 	 */
 	public void setSpeeds(float lSpd, float rSpd) {
@@ -71,7 +77,7 @@ public class Navigation {
 			this.rightMotor.forward();
 	}
 
-	/*
+	/**
 	 * Float the two motors jointly
 	 */
 	public void setFloat() {
@@ -81,7 +87,10 @@ public class Navigation {
 		this.rightMotor.flt(true);
 	}
 
-	public void stopMoving() { // This method will just stop the motors
+	/**
+	 * Stop the motors of the robot
+	 */
+	public void stopMoving() {
 
 		this.rightMotor.setSpeed(0);
 		this.leftMotor.setSpeed(0);
@@ -89,7 +98,7 @@ public class Navigation {
 		this.rightMotor.forward();
 	}
 
-	/*
+	/**
 	 * TravelTo function which takes as arguments the x and y position in cm
 	 * Will travel to designated position, while constantly updating it's
 	 * heading
@@ -109,7 +118,7 @@ public class Navigation {
 		this.setSpeeds(0, 0);
 	}
 
-	/*
+	/**
 	 * TurnTo function which takes an angle and boolean as arguments The boolean
 	 * controls whether or not to stop the motors when the turn is completed
 	 */
@@ -136,16 +145,7 @@ public class Navigation {
 			this.setSpeeds(0, 0);
 		}
 	}
-	/*
-	 * Go foward a set distance in cm
-	 */
-	// public void goForward(double distance) {
-	// this.travelTo(Math.cos(Math.toRadians(this.odometer.getAng())) *
-	// distance, Math.cos(Math.toRadians(this.odometer.getAng())) * distance);
-	//
-	// }
-
-	/*
+	/**
 	 * Go foward a set distance in cm
 	 */
 	public void goForward(double distance) {
@@ -172,8 +172,9 @@ public class Navigation {
 		isNavigating = false;
 	}
 
-	/*
+	/**
 	 * Go Backward a set distance in cm
+	 * @param distance the distance with which to move backward
 	 */
 	public void goBackward(double distance) {
 
@@ -188,14 +189,20 @@ public class Navigation {
 		isNavigating = false;
 	}
 
-	// Motor Setters (FOR ROTATING)
+	/** Motor Setters (FOR ROTATING)
+	 *
+	 * @param speed the speed at which the robot should be rotating
+	 */
 	public void setRotationSpeed(float speed) {
 		rotationSpeed = speed;
 		setSpeeds(rotationSpeed, -rotationSpeed);
 
 	}
 
-	// Takes a sweep to detect a block (controlled by main)
+	/**
+	 * Make the robot perform a sweeping motion
+	 * @param forward whether the robot sweeps forward or backward
+	 */
 	public void search(boolean forward) {
 		leftMotor.setSpeed(SEARCH_SPEED);
 		rightMotor.setSpeed(SEARCH_SPEED);
@@ -212,7 +219,9 @@ public class Navigation {
 		return (int) ((180.0 * distance) / (Math.PI * radius));
 	}
 
-	// arm motor will grab the block
+	/**
+	 * Controls the arm motor to force robot to grab the actual block
+	 */
 	public void grab() {
 		this.goForward(3);
 		armMotor.backward();

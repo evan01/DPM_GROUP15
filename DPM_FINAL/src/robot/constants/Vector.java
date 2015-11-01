@@ -1,5 +1,8 @@
 package robot.constants;
 
+/**
+ * This class just repreents an angle and a distance, can be used for odometry correction
+ */
 public class Vector {
 	double angle;
 	int distance;

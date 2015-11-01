@@ -37,6 +37,9 @@ public class USSensor implements Runnable{
         usData = new float[usSensor.sampleSize()];
     }
 
+    /**
+     * When you want to run the sensor as a thread you have the option, but you aren't limited to doing so
+     */
     @Override
     public void run() {
         threadRunning = true;
@@ -54,12 +57,20 @@ public class USSensor implements Runnable{
         distance = (int) (usData[0] * 100.0);
     }
 
-    //this method allows for tailored usage of the ultrasonic sensor
+    /**
+     * This method allows for single scans of the sensor
+     * @return an integer representing the distance returned from a scan
+     */
     public synchronized int scan(){
         us.fetchSample(usData, 0); // acquire data
         return (int) (usData[0] * 100.0);
     }
 
+    /**
+     *
+     * @param sample a sample from the ultrasonic sensor
+     * @return the filtered sample, cuts off sample at 30 cm if the sample is greater than 30
+     */
     public static float filterSample(float sample){
         if (sample > 30) {                                                                        // filter out large
             // values
