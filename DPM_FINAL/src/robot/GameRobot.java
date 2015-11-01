@@ -3,6 +3,7 @@ package robot;
  * Created by evanknox on 2015-10-27.
  */
 
+import robot.constants.Color;
 import robot.constants.NavInstruction;
 import robot.constants.Position;
 import robot.navigation.Capturer;
@@ -39,8 +40,8 @@ public class GameRobot extends Robot {
     }
 
     @Override
-    public int colorScan() {
-        return 0;
+    public Color colorScan() {
+        return null;
     }
 
     @Override
@@ -57,12 +58,6 @@ public class GameRobot extends Robot {
 	public Position getOdometerReading() {
 		// TODO Auto-generated method stub
 		return null;
-	}
-
-	@Override
-	public boolean isBlock(int colorId) {
-		
-		return false;
 	}
 
 }

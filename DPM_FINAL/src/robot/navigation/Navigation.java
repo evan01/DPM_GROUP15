@@ -149,7 +149,6 @@ public class Navigation {
 	 * Go foward a set distance in cm
 	 */
 	public void goForward(double distance) {
-		;
 		leftMotor.setSpeed(SLOW);
 		rightMotor.setSpeed(SLOW);
 		isNavigating = true;

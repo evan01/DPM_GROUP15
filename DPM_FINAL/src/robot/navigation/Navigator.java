@@ -161,11 +161,7 @@ public class Navigator implements Runnable {
 			error = goal.coordinate - currentPosition.getY();
 		}
 
-		if (Math.abs(error) > Constants.THRESHOLD_DISTANCE_ERROR) {
-			return false;
-		} else {
-			return true;
-		}
+		return Math.abs(error) <= Constants.THRESHOLD_DISTANCE_ERROR;
 	}
 
 	/**
@@ -299,7 +295,6 @@ public class Navigator implements Runnable {
 	 * Go foward a set distance in cm
 	 */
 	public void goForward(double distance) {
-		;
 		leftMotor.setSpeed(SLOW);
 		rightMotor.setSpeed(SLOW);
 		isNavigating = true;
