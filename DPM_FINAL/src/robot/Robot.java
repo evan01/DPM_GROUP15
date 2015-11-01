@@ -24,4 +24,6 @@ public abstract class Robot {
 	
 	public abstract Position getOdometerReading();
 	
+	public abstract boolean isBlock(int colorId);
+	
 }

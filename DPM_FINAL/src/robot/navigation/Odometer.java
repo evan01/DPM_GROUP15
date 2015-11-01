@@ -30,14 +30,17 @@ import lejos.utility.Timer;
 import lejos.utility.TimerListener;
 import lejos.hardware.motor.EV3LargeRegulatedMotor;
 import lejos.hardware.motor.EV3MediumRegulatedMotor;
-import robot.constants.Constants;
-import robot.constants.Position;
 
-/**
- * The odometer class serves to report the location of our robot at any given time, it will run as its own thread
- */
 public class Odometer implements TimerListener {
+	
+	// this is a singleton class
+	private static final Odometer ourInstance = new Odometer(30, true);
 
+	public static Odometer getInstance() {
+		return ourInstance;
+	}
+	
+	
 	private Timer timer;
 	private EV3LargeRegulatedMotor leftMotor, rightMotor;
 	private EV3MediumRegulatedMotor armMotor;
@@ -45,25 +48,18 @@ public class Odometer implements TimerListener {
 	private double leftRadius, rightRadius, TRACK;
 	private double x, y, theta;
 	private double[] oldDH, dDH;
-
-	//This is a singleton class
-	private static Odometer instance = new Odometer(true);
-	public static synchronized Odometer getInstance(){
-		return instance;
-	}
-
+	
 	// constructor
-	private Odometer (boolean autostart) {
+	private Odometer (int INTERVAL, boolean autostart) {
 		Motors mtrs = Motors.getInstance();
-		
 		this.leftMotor = mtrs.getLeftMotor();
 		this.rightMotor = mtrs.getRightMotor();
 		this.armMotor = mtrs.getArmMotor();
 		
 		// default values, modify for your robot
-		this.rightRadius = Constants.WHEEL_RADIUS;
-		this.leftRadius = Constants.WHEEL_RADIUS;
-		this.TRACK = Constants.TRACK;
+		this.rightRadius = 2.2;
+		this.leftRadius = 2.2;
+		this.TRACK = 11.5;
 		
 		this.x = 0.0;
 		this.y = 0.0;
@@ -72,9 +68,8 @@ public class Odometer implements TimerListener {
 		this.dDH = new double[2];
 		
 		if (autostart) {
-			int interval = Constants.ODOMETER_UPDATE_INTERVAL;
 			// if the timeout interval is given as <= 0, default to 20ms timeout 
-			this.timer = new Timer((interval <= 0) ? interval : DEFAULT_TIMEOUT_PERIOD, this);
+			this.timer = new Timer((INTERVAL <= 0) ? INTERVAL : DEFAULT_TIMEOUT_PERIOD, this);
 			this.timer.start();
 		} else
 			this.timer = null;
@@ -143,7 +138,7 @@ public class Odometer implements TimerListener {
 			return theta;
 		}
 	}
-	
+
 	// set x,y,theta------- WHY U DO THIS ??
 	public void setPosition(double[] position, boolean[] update) {
 		synchronized (this) {
@@ -167,11 +162,17 @@ public class Odometer implements TimerListener {
 		}
 	}
 
-	public synchronized Position getPosition(){
-		return new Position(x,y,theta);
+
+	// return x,y,theta
+	public void getPosition(double[] position) {
+		synchronized (this) {
+			position[0] = x;
+			position[1] = y;
+			position[2] = theta;
+		}
 	}
 
-	public double[] getArrayPosition() {
+	public double[] getPosition() {
 		synchronized (this) {
 			return new double[] { x, y, theta };
 		}
@@ -220,3 +221,4 @@ public class Odometer implements TimerListener {
 	}
 
 }
+

@@ -6,7 +6,7 @@ import lejos.hardware.lcd.LCD;
 import lejos.robotics.SampleProvider;
 import robot.sensors.USSensor;
 
-public class Localizer {
+public class USLocalizer {
 	public enum LocalizationType { FALLING_EDGE, RISING_EDGE };
 	public static float ROTATION_SPEED = 70;
 	
@@ -21,7 +21,7 @@ public class Localizer {
 //	private final double TILE_DIMENSION = 30;		not needed anymore
 	private static boolean isMeasured  = false;
 	
-	public Localizer(Odometer odo, LocalizationType locType) {
+	public USLocalizer(Odometer odo, LocalizationType locType) {
 		this.odo = odo;
 		this.us = USSensor.getInstance();
 		this.locType = locType;

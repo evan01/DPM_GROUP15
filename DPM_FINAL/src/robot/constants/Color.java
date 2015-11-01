@@ -1,12 +1,52 @@
 package robot.constants;/*
  * Created by evanknox on 2015-10-18.
  */
-//Simple data class to represent colours
+/**
+ * 
+ * 
+ *
+ */
 public class Color {
     private double R;
     private double G;
     private double B;
 
+    public boolean isSampleRed(){
+    	if(this.R>this.G && this.R>this.B){
+    		return true;
+    	} else{
+    		return false;
+    	}
+    }
+    //if sample is not red or blue, it compares the ratio of each
+    //value to 90% as white colour has similar RGB values
+    public boolean isSampleWhite(){
+    	if(!isSampleBlue() && !isSampleRed()){
+    		if((this.R/this.B)*100>=90 && (this.R/this.G)*100>=90){
+    			return true;
+    		} else{
+    			return false;
+    		}
+    	} else{
+    		return false;
+    	}
+    }
+    
+    //if sample is not blue, it compares the ratio of red and green
+    //if green is not less than 30% of red value it is yellow and
+    //red is bigger than green and blue
+    public boolean isSampleYellow(){
+    	if(!isSampleBlue()){
+    		if(this.R>this.B && this.R>this.G && !isSampleWhite()
+    				&& !((this.G/this.R)*100 <=30)){
+    			return true;
+    		} else{
+    			return false;
+    		}
+    	} else{
+    		return false;
+    	}
+    }
     public boolean isSampleBlue(){
         if(this.R<this.B && this.G <this.B){
             return true;
