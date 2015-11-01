@@ -1,5 +1,0 @@
-Writing tests shouldn't be so bad actually!
-
-If you are testing something to do with the game, then place your test in the gameTests package.
-Each test will be a class with a main method. These mini programs are supposed to test specific things so 
-they should be extremely small in size.
