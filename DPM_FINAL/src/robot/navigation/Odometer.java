@@ -27,10 +27,11 @@
  */
 package robot.navigation;
 
-import lejos.utility.Timer;
-import lejos.utility.TimerListener;
 import lejos.hardware.motor.EV3LargeRegulatedMotor;
 import lejos.hardware.motor.EV3MediumRegulatedMotor;
+import lejos.utility.Timer;
+import lejos.utility.TimerListener;
+import robot.constants.Position;
 
 /**
  * This class represents the odometer of our robot, will always run as a thread as long as the robot is playing the game
@@ -53,6 +54,7 @@ public class Odometer implements TimerListener {
     private double leftRadius, rightRadius, TRACK;
     private double x, y, theta;
     private double[] oldDH, dDH;
+    private Position position;
 
     /**
      * The constructor for the odometer
@@ -185,9 +187,9 @@ public class Odometer implements TimerListener {
         }
     }
 
-    public double[] getPosition() {
+    public synchronized Position getPosition() {
         synchronized (this) {
-            return new double[]{x, y, theta};
+            return new Position(x, y, theta);
         }
     }
 

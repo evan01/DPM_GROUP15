@@ -1,10 +1,8 @@
 package robot.navigation;
 
 import lejos.hardware.Sound;
-import lejos.hardware.lcd.LCD;
 import lejos.hardware.motor.EV3LargeRegulatedMotor;
 import lejos.hardware.motor.EV3MediumRegulatedMotor;
-import lejos.utility.Delay;
 
 /**
  * This is another implementation of the navigation class, will travel using a direct path instead of straight path
@@ -216,27 +214,6 @@ public class Navigation {
 
 	private static int convertDistance(double radius, double distance) {
 		return (int) ((180.0 * distance) / (Math.PI * radius));
-	}
-
-	/**
-	 * Controls the arm motor to force robot to grab the actual block
-	 */
-	public void grab() {
-		this.goForward(3);
-		armMotor.backward();
-		armMotor.setSpeed(150);
-		armMotor.rotate(180);
-		Delay.msDelay(250);
-		armMotor.stop();
-		this.hasStyro = true;
-	}
-
-	public boolean hasStyro() {
-		boolean foo;
-		synchronized (this) {
-			foo = hasStyro;
-		}
-		return foo;
 	}
 
 	public boolean isNavigating() {

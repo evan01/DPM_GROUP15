@@ -51,7 +51,7 @@ public class Constants {
 		public static final double THRESHOLD_DISTANCE_ERROR = 1.25;
 
 		// LCD DISPLAY
-		public static final int LCD_REFRESH = 20;
+		public static final int LCD_REFRESH = 250;
 
 		// LightSensor
 	

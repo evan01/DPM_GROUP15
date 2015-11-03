@@ -1,13 +1,11 @@
 package test;
 
-import java.util.ArrayList;
-
 import lejos.hardware.ev3.LocalEV3;
 import lejos.hardware.motor.EV3LargeRegulatedMotor;
 import lejos.hardware.port.Port;
 import lejos.hardware.sensor.EV3ColorSensor;
-import robot.GameRobot;
-import robot.Robot;
+
+import java.util.ArrayList;
 
 public class LightSensorTest {
 
