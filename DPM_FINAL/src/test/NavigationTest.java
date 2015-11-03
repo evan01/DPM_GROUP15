@@ -33,8 +33,8 @@ public class NavigationTest {
 		
 		USLocalizer loc = new USLocalizer(odo,USLocalizer.LocalizationType.FALLING_EDGE);
 		loc.doLocalization();
-		nav.travelTo(0, 0);
-		nav.turnTo(0, true);
+		nav.travelTo(-5, -5);
+		nav.turnTo(30, true);
 	}
 
 }

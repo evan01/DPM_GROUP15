@@ -42,11 +42,12 @@ public class LightSensor implements Runnable{
         sensorLeft.setFloodlight(true);
     }
 
+
 	
 	@Override
 	public void run() {
 		 threadRunning = true;
-		 
+        
 		 while (threadRunning){
 			 lightSensorR.fetchSample(sampleRight, 0);
 			 lightSensorL.fetchSample(sampleLeft, 0);

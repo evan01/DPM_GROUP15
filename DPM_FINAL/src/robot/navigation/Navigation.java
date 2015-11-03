@@ -193,7 +193,6 @@ public class Navigation {
 	public void setRotationSpeed(float speed) {
 		rotationSpeed = speed;
 		setSpeeds(rotationSpeed, -rotationSpeed);
-
 	}
 
 	/**
