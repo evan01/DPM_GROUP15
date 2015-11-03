@@ -1,11 +1,9 @@
 package robot.sensors;
-import lejos.hardware.Sound;
-import lejos.hardware.lcd.LCD;
+
 import lejos.hardware.port.Port;
 import lejos.hardware.sensor.EV3ColorSensor;
 import lejos.robotics.SampleProvider;
 import robot.constants.Color;
-
 import robot.constants.Constants;
 
 /**

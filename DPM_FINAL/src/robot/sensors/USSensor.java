@@ -1,13 +1,9 @@
 package robot.sensors;
 
+import lejos.hardware.port.Port;
 import lejos.hardware.sensor.EV3UltrasonicSensor;
-import lejos.hardware.sensor.SensorMode;
-import lejos.hardware.sensor.SensorModes;
 import lejos.robotics.SampleProvider;
 import robot.constants.Constants;
-import lejos.hardware.Button;
-import lejos.hardware.ev3.LocalEV3;
-import lejos.hardware.port.Port;
 
 /**
  * This class represents the Ultrasonic sensor, you can order the sensor to continuously sense things or only scan at

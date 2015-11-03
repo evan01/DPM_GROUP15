@@ -2,8 +2,8 @@ package game;/*
  * Created by evanknox on 2015-10-27.
  */
 
-import robot.navigation.Motors;
 import robot.display.Display;
+import robot.navigation.Motors;
 import robot.navigation.Odometer;
 import robot.sensors.ColorSensor;
 import robot.sensors.USSensor;
