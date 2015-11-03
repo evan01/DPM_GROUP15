@@ -47,7 +47,12 @@ public class LightSensor implements Runnable{
 	public void run() {
 		 threadRunning = true;
 		 
-		 
+		 while (threadRunning){
+			 lightSensorR.fetchSample(sampleRight, 0);
+			 lightSensorL.fetchSample(sampleLeft, 0);
+			 
+			 
+		 }
 		
 	}
 

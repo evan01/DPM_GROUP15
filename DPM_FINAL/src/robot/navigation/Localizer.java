@@ -13,7 +13,7 @@ public class Localizer {
 	
 
 	private Odometer odo;
-	private Navigation navigate;
+	private Navigator navigate;
 	private USSensor us;
 	private LocalizationType locType;
 	
@@ -26,7 +26,7 @@ public class Localizer {
 		this.odo = odo;
 		this.us = USSensor.getInstance();
 		this.locType = locType;
-		this.navigate = Navigation.getInstance();
+		this.navigate = Navigator.getInstance();
 	}
 	
 	public void doLocalization() {

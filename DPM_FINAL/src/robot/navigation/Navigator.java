@@ -5,6 +5,7 @@ package robot.navigation;
  * arguably, this is the single most important class in the entire project, all commands sent to the navigator will
  * be executed
  */
+import robot.constants.Constants;
 import lejos.hardware.Sound;
 import lejos.hardware.lcd.LCD;
 import lejos.hardware.motor.EV3LargeRegulatedMotor;
@@ -22,6 +23,12 @@ public class Navigator {
 	private int SEARCH_SPEED = 20;
 	private boolean isNavigating;
 	public boolean hasStyro = false;
+	
+	// for odo correction
+	public int horizontalLinesCrossed = -1;
+	public int verticalLinesCrossed = -1;
+	private boolean hasLeftLine;
+	private boolean hasRightLine;
 
 	public Navigator(Odometer odo) {
 		this.odometer = odo;
@@ -223,7 +230,50 @@ public class Navigator {
 		armMotor.stop();
 		this.hasStyro = true;
 	}
-	
+	//###### ODOMETRY CORRECTION ########
+	private void performOdometerCorrection()
+	{
+		// Updates the x, y and theta values on the Odometer according to the correction
+		double heading = odometer.getPosition()[2];
+		
+		// Heading EAST (x++)
+		if(heading >= 45 && heading < 135)
+		{
+			horizontalLinesCrossed++;
+			odometer.setPosition(new double[] {horizontalLinesCrossed * Constants.SQUARE_WIDTH + Constants.LIGHT_SENS_OFFSET , 0.0, 90.0}, 
+								  new boolean[] {true, false, true});
+		}
+		// Heading SOUTH (y--)
+		else if(heading >= 135 && heading < 225)
+		{
+			if(verticalLinesCrossed < 0)
+			{
+				verticalLinesCrossed = 0;
+			}
+			odometer.setPosition(new double[] {0.0, verticalLinesCrossed * Constants.SQUARE_WIDTH - Constants.LIGHT_SENS_OFFSET , 180.0}, 
+								  new boolean[] {false, true, true});
+			verticalLinesCrossed--;
+		}
+		// Heading WEST (x--)
+		else if(heading >= 225 && heading < 315)
+		{
+			if(horizontalLinesCrossed < 0)
+			{
+				horizontalLinesCrossed = 0;
+			}
+			odometer.setPosition(new double[] {horizontalLinesCrossed * Constants.SQUARE_WIDTH - Constants.LIGHT_SENS_OFFSET , 0.0, 270.0},
+								  new boolean[] {true, false, true});
+			horizontalLinesCrossed--;
+		}
+		// Heading NORTH (y++)
+		else
+		{
+			verticalLinesCrossed++;
+			odometer.setPosition(new double[] {0.0, verticalLinesCrossed * Constants.SQUARE_WIDTH + Constants.LIGHT_SENS_OFFSET , 0.0}, 
+								  new boolean[] {false, true, true});
+		}
+
+	}
 	public boolean hasStyro() {
 		boolean foo;
 		synchronized(this){ foo = hasStyro;}
