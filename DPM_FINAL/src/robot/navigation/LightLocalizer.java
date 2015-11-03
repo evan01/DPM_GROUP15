@@ -3,7 +3,6 @@ package robot.navigation;
  * Created by evanknox on 2015-11-02.
  */
 
-import javafx.geometry.Pos;
 import robot.constants.Constants;
 import robot.constants.Position;
 import robot.sensors.LightSensor;
@@ -68,9 +67,11 @@ public class LightLocalizer {
      * @param theta2 second angle
      * @return a double representing the distance from axis
      */
+
     private double findXYDistance(double theta1, double theta2){
         return Constants.DIST_TO_LIGHT_SENSOR*Math.cos((theta2-theta1)/2);
     }
+
 
     /**
      * This is the ammount that we need to correct

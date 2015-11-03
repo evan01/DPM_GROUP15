@@ -68,39 +68,7 @@ public class Color {
 		}
 	}
 
-<<<<<<< HEAD
-    public boolean isSampleRed(){
-        return this.R > this.G && this.R > this.B;
-    }
-    //if sample is not red or blue, it compares the ratio of each
-    //value to 90% as white colour has similar RGB values
-    public boolean isSampleWhite(){
-    	if(!isSampleBlue() && !isSampleRed()){
-            return (this.R / this.B) * 100 >= 90 && (this.R / this.G) * 100 >= 90;
-    	} else{
-    		return false;
-    	}
-    }
-    
-    //if sample is not blue, it compares the ratio of red and green
-    //if green is not less than 30% of red value it is yellow and
-    //red is bigger than green and blue
-    public boolean isSampleYellow(){
-    	if(!isSampleBlue()){
-            return this.R > this.B && this.R > this.G && !isSampleWhite()
-                    && !((this.G / this.R) * 100 <= 30);
-    	} else{
-    		return false;
-    	}
-    }
-    public boolean isSampleBlue(){
-        return this.R < this.B && this.G < this.B;
-    }
-    
-    public boolean isBadSample(){
-        return this.R < 2 && this.B < 2 && this.G < 2;
-    }
-=======
+
 	public boolean isBadSample() {
 		if (this.R < 2 && this.B < 2 && this.G < 2) {
 			return true;
@@ -108,7 +76,6 @@ public class Color {
 			return false;
 		}
 	}
->>>>>>> 6e8f1a2... Test for light sensor and block color detection
 
 	public double getB() {
 		return B;

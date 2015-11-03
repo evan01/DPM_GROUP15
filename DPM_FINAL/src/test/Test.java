@@ -1,11 +1,5 @@
 package test;
 
-<<<<<<< HEAD
-public class Test {
-
-	public static void main(String args[]){
-		//This class is like any other start of a java program
-=======
 import robot.constants.Color;
 import robot.sensors.ColorSensor;
 import robot.sensors.USSensor;
@@ -52,7 +46,6 @@ public class Test {
 				// TODO Auto-generated catch block
 			}
 		}
->>>>>>> 6e8f1a2... Test for light sensor and block color detection
 	}
 
 }
