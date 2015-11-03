@@ -21,7 +21,7 @@ public class LightSensorTest {
 		@SuppressWarnings("resource")
 		EV3ColorSensor colorSensor = new EV3ColorSensor(colorPort);
 		float[] colorData = new float[colorSensor.getRedMode().sampleSize()];
-		//go 96.44 cm forward, cross 3 lines
+		//cross 2 gridlines
 		leftMotor.setSpeed(100);
 		leftMotor.setAcceleration(100);
 		rightMotor.setSpeed(100);
