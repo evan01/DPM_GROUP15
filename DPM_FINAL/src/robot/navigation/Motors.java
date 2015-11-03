@@ -10,6 +10,7 @@ import robot.constants.Constants;
 public class Motors {
     private EV3LargeRegulatedMotor leftMotor;
     private EV3LargeRegulatedMotor rightMotor;
+    private EV3LargeRegulatedMotor clawMotor;
     private EV3MediumRegulatedMotor armMotor;
 
     private static Motors ourInstance = new Motors();
@@ -22,6 +23,7 @@ public class Motors {
             leftMotor = new EV3LargeRegulatedMotor(Constants.leftMotorPort);
             rightMotor = new EV3LargeRegulatedMotor(Constants.rightMotorPort);
             armMotor =new EV3MediumRegulatedMotor(Constants.armPort);
+            clawMotor = new EV3LargeRegulatedMotor(Constants.clawMotorPort);
         }catch(Exception e){
             //Sometimes something else may have control over motors
         }
@@ -41,6 +43,13 @@ public class Motors {
 
     public void setRightMotor(EV3LargeRegulatedMotor rightMotor) {
         this.rightMotor = rightMotor;
+    }
+    public EV3LargeRegulatedMotor getClawMotor() {
+        return clawMotor;
+    }
+
+    public void setClawMotor(EV3LargeRegulatedMotor clawMotor) {
+        this.clawMotor = clawMotor;
     }
 
     public EV3MediumRegulatedMotor getArmMotor() {
