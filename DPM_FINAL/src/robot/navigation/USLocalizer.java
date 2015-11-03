@@ -7,7 +7,8 @@ import lejos.robotics.SampleProvider;
 import robot.sensors.USSensor;
 
 public class USLocalizer {
-	public enum LocalizationType { FALLING_EDGE, RISING_EDGE };
+	public enum LocalizationType { FALLING_EDGE, RISING_EDGE }
+
 	public static float ROTATION_SPEED = 70;
 	
 

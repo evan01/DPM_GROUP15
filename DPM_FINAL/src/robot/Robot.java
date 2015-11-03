@@ -1,5 +1,6 @@
 package robot;
 
+import robot.constants.Color;
 import robot.constants.Position;
 
 /**
@@ -13,17 +14,33 @@ public abstract class Robot {
 	 * @param angle
 	 */
 	public abstract void turnTo(int angle);
-	
+
+	/**
+	 * Orders robot to do a single ultrasonic scan
+	 * @return distance scanned by ultrasonic sensor
+	 */
 	public abstract int usScan();
-	
-	public abstract int colorScan();
-	
+
+	/**
+	 * Orders
+	 * @return an abstract color object representing what was scanned
+	 */
+	public abstract Color colorScan();
+
+	/**
+	 * Orders the robot to capture a block in front of it
+	 */
 	public abstract void capture();
-	
+
+	/**
+	 * Orders the robot to localize itself
+	 */
 	public abstract void localize();
-	
+
+	/**
+	 * Gets the current position of the robot
+	 * @return the odometer reading
+	 */
 	public abstract Position getOdometerReading();
-	
-	public abstract boolean isBlock(int colorId);
 	
 }

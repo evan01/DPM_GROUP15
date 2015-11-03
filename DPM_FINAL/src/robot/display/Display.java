@@ -26,16 +26,16 @@ public class Display implements TimerListener{
 	private Display() {
 		this.odo = Odometer.getInstance();
 		this.lcdTimer = new Timer(LCD_REFRESH, this);
-		this.mode = Mode.Standard;//Always the standard mode by default
-		this.stage = "Stage 1";
-		this.CS_ON = false;
-		this.US_ON = false;
+		mode = Mode.Standard;//Always the standard mode by default
+		stage = "Stage 1";
+		CS_ON = false;
+		US_ON = false;
 	}
 
 	/**
 	 * Mode setting for the class, changes what the LCD actually displays
 	 */
-	public static enum Mode {
+	public enum Mode {
 		Standard, //Will display the usual screen
 		Debug //Will allow for a different display
 	}

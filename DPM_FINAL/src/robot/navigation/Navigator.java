@@ -161,11 +161,7 @@ public class Navigator implements Runnable {
 			error = goal.coordinate - currentPosition.getY();
 		}
 
-		if (Math.abs(error) > Constants.THRESHOLD_DISTANCE_ERROR) {
-			return false;
-		} else {
-			return true;
-		}
+		return Math.abs(error) <= Constants.THRESHOLD_DISTANCE_ERROR;
 	}
 
 	/**
@@ -200,10 +196,9 @@ public class Navigator implements Runnable {
 		return angle;
 	}
 
-	/*
+	/**
 	 * Functions to set the motor speeds jointly
 	 */
-
 	public void setSpeeds(int lSpd, int rSpd) {
 		Navigator.leftMotor.setSpeed(lSpd);
 		Navigator.rightMotor.setSpeed(rSpd);
@@ -230,7 +225,7 @@ public class Navigator implements Runnable {
 			Navigator.rightMotor.forward();
 	}
 
-	/*
+	/**
 	 * Float the two motors jointly
 	 */
 	public void setFloat() {
@@ -248,7 +243,7 @@ public class Navigator implements Runnable {
 		Navigator.rightMotor.forward();
 	}
 
-	/*
+	/**
 	 * TravelTo function which takes as arguments the x and y position in cm
 	 * Will travel to designated position, while constantly updating it's
 	 * heading
@@ -268,7 +263,7 @@ public class Navigator implements Runnable {
 		this.setSpeeds(0, 0);
 	}
 
-	/*
+	/**
 	 * TurnTo function which takes an angle and boolean as arguments The boolean
 	 * controls whether or not to stop the motors when the turn is completed
 	 */
@@ -296,11 +291,10 @@ public class Navigator implements Runnable {
 		}
 	}
 
-	/*
+	/**
 	 * Go foward a set distance in cm
 	 */
 	public void goForward(double distance) {
-		;
 		leftMotor.setSpeed(SLOW);
 		rightMotor.setSpeed(SLOW);
 		isNavigating = true;
@@ -323,7 +317,7 @@ public class Navigator implements Runnable {
 		isNavigating = false;
 	}
 
-	/*
+	/**
 	 * Go Backward a set distance in cm
 	 */
 	public void goBackward(double distance) {
