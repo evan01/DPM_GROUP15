@@ -69,7 +69,7 @@ public class LightLocalizer {
      * @return a double representing the distance from axis
      */
     private double findXYDistance(double theta1, double theta2){
-        return Constants.DIST_TO_LIGHT_SENSOR*Math.cos((theta2-theta1)/2);
+        return Constants.LIGHT_SENS_OFFSET*Math.cos((theta2-theta1)/2);
     }
 
     /**
