@@ -22,7 +22,7 @@ public class Motors {
         try{
             leftMotor = new EV3LargeRegulatedMotor(Constants.leftMotorPort);
             rightMotor = new EV3LargeRegulatedMotor(Constants.rightMotorPort);
-            armMotor =new EV3MediumRegulatedMotor(Constants.armPort);
+            armMotor = new EV3MediumRegulatedMotor(Constants.armPort);
             clawMotor = new EV3LargeRegulatedMotor(Constants.clawMotorPort);
         }catch(Exception e){
             //Sometimes something else may have control over motors

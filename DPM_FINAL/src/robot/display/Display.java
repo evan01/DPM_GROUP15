@@ -1,4 +1,5 @@
 package robot.display;
+
 import lejos.hardware.ev3.LocalEV3;
 import lejos.hardware.lcd.TextLCD;
 import lejos.utility.Timer;
@@ -26,22 +27,22 @@ public class Display implements TimerListener{
 	private Display() {
 		this.odo = Odometer.getInstance();
 		this.lcdTimer = new Timer(LCD_REFRESH, this);
-		this.mode = Mode.Standard;//Always the standard mode by default
-		this.stage = "Stage 1";
-		this.CS_ON = false;
-		this.US_ON = false;
+		mode = Mode.Standard;//Always the standard mode by default
+		message = "No Debug Message";
+		CS_ON = false;
+		US_ON = false;
 	}
 
 	/**
 	 * Mode setting for the class, changes what the LCD actually displays
 	 */
-	public static enum Mode {
+	public enum Mode {
 		Standard, //Will display the usual screen
 		Debug //Will allow for a different display
 	}
 	//Useful info/class vars we will display
 	private static Mode mode;
-	private static String stage;
+	private static String message;
 	private static boolean US_ON;
 	private static boolean CS_ON;
 
@@ -79,11 +80,12 @@ public class Display implements TimerListener{
 	public void displayStandard(){
 		Position p = odo.getPosition();
 		LCD.clear();
-		LCD.drawString(stage,0,0);
-		LCD.drawString(stage,0,1);
-		LCD.drawString(stage,0,2);
-		LCD.drawString("---------------",0,3);
-		LCD.drawString(p.toString(), 0, 4);
+		LCD.drawString("__ODOMETER__",0,0);
+		LCD.drawString("X: "+p.getX(),0,1);
+		LCD.drawString("Y: "+p.getY(),0,2);
+		LCD.drawString("Theta: "+p.getTheta(),0,3);
+		LCD.drawString("---------------",0,4);
+
 		if(US_ON){
 			//If the ultrasonic sensor is on
 			LCD.drawString("USSensor: ", 0, 5);
@@ -92,6 +94,7 @@ public class Display implements TimerListener{
 			//If the color sensor is on
 			LCD.drawString("ColorSensor: ", 0, 6);
 		}
+		LCD.drawString(message,0,7);
 
 	}
 

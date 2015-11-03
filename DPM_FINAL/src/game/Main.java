@@ -1,8 +1,8 @@
 package game;
 
-import game.stage1.Stage1;
 import robot.GameRobot;
 import robot.Robot;
+import game.stage1.Stage1;
 
 /**
  * This class is the main entry point into our game, everything originates from here
@@ -10,7 +10,6 @@ import robot.Robot;
 public class Main {
 
 	public static void main(String[] args) {
-		//TODO Final Game code starts here
 		Loader loader = new Loader();
 		loader.load();
 
@@ -20,10 +19,6 @@ public class Main {
 		s1.start();
 //		Stage2 s2 = new Stage2(robot);
 //		Stage3 s3 = new Stage3(robot);
-
-
-
-
 
 	}
 

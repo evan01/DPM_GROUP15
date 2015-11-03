@@ -2,4 +2,21 @@ Writing tests shouldn't be so bad actually!
 
 If you are testing something to do with the game, then place your test in the gameTests package.
 Each test will be a class with a main method. These mini programs are supposed to test specific things so 
-they should be extremely small in size.
+they should be extremely small in size. Please name your test class to be what you're testing (makes sense right?). So
+ if for example you happen to be testing the display create a file called DisplayTest.java with a main method...
+
+
+ public class DisplayTest{
+
+    public static void main(String args[]){
+        //Code here
+        subTest1();
+    }
+
+    public subTest1(){
+
+    }
+
+
+
+ }
