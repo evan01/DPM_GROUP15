@@ -8,7 +8,7 @@ import lejos.hardware.lcd.TextLCD;
 import lejos.hardware.port.Port;
 import lejos.hardware.sensor.EV3ColorSensor;
 
-public class Test {
+public class ColorRecognitionTest {
 
 	private static TextLCD LCD = LocalEV3.get().getTextLCD();
 
@@ -28,16 +28,16 @@ public class Test {
 		  if(dist<5){
 			if (color.isSampleBlue()) {
 				LCD.drawString("Blue", 0, 0);
-			} else if (color.isSampleRed()) {
-				LCD.drawString("Red", 0, 0);
 			} else if (color.isSampleYellow()) {
 				LCD.drawString("Yellow", 0, 0);
 			} else if (color.isSampleWhite()) {
 				LCD.drawString("White", 0, 0);
+			} else if (color.isSampleRed()) {
+				LCD.drawString("Red", 0, 0);
 			} else if(color.isSampleLightBlue()){
-				LCD.drawString("Light", 0, 0);
+				LCD.drawString("light", 0, 0);
 			} else{
-				LCD.drawString("No color block", 0, 0);
+				LCD.drawString("No Block", 0, 0);
 			}
 		  }
 			try {
