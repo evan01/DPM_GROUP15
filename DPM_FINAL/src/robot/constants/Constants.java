@@ -16,6 +16,9 @@ public class Constants {
 		public static final Port usPort = LocalEV3.get().getPort("S1");
 		//Color Sensor
 		public static final Port colorPort = LocalEV3.get().getPort("S3");
+		//Light Sensors
+		public static final Port rightLightPort = LocalEV3.get().getPort("S4");
+		public static final Port leftLightPort = LocalEV3.get().getPort("S2");
 
 	// Constants for Odometer and Robot
 		// Motors
