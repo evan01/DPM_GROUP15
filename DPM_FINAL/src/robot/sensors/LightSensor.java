@@ -43,11 +43,11 @@ public class LightSensor implements Runnable{
     }
 
 	
-	
-	
 	@Override
 	public void run() {
-		// TODO Auto-generated method stub
+		 threadRunning = true;
+		 
+		 
 		
 	}
 
