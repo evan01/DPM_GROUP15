@@ -1,5 +1,8 @@
 package robot.navigation;
 
+import robot.constants.Constants;
+import robot.sensors.LeftLightSensor;
+import robot.sensors.RightLightSensor;
 import lejos.hardware.Sound;
 import lejos.hardware.motor.EV3LargeRegulatedMotor;
 import lejos.hardware.motor.EV3MediumRegulatedMotor;
@@ -11,7 +14,7 @@ public class Navigation {
 
 	final static int FAST = 200, SLOW = 100, ACCELERATION = 4000;
 	final static double DEG_ERR = 3.0, CM_ERR = 1.0;
-	private Odometer odometer;
+	public static Odometer odometer;
 	private EV3LargeRegulatedMotor leftMotor, rightMotor;
 	private EV3MediumRegulatedMotor armMotor;
 	private float rotationSpeed;
@@ -19,11 +22,23 @@ public class Navigation {
 	private int SEARCH_SPEED = 20;
 	private boolean isNavigating;
 	public boolean hasStyro = false;
+	private static LeftLightSensor leftLs;
+	private static RightLightSensor rightLs;
+	
+	// for odo correction
+	public int horizontalLinesCrossed = -1;
+	public int verticalLinesCrossed = -1;
+	private boolean hasLeftLine;
+	private boolean hasRightLine;
+	
 
 	// this is a singleton class
 	private static final Navigation ourInstance = new Navigation();
 
 	public static Navigation getInstance() {
+		leftLs = LeftLightSensor.getInstance();
+		rightLs = RightLightSensor.getInstance();
+		odometer = Odometer.getInstance();
 		return ourInstance;
 	}
 
@@ -217,6 +232,51 @@ public class Navigation {
 
 	public boolean isNavigating() {
 		return this.isNavigating;
+	}
+	
+	//###### ODOMETRY CORRECTION ########
+	private void performOdometerCorrection()
+	{
+		// Updates the x, y and theta values on the Odometer according to the correction
+		double heading = odometer.getAng();
+		
+		// Heading EAST (x++)
+		if(heading >= 45 && heading < 135)
+		{
+			horizontalLinesCrossed++;
+			odometer.setPosition(new double[] {horizontalLinesCrossed * Constants.SQUARE_WIDTH + Constants.LIGHT_SENS_OFFSET , 0.0, 90.0}, 
+								  new boolean[] {true, false, true});
+		}
+		// Heading SOUTH (y--)
+		else if(heading >= 135 && heading < 225)
+		{
+			if(verticalLinesCrossed < 0)
+			{
+				verticalLinesCrossed = 0;
+			}
+			odometer.setPosition(new double[] {0.0, verticalLinesCrossed * Constants.SQUARE_WIDTH - Constants.LIGHT_SENS_OFFSET , 180.0}, 
+								  new boolean[] {false, true, true});
+			verticalLinesCrossed--;
+		}
+		// Heading WEST (x--)
+		else if(heading >= 225 && heading < 315)
+		{
+			if(horizontalLinesCrossed < 0)
+			{
+				horizontalLinesCrossed = 0;
+			}
+			odometer.setPosition(new double[] {horizontalLinesCrossed * Constants.SQUARE_WIDTH - Constants.LIGHT_SENS_OFFSET , 0.0, 270.0},
+								  new boolean[] {true, false, true});
+			horizontalLinesCrossed--;
+		}
+		// Heading NORTH (y++)
+		else
+		{
+			verticalLinesCrossed++;
+			odometer.setPosition(new double[] {0.0, verticalLinesCrossed * Constants.SQUARE_WIDTH + Constants.LIGHT_SENS_OFFSET , 0.0}, 
+								  new boolean[] {false, true, true});
+		}
+
 	}
 
 }
