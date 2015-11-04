@@ -277,21 +277,21 @@ public class Navigation {
 			odometer.getRightMotor().stop();
 			if(odometer.getX() > x)
 			{
-				travelToBackwards(x + 0, odometer.getY());
+				travelToBackwards(x, odometer.getY());
 			}
 		}
 		// Heading SOUTH (y--)
 		else if(theta >= 135 && theta < 225)
 		{
-			while(odometer.getY() > y - 0)
+			while(odometer.getY() > y)
 			{
 				travelWithCorrection(leftLS, rightLS);
 			}
 			odometer.getLeftMotor().stop(true);
 			odometer.getRightMotor().stop();
-			if(odometer.getY() < y - 0)
+			if(odometer.getY() < y)
 			{
-				travelToBackwards(odometer.getX(), y - 0);
+				travelToBackwards(odometer.getX(), y);
 			}
 		}
 		// Heading WEST (x--)
@@ -312,15 +312,15 @@ public class Navigation {
 		// Heading NORTH (y++)
 		else
 		{
-			while(odometer.getY() < y + 0)
+			while(odometer.getY() < y)
 			{
 				travelWithCorrection(leftLS,rightLS );
 			}
 			odometer.getLeftMotor().stop(true);
 			odometer.getRightMotor().stop();
-			if(odometer.getY() > y + 0)
+			if(odometer.getY() > y)
 			{
-				travelToBackwards(odometer.getX(), y + 0);
+				travelToBackwards(odometer.getX(), y );
 			}
 		}
 		Delay.msDelay(500);
