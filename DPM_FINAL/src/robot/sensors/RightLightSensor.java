@@ -17,7 +17,7 @@ public class RightLightSensor implements Runnable{
 
     private static EV3ColorSensor sensorRight;
     private static SampleProvider lightSensorR;
-   
+    private float lightIntensity;
     private float[] sampleRight;
 
 
@@ -39,10 +39,26 @@ public class RightLightSensor implements Runnable{
 		 threadRunning = true;
         
 		 while (threadRunning){
-			 lightSensorR.fetchSample(sampleRight, 0);
+			 fetchSample();
+			 try {
+	              Thread.sleep(40);
+	            } catch (Exception e) {
+	         }
 			 	 
 		 }
 		
 	}
-
+    public synchronized void fetchSample(){
+    	lightSensorR.fetchSample(sampleRight, 0); // acquire data
+    	lightIntensity = sampleRight[0]*100;  
+    }
+    public synchronized double scan(){
+    	lightSensorR.fetchSample(sampleRight, 0); // acquire data
+        return (sampleRight[0] * 100.0);
+    }
+    public synchronized float getIntensity() {
+        return lightIntensity;
+    }
+    
+    
 }

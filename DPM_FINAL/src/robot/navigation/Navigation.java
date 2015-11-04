@@ -1,11 +1,13 @@
 package robot.navigation;
 
 import robot.constants.Constants;
+import robot.sensors.ColorSensor;
 import robot.sensors.LeftLightSensor;
 import robot.sensors.RightLightSensor;
 import lejos.hardware.Sound;
 import lejos.hardware.motor.EV3LargeRegulatedMotor;
 import lejos.hardware.motor.EV3MediumRegulatedMotor;
+import lejos.utility.Delay;
 
 /**
  * This is another implementation of the navigation class, will travel using a direct path instead of straight path
@@ -234,6 +236,158 @@ public class Navigation {
 		return this.isNavigating;
 	}
 	
+	
+	public void travelWithCorrection(LeftLightSensor leftLS, RightLightSensor rightLS)
+	{
+		// Makes the robot go straight with correction. Needs a while loop to work until a certain condition
+
+		// Case: Detecting both lines at the same time: Just do position and angle corrections
+		if(((leftLS.getIntensity()< Constants.LIGHT_THRESHOLD) && (rightLS.getIntensity() <  Constants.LIGHT_THRESHOLD)))
+		{
+			performOdometerCorrection();
+			Sound.buzz();
+
+			odometer.getLeftMotor().setSpeed(Constants.SLOW);
+			odometer.getRightMotor().setSpeed(Constants.SLOW);
+			odometer.getLeftMotor().forward();
+			odometer.getRightMotor().forward();
+
+			hasLeftLine = false;
+			hasRightLine = false;
+
+			Delay.msDelay(500);
+		}
+		/*
+		 * Case: both color sensors are on the line after a correction 1- Stop the motors 2- adjust coordinates 3- reset the booleans 4-
+		 * continue going forward
+		 */
+		else if(hasLeftLine && hasRightLine)
+		{
+			Delay.msDelay(500);
+			odometer.getLeftMotor().stop(true);
+			odometer.getRightMotor().stop();
+
+			performOdometerCorrection();
+
+			Sound.buzz();
+
+			odometer.getLeftMotor().setSpeed(Constants.SLOW);
+			odometer.getRightMotor().setSpeed(Constants.SLOW);
+
+			odometer.getLeftMotor().forward();
+			odometer.getRightMotor().forward();
+
+			hasLeftLine = false;
+			hasRightLine = false;
+
+			Delay.msDelay(500);
+
+			/*
+			 * Case: detection of line with the left color sensor (drifting right)
+			 */
+		}
+		else if((leftLS.getIntensity()< Constants.LIGHT_THRESHOLD) && !hasLeftLine)
+		{
+			odometer.getLeftMotor().stop(true);
+			odometer.getRightMotor().stop();
+
+			Delay.msDelay(500);
+
+			// If you detect a line with the right color sensor after adjustment then you're good
+			if((rightLS.scan() <  Constants.LIGHT_THRESHOLD))
+			{
+				odometer.getLeftMotor().stop(true);
+				odometer.getRightMotor().stop();
+
+				hasRightLine = true;
+				hasLeftLine = true;
+
+				Delay.msDelay(250);
+			}
+			else
+			{
+				// Otherwise rotate the motor that did not detect it
+				odometer.getRightMotor().setSpeed(Constants.SLOW);
+				odometer.getRightMotor().forward();
+
+				hasLeftLine = true;
+
+				double detectionTime = System.currentTimeMillis();
+
+				// Keep searching for a line with the right CS
+				while(!(rightLS.getIntensity() <  Constants.LIGHT_THRESHOLD))
+				{
+					if((detectionTime - System.currentTimeMillis()) > 10000)
+					{
+						odometer.getLeftMotor().rotate(9000);
+						break;
+					}
+				}
+
+				// until you detect one
+				hasRightLine = true;
+
+				// Once you do then stop the motors and wait
+				odometer.getLeftMotor().stop(true);
+				odometer.getRightMotor().stop();
+
+				Delay.msDelay(500);
+			}
+
+			// you're drifting right, so go left
+			odometer.getRightMotor().rotate(30);
+
+			/*
+			 * Case: You detect a line with the right CS first (drifting left)
+			 */
+		}
+		else if((rightLS.scan() >  Constants.LIGHT_THRESHOLD) && !hasRightLine)
+		{
+			odometer.getRightMotor().stop(true);
+			odometer.getLeftMotor().stop();
+
+			Delay.msDelay(500);
+
+			odometer.getLeftMotor().rotate(-30);
+
+			if((leftLS.scan()< Constants.LIGHT_THRESHOLD))
+			{
+				odometer.getRightMotor().stop(true);
+				odometer.getLeftMotor().stop();
+
+				hasRightLine = true;
+				hasLeftLine = true;
+
+				Delay.msDelay(500);
+			}
+			else
+			{
+				odometer.getLeftMotor().setSpeed(Constants.SLOW);
+				odometer.getLeftMotor().forward();
+
+				hasRightLine = true;
+
+				double detectionTime = System.currentTimeMillis();
+				while(!(leftLS.scan()< Constants.LIGHT_THRESHOLD))
+				{
+					if((detectionTime - System.currentTimeMillis()) > 10000)
+					{
+						odometer.getRightMotor().rotate(30000);
+						break;
+					}
+				}
+
+				hasLeftLine = true;
+
+				odometer.getRightMotor().stop(true);
+				odometer.getLeftMotor().stop();
+
+				Delay.msDelay(500);
+			}
+			// you're drifting left, so go right
+			odometer.getLeftMotor().rotate(-10);
+		}
+	}
 	//###### ODOMETRY CORRECTION ########
 	// this could have been simpler but I needed to keep count of gridline number - Mahmood
 	private void performOdometerCorrection()
