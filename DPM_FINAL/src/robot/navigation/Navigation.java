@@ -235,6 +235,7 @@ public class Navigation {
 	}
 	
 	//###### ODOMETRY CORRECTION ########
+	// this could have been simpler but I needed to keep count of gridline number - Mahmood
 	private void performOdometerCorrection()
 	{
 		// Updates the x, y and theta values on the Odometer according to the correction
@@ -243,18 +244,21 @@ public class Navigation {
 		// Heading EAST (x++)
 		if(heading >= 45 && heading < 135)
 		{
+			double xActual = odometer.getX() + Math.sin(odometer.getAng()*Constants.LIGHT_SENS_OFFSET);
+			double correctionX = (xActual%30.48);
 			horizontalLinesCrossed++;
-			odometer.setPosition(new double[] {horizontalLinesCrossed * Constants.SQUARE_WIDTH + Constants.LIGHT_SENS_OFFSET , 0.0, 90.0}, 
+			odometer.setPosition(new double[] {correctionX + odometer.getX(), 0.0, 90.0}, 
 								  new boolean[] {true, false, true});
 		}
 		// Heading SOUTH (y--)
 		else if(heading >= 135 && heading < 225)
 		{
 			if(verticalLinesCrossed < 0)
-			{
 				verticalLinesCrossed = 0;
-			}
-			odometer.setPosition(new double[] {0.0, verticalLinesCrossed * Constants.SQUARE_WIDTH - Constants.LIGHT_SENS_OFFSET , 180.0}, 
+			
+			double yActual = odometer.getY() + Math.cos(odometer.getAng()*Constants.LIGHT_SENS_OFFSET);
+			double correctionY = (yActual%30.48);
+			odometer.setPosition(new double[] {0.0, correctionY + odometer.getY() , 180.0}, 
 								  new boolean[] {false, true, true});
 			verticalLinesCrossed--;
 		}
@@ -262,18 +266,22 @@ public class Navigation {
 		else if(heading >= 225 && heading < 315)
 		{
 			if(horizontalLinesCrossed < 0)
-			{
 				horizontalLinesCrossed = 0;
-			}
-			odometer.setPosition(new double[] {horizontalLinesCrossed * Constants.SQUARE_WIDTH - Constants.LIGHT_SENS_OFFSET , 0.0, 270.0},
+			
+			double xActual = odometer.getX() + Math.sin(odometer.getAng()*Constants.LIGHT_SENS_OFFSET);
+			double correctionX = (xActual%30.48);
+			
+			odometer.setPosition(new double[] {correctionX + odometer.getX(), 0.0, 270.0},
 								  new boolean[] {true, false, true});
 			horizontalLinesCrossed--;
 		}
 		// Heading NORTH (y++)
 		else
 		{
+			double yActual = odometer.getY() + Math.cos(odometer.getAng()*Constants.LIGHT_SENS_OFFSET);
+			double correctionY = (yActual%30.48);
 			verticalLinesCrossed++;
-			odometer.setPosition(new double[] {0.0, verticalLinesCrossed * Constants.SQUARE_WIDTH + Constants.LIGHT_SENS_OFFSET , 0.0}, 
+			odometer.setPosition(new double[] {0.0, correctionY + odometer.getY(), 0.0}, 
 								  new boolean[] {false, true, true});
 		}
 
