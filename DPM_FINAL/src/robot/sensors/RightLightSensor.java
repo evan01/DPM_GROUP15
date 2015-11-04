@@ -60,5 +60,13 @@ public class RightLightSensor implements Runnable{
         return lightIntensity;
     }
     
+    public synchronized boolean isThreadRunning() {
+        return threadRunning;
+    }
+
+    public synchronized void setThreadRunning(boolean threadRunning) {
+        this.threadRunning = threadRunning;
+    }
+    
     
 }

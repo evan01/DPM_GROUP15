@@ -4,7 +4,7 @@ import 	lejos.hardware.lcd.LCD;
 import 	lejos.hardware.port.Port;
 import 	lejos.hardware.sensor.EV3ColorSensor;
 import 	lejos.robotics.SampleProvider;
-import robot.constants.Color;
+import  robot.constants.Color;
 import 	robot.constants.Constants;
 
 public class LeftLightSensor implements Runnable{
@@ -17,7 +17,7 @@ public class LeftLightSensor implements Runnable{
 
     private static EV3ColorSensor sensorLeft;
     private static SampleProvider lightSensorL;
-   
+    private float lightIntensity;
     private float[] sampleLeft;
 
 
@@ -39,10 +39,39 @@ public class LeftLightSensor implements Runnable{
 		 threadRunning = true;
         
 		 while (threadRunning){
-			 lightSensorL.fetchSample(sampleLeft, 0);
-			 	 
+			 fetchSample();
+			 try {
+	              Thread.sleep(40);
+	            } catch (Exception e) {
+	         }
 		 }
 		
 	}
+	
+    public synchronized void fetchSample(){
+    	lightSensorL.fetchSample(sampleLeft, 0); // acquire data
+    	lightIntensity = sampleLeft[0]*100;  
+    }
+    public synchronized double scan(){
+    	lightSensorL.fetchSample(sampleLeft, 0); // acquire data
+        return (sampleLeft[0] * 100.0);
+    }
+    
+    public synchronized float getIntensity() {
+        return lightIntensity;
+    }
+    
+    public synchronized boolean isThreadRunning() {
+        return threadRunning;
+    }
+
+    public synchronized void setThreadRunning(boolean threadRunning) {
+        this.threadRunning = threadRunning;
+    }
+	
+	
+	
+	
+	
 
 }

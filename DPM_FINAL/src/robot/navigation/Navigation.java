@@ -24,8 +24,8 @@ public class Navigation {
 	private int SEARCH_SPEED = 20;
 	private boolean isNavigating;
 	public boolean hasStyro = false;
-	private static LeftLightSensor leftLs;
-	private static RightLightSensor rightLs;
+	private static LeftLightSensor leftLS;
+	private static RightLightSensor rightLS;
 	
 	// for odo correction
 	public int horizontalLinesCrossed = -1;
@@ -38,8 +38,8 @@ public class Navigation {
 	private static final Navigation ourInstance = new Navigation();
 
 	public static Navigation getInstance() {
-		leftLs = LeftLightSensor.getInstance();
-		rightLs = RightLightSensor.getInstance();
+		leftLS = LeftLightSensor.getInstance();
+		rightLS = RightLightSensor.getInstance();
 		odometer = Odometer.getInstance();
 		return ourInstance;
 	}
@@ -129,6 +129,24 @@ public class Navigation {
 			// calculates magnitude to travel
 			double distance = Math.sqrt(Math.pow((y - odometer.getY()), 2) + Math.pow((x - odometer.getX()), 2));
 			goForward(distance);
+		}
+		this.setSpeeds(0, 0);
+	}
+	
+	/**
+	 * TravelTo bacwards function 
+	 */
+	public void travelToBackwards(double x, double y) {
+		double minAng;
+		while (Math.abs(x - odometer.getX()) > CM_ERR || Math.abs(y - odometer.getY()) > CM_ERR) {
+			minAng = (Math.atan2(y - odometer.getY(), x - odometer.getX())) * (180.0 / Math.PI);
+			if (minAng < 0)
+				minAng += 360.0;
+			this.turnTo(minAng, false);
+			// this.setSpeeds(FAST, FAST);
+			// calculates magnitude to travel
+			double distance = Math.sqrt(Math.pow((y - odometer.getY()), 2) + Math.pow((x - odometer.getX()), 2));
+			goBackward(distance);
 		}
 		this.setSpeeds(0, 0);
 	}
@@ -236,6 +254,78 @@ public class Navigation {
 		return this.isNavigating;
 	}
 	
+	//######### CORRECTIVE NAVIGATION ########## --- Mahmood
+	
+	public void travelToWithCorrection(double x, double y, double theta)
+	{
+		turnTo(theta,false);
+		
+		odometer.getLeftMotor().setSpeed(Constants.SLOW);
+		odometer.getRightMotor().setSpeed(Constants.SLOW);
+
+		odometer.getLeftMotor().forward();
+		odometer.getRightMotor().forward();
+
+		// Heading EAST (x++)
+		if(theta >= 45 && theta < 135)
+		{
+			while(odometer.getX() < x)
+			{
+				travelWithCorrection(leftLS, rightLS);
+			}
+			odometer.getLeftMotor().stop(true);
+			odometer.getRightMotor().stop();
+			if(odometer.getX() > x)
+			{
+				travelToBackwards(x + 0, odometer.getY());
+			}
+		}
+		// Heading SOUTH (y--)
+		else if(theta >= 135 && theta < 225)
+		{
+			while(odometer.getY() > y - 0)
+			{
+				travelWithCorrection(leftLS, rightLS);
+			}
+			odometer.getLeftMotor().stop(true);
+			odometer.getRightMotor().stop();
+			if(odometer.getY() < y - 0)
+			{
+				travelToBackwards(odometer.getX(), y - 0);
+			}
+		}
+		// Heading WEST (x--)
+		else if(theta >= 225 && theta < 315)
+		{
+			while(odometer.getX() > x )
+			{
+				travelWithCorrection(leftLS, rightLS);
+			}
+			odometer.getLeftMotor().stop(true);
+			odometer.getRightMotor().stop();
+			if(odometer.getX() < x)
+			{
+				travelToBackwards(x, odometer.getY());
+			}
+
+		}
+		// Heading NORTH (y++)
+		else
+		{
+			while(odometer.getY() < y + 0)
+			{
+				travelWithCorrection(leftLS,rightLS );
+			}
+			odometer.getLeftMotor().stop(true);
+			odometer.getRightMotor().stop();
+			if(odometer.getY() > y + 0)
+			{
+				travelToBackwards(odometer.getX(), y + 0);
+			}
+		}
+		Delay.msDelay(500);
+	}
+	
 	
 	public void travelWithCorrection(LeftLightSensor leftLS, RightLightSensor rightLS)
 	{
@@ -294,7 +384,7 @@ public class Navigation {
 			Delay.msDelay(500);
 
 			// If you detect a line with the right color sensor after adjustment then you're good
-			if((rightLS.scan() <  Constants.LIGHT_THRESHOLD))
+			if((rightLS.getIntensity() <  Constants.LIGHT_THRESHOLD))
 			{
 				odometer.getLeftMotor().stop(true);
 				odometer.getRightMotor().stop();
@@ -341,7 +431,7 @@ public class Navigation {
 			 * Case: You detect a line with the right CS first (drifting left)
 			 */
 		}
-		else if((rightLS.scan() >  Constants.LIGHT_THRESHOLD) && !hasRightLine)
+		else if((rightLS.getIntensity() >  Constants.LIGHT_THRESHOLD) && !hasRightLine)
 		{
 			odometer.getRightMotor().stop(true);
 			odometer.getLeftMotor().stop();
@@ -350,7 +440,7 @@ public class Navigation {
 
 			odometer.getLeftMotor().rotate(-30);
 
-			if((leftLS.scan()< Constants.LIGHT_THRESHOLD))
+			if((leftLS.getIntensity()< Constants.LIGHT_THRESHOLD))
 			{
 				odometer.getRightMotor().stop(true);
 				odometer.getLeftMotor().stop();
@@ -368,7 +458,7 @@ public class Navigation {
 				hasRightLine = true;
 
 				double detectionTime = System.currentTimeMillis();
-				while(!(leftLS.scan()< Constants.LIGHT_THRESHOLD))
+				while(!(leftLS.getIntensity()< Constants.LIGHT_THRESHOLD))
 				{
 					if((detectionTime - System.currentTimeMillis()) > 10000)
 					{
