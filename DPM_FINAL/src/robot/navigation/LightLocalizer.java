@@ -112,7 +112,7 @@ public class LightLocalizer {
     private void updateTheta(double[] angles) {
         //At thi point in time, robot has left sensor 'over' the black line
         Navigation.getInstance().turnTo(angles[2],true);
-        Navigation.getInstance().turnTo((angles[0]-angles[1]/2),true);
+        Navigation.getInstance().turnTo((angles[0]-angles[2]/2),true);
 
         //Robot should be facing 0,0
         Odometer.getInstance().setTheta(0);
