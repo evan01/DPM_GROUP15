@@ -4,8 +4,6 @@ import robot.Robot;
 
 public class Stage1 {
     private Robot robot;
-    private final double SQUARE_CENTER = 15.24;
-    private final double SQUARE_WIDTH = 30.48;
 
     public Stage1(Robot robot){
         this.robot = robot;
@@ -21,6 +19,7 @@ public class Stage1 {
 
     	//Stage 1 begins by localizing
         robot.localize();
+        robot.capture();
         
         //go to center of square it is currently in (one of the 4 corners)
         //since it is known robot starts in a corner, can use current odometer values to find

@@ -41,14 +41,14 @@ public class Odometer implements TimerListener {
     /**
      * This is a singleton class
      */
-    private static final Odometer ourInstance = new Odometer(30, true);
+    // private static final Odometer ourInstance = new Odometer(30, true);
     public static Odometer getInstance() {
-        return ourInstance;
+        return new Odometer(30, true);
     }
 
 
     private Timer timer;
-    private EV3LargeRegulatedMotor leftMotor, rightMotor;
+    private EV3LargeRegulatedMotor leftMotor, rightMotor, clawMotor;
     private EV3MediumRegulatedMotor armMotor;
     private final int DEFAULT_TIMEOUT_PERIOD = 20;
     private double leftRadius, rightRadius, TRACK;
@@ -66,6 +66,7 @@ public class Odometer implements TimerListener {
         this.leftMotor = mtrs.getLeftMotor();
         this.rightMotor = mtrs.getRightMotor();
         this.armMotor = mtrs.getArmMotor();
+        this.clawMotor = mtrs.getClawMotor();
 
         // default values, modify for your robot
         this.rightRadius = 2.2;
@@ -182,6 +183,11 @@ public class Odometer implements TimerListener {
             this.y = y;
         }
     }
+    public void setTheta(final double theta) {
+        synchronized (this) {
+            this.theta = theta;
+        }
+    }
 
 
     // return x,y,theta
@@ -206,6 +212,10 @@ public class Odometer implements TimerListener {
 
     public EV3MediumRegulatedMotor getArm() {
         return this.armMotor;
+    }
+    
+    public EV3LargeRegulatedMotor getClawMotor() {
+        return this.clawMotor;
     }
 
     public EV3LargeRegulatedMotor getLeftMotor() {

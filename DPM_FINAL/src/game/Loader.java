@@ -24,7 +24,7 @@ public class Loader {
             USSensor.getInstance();
             ColorSensor.getInstance();
             Display.getInstance();
-            Motors.getInstance();
+         //   Motors.getInstance();
         }catch (Exception e){
 
         }
