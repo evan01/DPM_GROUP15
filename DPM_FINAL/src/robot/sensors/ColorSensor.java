@@ -78,6 +78,14 @@ public class ColorSensor implements Runnable{
     public synchronized void setColor(Color color) {
         ColorSensor.color = color;
     }
+    public synchronized Color scan(){
+    	Color clr = new Color();
+    	colorRGBSensor.fetchSample(sample, 0);
+        clr.setR(sample[0]*1024);
+        clr.setG(sample[1]*1024);
+        clr.setB(sample[2]*1024);
+        return clr;
+    }
 }
 
 // Setup color sensor

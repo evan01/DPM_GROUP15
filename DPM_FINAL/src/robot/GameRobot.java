@@ -36,48 +36,20 @@ public class GameRobot implements Robot {
 		// object for synchronized lock
 		Object lock = new Object();
 		ColorSensor cs = ColorSensor.getInstance();
-		new Thread(cs).start();
-		Color color = cs.getColor();
+		Color color = new Color();
 		int counterScan = 0;
 		ArrayList<Color> colorPings = new ArrayList<Color>();
 		synchronized (lock) {
 			// continuously get colour values
 			while (counterScan != 10) {
-				color = cs.getColor();
+				color = cs.scan();
 				colorPings.add(color);
 				counterScan++;
 			}
 		}
-		// get average of each value
-		double R = 0;
-		double G = 0;
-		double B = 0;
-		for (Color i : colorPings) {
-			R += i.getR();
-			G += i.getG();
-			B += i.getB();
-		}
-		R /= 10.0;
-		G /= 10.0;
-		B /= 10.0;
-		color.setR(R);
-		color.setG(G);
-		color.setB(B);
-
-		if (color.isSampleBlue()) {
-			return 0;
-		} else if (color.isSampleYellow()) {
-			return 1;
-		} else if (color.isSampleWhite()) {
-			return 2;
-		} else if (color.isSampleRed()) {
-			return 3;
-		} else if (color.isSampleLightBlue()) {
-			return 4;
-		} else {
-			// bad sample was taken
-			return -1;
-		}
+		
+		return color.colorValue(colorPings);
+		
 	}
 
 	public void capture() {
