@@ -14,12 +14,12 @@ public class Constants {
 		public static final Port armPort = LocalEV3.get().getPort("C");
 		public static final Port clawMotorPort = LocalEV3.get().getPort("B");
 		//Ultrasonic Sensor
-		public static final Port usPort = LocalEV3.get().getPort("S1");
+		public static final Port usPort = LocalEV3.get().getPort("S4");
 		//Color Sensor
-		public static final Port colorPort = LocalEV3.get().getPort("S3");
+		public static final Port colorPort = LocalEV3.get().getPort("S2");
 		//Light Sensors
-		public static final Port rightLightPort = LocalEV3.get().getPort("S4");
-		public static final Port leftLightPort = LocalEV3.get().getPort("S2");
+		public static final Port rightLightPort = LocalEV3.get().getPort("S1");
+		public static final Port leftLightPort = LocalEV3.get().getPort("S3");
 
 	// Constants for Odometer and Robot
 		// Motors
@@ -41,7 +41,7 @@ public class Constants {
 
 		// LIGHT SENSOR
 		public static final int LIGHT_SENSOR_UPDATE_TIME = 200;
-		public static final int LIGHT_THRESHOLD = 20; // Should be the difference between black vs everything else
+		public static final int LIGHT_THRESHOLD = 25; 
 		public static final double LIGHT_SENS_OFFSET = 5.4;
 		
 		public static final double SQUARE_WIDTH = 30.48;

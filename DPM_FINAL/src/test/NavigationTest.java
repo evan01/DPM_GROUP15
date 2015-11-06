@@ -13,7 +13,7 @@ public class NavigationTest {
 	 */
 	public static void main(String[] args) {
 		testLocalization();
-		testNavigation();	
+		//testNavigation();	
 	}
 	
 	public static void testNavigation(){
@@ -31,10 +31,13 @@ public class NavigationTest {
 		new Thread(us).start();
 		Navigation nav = Navigation.getInstance();
 		
+		nav.clawUp();
+		nav.grab();
 		USLocalizer loc = new USLocalizer(odo,USLocalizer.LocalizationType.FALLING_EDGE);
 		loc.doLocalization();
-		nav.travelTo(-5, -5);
-		nav.turnTo(30, true);
+		nav.travelTo(0, 0);
+		nav.turnTo(0, true);
+
 	}
 
 }

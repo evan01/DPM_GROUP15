@@ -6,7 +6,7 @@ import robot.navigation.Odometer;
 public class ClawTest {
 	
 	/**
-	 * This class will make sure that the robot can navigate correctly
+	 * This class will make sure that the robot can pick up a styrofoam block correctly
 	 * @param args
 	 */
 	public static void main(String[] args) {
@@ -19,28 +19,28 @@ public class ClawTest {
 		nav.grab();
 		nav.clawUp();
 		try {
-			Thread.sleep(5000);
+			Thread.sleep(3000);
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		nav.clawDown();
 		try {
-			Thread.sleep(5000);
+			Thread.sleep(3000);
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		nav.armOpen();
 		try {
-			Thread.sleep(5000);
+			Thread.sleep(3000);
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		nav.grab();
 		try {
-			Thread.sleep(5000);
+			Thread.sleep(3000);
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -48,17 +48,5 @@ public class ClawTest {
 		nav.clawUp();
 		}
 	
-	
-//	public static void testLocalization(){
-//		Odometer odo = Odometer.getInstance();
-//		USSensor us = USSensor.getInstance();
-//		new Thread(us).start();
-//		Navigation nav = Navigation.getInstance();
-//		
-//		USLocalizer loc = new USLocalizer(odo,USLocalizer.LocalizationType.FALLING_EDGE);
-//		loc.doLocalization();
-//		nav.travelTo(-5, -5);
-//		nav.turnTo(30, true);
-//	}
 
 }

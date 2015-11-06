@@ -38,9 +38,6 @@ public class Navigation {
 	private static final Navigation ourInstance = new Navigation();
 
 	public static Navigation getInstance() {
-//		leftLS = LeftLightSensor.getInstance();
-//		rightLS = RightLightSensor.getInstance();
-//		odometer = Odometer.getInstance();
 		return ourInstance;
 	}
 
@@ -50,6 +47,8 @@ public class Navigation {
 	public Navigation() {
 
 		this.odometer = Odometer.getInstance();
+		this.leftLS = LeftLightSensor.getInstance();
+		this.rightLS = RightLightSensor.getInstance();
 
 		EV3LargeRegulatedMotor[] motors = new EV3LargeRegulatedMotor[2];
 		motors = this.odometer.getMotors();
@@ -260,14 +259,13 @@ public class Navigation {
 	
 	public void travelToWithCorrection(double x, double y, double theta)
 	{
-		turnTo(theta,false);
-		
 		odometer.getLeftMotor().setSpeed(Constants.SLOW);
 		odometer.getRightMotor().setSpeed(Constants.SLOW);
 
 		odometer.getLeftMotor().forward();
 		odometer.getRightMotor().forward();
 
+		Sound.buzz();
 		// Heading EAST (x++)
 		if(theta >= 45 && theta < 135)
 		{
@@ -314,6 +312,7 @@ public class Navigation {
 		// Heading NORTH (y++)
 		else
 		{
+			
 			while(odometer.getY() < y)
 			{
 				travelWithCorrection(leftLS,rightLS );
@@ -336,8 +335,9 @@ public class Navigation {
 		// Case: Detecting both lines at the same time: Just do position and angle corrections
 		if(((leftLS.getIntensity()< Constants.LIGHT_THRESHOLD) && (rightLS.getIntensity() <  Constants.LIGHT_THRESHOLD)))
 		{
+			
 			performOdometerCorrection();
-			Sound.buzz();
+			Sound.beepSequenceUp();
 
 			odometer.getLeftMotor().setSpeed(Constants.SLOW);
 			odometer.getRightMotor().setSpeed(Constants.SLOW);
