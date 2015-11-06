@@ -17,7 +17,7 @@ public class Navigation {
 	final static int FAST = 200, SLOW = 100, ACCELERATION = 4000;
 	final static double DEG_ERR = 3.0, CM_ERR = 1.0;
 	public static Odometer odometer;
-	private EV3LargeRegulatedMotor leftMotor, rightMotor;
+	private EV3LargeRegulatedMotor leftMotor, rightMotor, clawMotor;
 	private EV3MediumRegulatedMotor armMotor;
 	private float rotationSpeed;
 	private double RADIUS = 2.2, TRACK = 11.5;
@@ -29,7 +29,7 @@ public class Navigation {
 	
 	// for odo correction
 	public int horizontalLinesCrossed = -1;
-	public int verticalLinesCrossed = -1;
+	public int verticalLinesCrossed = -1; 
 	private boolean hasLeftLine;
 	private boolean hasRightLine;
 	
@@ -57,6 +57,8 @@ public class Navigation {
 		this.rightMotor = motors[1];
 		EV3MediumRegulatedMotor armMotor = this.odometer.getArm();
 		this.armMotor = armMotor;
+		EV3LargeRegulatedMotor clawMotor = this.odometer.getClawMotor();
+		this.clawMotor = clawMotor;
 
 		// set acceleration
 		this.leftMotor.setAcceleration(ACCELERATION);
@@ -530,5 +532,38 @@ public class Navigation {
 		}
 
 	}
+	public void clawUp(){
+		clawMotor.backward();
+		clawMotor.setSpeed(150);
+		clawMotor.rotate(180);
+		Delay.msDelay(250);
+		clawMotor.stop();
+	}
+	public void clawDown(){
+		clawMotor.forward();
+		clawMotor.setSpeed(150);
+		clawMotor.rotate(150);
+		Delay.msDelay(250);
+		clawMotor.stop();
+	}
+    public void armOpen() {
+        goForward(3);
+        armMotor.forward();
+        armMotor.setSpeed(150);
+        armMotor.rotate(180);
+        Delay.msDelay(250);
+        armMotor.stop();
+    }
+    public void grab() {
+        goForward(3);
+        armMotor.backward();
+        armMotor.setSpeed(150);
+        armMotor.rotate(240);
+        Delay.msDelay(250);
+        armMotor.stop();
+        this.hasStyro = true;
+    }
+	
+	
 
 }

@@ -48,7 +48,7 @@ public class Odometer implements TimerListener {
 
 
     private Timer timer;
-    private EV3LargeRegulatedMotor leftMotor, rightMotor;
+    private EV3LargeRegulatedMotor leftMotor, rightMotor, clawMotor;
     private EV3MediumRegulatedMotor armMotor;
     private final int DEFAULT_TIMEOUT_PERIOD = 20;
     private double leftRadius, rightRadius, TRACK;
@@ -66,6 +66,7 @@ public class Odometer implements TimerListener {
         this.leftMotor = mtrs.getLeftMotor();
         this.rightMotor = mtrs.getRightMotor();
         this.armMotor = mtrs.getArmMotor();
+        this.clawMotor = mtrs.getClawMotor();
 
         // default values, modify for your robot
         this.rightRadius = 2.2;
@@ -211,6 +212,10 @@ public class Odometer implements TimerListener {
 
     public EV3MediumRegulatedMotor getArm() {
         return this.armMotor;
+    }
+    
+    public EV3LargeRegulatedMotor getClawMotor() {
+        return this.clawMotor;
     }
 
     public EV3LargeRegulatedMotor getLeftMotor() {
