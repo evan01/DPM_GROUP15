@@ -8,7 +8,7 @@ import robot.constants.Constants;
  * The purpose of this class is to provide a single access point for the motors
  */
 public class Motors {
-    private EV3LargeRegulatedMotor leftMotor;
+    private EV3LargeRegulatedMotor leftMotor , clawMotor;
     private EV3LargeRegulatedMotor rightMotor;
     private EV3MediumRegulatedMotor armMotor;
 
@@ -17,14 +17,14 @@ public class Motors {
         return ourInstance;
     }
 
-    private Motors(){
-        try{
+public Motors(){
+       
             leftMotor = new EV3LargeRegulatedMotor(Constants.leftMotorPort);
             rightMotor = new EV3LargeRegulatedMotor(Constants.rightMotorPort);
             armMotor =new EV3MediumRegulatedMotor(Constants.armPort);
-        }catch(Exception e){
-            //Sometimes something else may have control over motors
-        }
+            clawMotor = new EV3LargeRegulatedMotor(Constants.clawMotorPort);
+       
+        
     }
 
     public EV3LargeRegulatedMotor getLeftMotor() {
@@ -42,6 +42,14 @@ public class Motors {
     public void setRightMotor(EV3LargeRegulatedMotor rightMotor) {
         this.rightMotor = rightMotor;
     }
+    public EV3LargeRegulatedMotor getClawMotor() {
+        return clawMotor;
+    }
+
+    public void setClawMotor(EV3LargeRegulatedMotor clawMotor) {
+        this.clawMotor = clawMotor;
+    }
+
 
     public EV3MediumRegulatedMotor getArmMotor() {
         return armMotor;

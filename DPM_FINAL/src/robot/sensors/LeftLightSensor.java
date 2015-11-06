@@ -27,7 +27,7 @@ public class LeftLightSensor implements Runnable{
     //Constructor
     private LeftLightSensor(){
         //First setup the sensor
-        Port port1 = Constants.rightLightPort;
+        Port port1 = Constants.leftLightPort;
         sensorLeft = new EV3ColorSensor(port1);
         lightSensorL = sensorLeft.getRedMode();     
         sampleLeft = new float[lightSensorL.sampleSize()];
