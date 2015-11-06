@@ -38,16 +38,16 @@ public class Navigation {
 	private static final Navigation ourInstance = new Navigation();
 
 	public static Navigation getInstance() {
-		leftLS = LeftLightSensor.getInstance();
-		rightLS = RightLightSensor.getInstance();
-		odometer = Odometer.getInstance();
+//		leftLS = LeftLightSensor.getInstance();
+//		rightLS = RightLightSensor.getInstance();
+//		odometer = Odometer.getInstance();
 		return ourInstance;
 	}
 
 	/**
 	 * Constructor
 	 */
-	private Navigation() {
+	public Navigation() {
 
 		this.odometer = Odometer.getInstance();
 
@@ -542,7 +542,7 @@ public class Navigation {
 	public void clawDown(){
 		clawMotor.forward();
 		clawMotor.setSpeed(150);
-		clawMotor.rotate(150);
+		clawMotor.rotate(-150);
 		Delay.msDelay(250);
 		clawMotor.stop();
 	}
@@ -550,7 +550,7 @@ public class Navigation {
         goForward(3);
         armMotor.forward();
         armMotor.setSpeed(150);
-        armMotor.rotate(180);
+        armMotor.rotate(-180);
         Delay.msDelay(250);
         armMotor.stop();
     }

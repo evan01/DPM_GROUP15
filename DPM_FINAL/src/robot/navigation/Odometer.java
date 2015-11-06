@@ -41,9 +41,9 @@ public class Odometer implements TimerListener {
     /**
      * This is a singleton class
      */
-    private static final Odometer ourInstance = new Odometer(30, true);
+    // private static final Odometer ourInstance = new Odometer(30, true);
     public static Odometer getInstance() {
-        return ourInstance;
+        return new Odometer(30, true);
     }
 
 
