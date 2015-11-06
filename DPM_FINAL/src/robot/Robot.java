@@ -24,9 +24,9 @@ public interface Robot {
 
 	/**
 	 * Orders
-	 * @return an abstract color object representing what was scanned
+	 * @return int value representing one of the 5 colors
 	 */
-	Color colorScan();
+	int colorScan();
 
 	/**
 	 * Orders the robot to capture a block in front of it

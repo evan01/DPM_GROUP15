@@ -11,6 +11,8 @@ public class Color {
 	private double R;
 	private double G;
 	private double B;
+	
+	
 
 	public boolean isSampleRed() {
 		if (this.R > this.G && this.R > this.B && (this.G/this.R)*100<=40) {
