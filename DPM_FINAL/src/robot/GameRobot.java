@@ -16,7 +16,6 @@ public class GameRobot extends Robot {
 	
     @Override
     public void moveTo(double x, double y) {
-<<<<<<< Updated upstream
         //In theory the navigator thread should have already been started!!
         Navigator nav = Navigator.getInstance();
         NavInstruction xDistance = new NavInstruction();
@@ -24,9 +23,7 @@ public class GameRobot extends Robot {
 
         nav.addInstructions(xDistance);
         nav.addInstructions(yDistance);
-=======
     		
->>>>>>> Stashed changes
     }
 
     @Override
@@ -55,13 +52,10 @@ public class GameRobot extends Robot {
 
     }
 
-<<<<<<< Updated upstream
 	@Override
 	public Position getOdometerReading() {
 		// TODO Auto-generated method stub
 		return null;
 	}
-=======
    
->>>>>>> Stashed changes
 }

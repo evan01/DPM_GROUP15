@@ -3,6 +3,7 @@
 package robot.constants;
 
 import lejos.hardware.ev3.LocalEV3;
+
 import lejos.hardware.port.Port;
 
 public class Constants {
