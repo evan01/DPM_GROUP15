@@ -3,6 +3,7 @@ package test;
 import robot.constants.Color;
 import robot.sensors.ColorSensor;
 import robot.sensors.USSensor;
+import lejos.hardware.Button;
 import lejos.hardware.ev3.LocalEV3;
 import lejos.hardware.lcd.TextLCD;
 import lejos.hardware.port.Port;
@@ -13,6 +14,17 @@ public class ColorRecognitionTest {
 	private static TextLCD LCD = LocalEV3.get().getTextLCD();
 
 	public static void main(String[] args) {
+		//thread to allow exit at any time;
+    	(new Thread() {
+			public void run() {
+				int buttonPressed=Button.waitForAnyPress();
+				while (buttonPressed != Button.ID_ESCAPE){
+					buttonPressed=Button.waitForAnyPress();
+				}
+				System.exit(0);
+			}
+		}).start();
+    	
 		Color color;
 		double dist;
 		ColorSensor cs = ColorSensor.getInstance();

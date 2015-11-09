@@ -1,5 +1,6 @@
 package test;
 
+import lejos.hardware.Button;
 import lejos.hardware.ev3.LocalEV3;
 import lejos.hardware.motor.EV3LargeRegulatedMotor;
 import lejos.hardware.port.Port;
@@ -17,6 +18,17 @@ public class LightSensorTest {
 	
 	private static final Port colorPort = LocalEV3.get().getPort("S3");
 	public static void main(String[] args) {
+		//thread to allow exit at any time;
+    	(new Thread() {
+			public void run() {
+				int buttonPressed=Button.waitForAnyPress();
+				while (buttonPressed != Button.ID_ESCAPE){
+					buttonPressed=Button.waitForAnyPress();
+				}
+				System.exit(0);
+			}
+		}).start();
+		
 		//create sensor
 		@SuppressWarnings("resource")
 		EV3ColorSensor colorSensor = new EV3ColorSensor(colorPort);

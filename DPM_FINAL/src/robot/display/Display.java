@@ -1,12 +1,17 @@
 package robot.display;
 
 import lejos.hardware.ev3.LocalEV3;
+
 import lejos.hardware.lcd.TextLCD;
 import lejos.utility.Timer;
 import lejos.utility.TimerListener;
 import robot.constants.Constants;
 import robot.constants.Position;
 import robot.navigation.Odometer;
+import robot.sensors.ColorSensor;
+import robot.sensors.LeftLightSensor;
+import robot.sensors.RightLightSensor;
+import robot.sensors.USSensor;
 
 
 /**
@@ -31,6 +36,8 @@ public class Display implements TimerListener{
 		message = "No Debug Message";
 		CS_ON = false;
 		US_ON = false;
+		LLS_ON=false;
+		RLS_ON=false;
 	}
 
 	/**
@@ -45,6 +52,8 @@ public class Display implements TimerListener{
 	private static String message;
 	private static boolean US_ON;
 	private static boolean CS_ON;
+	private static boolean LLS_ON;
+	private static boolean RLS_ON;
 
 	//The actual lcd display of our robot
 	public static TextLCD LCD = LocalEV3.get().getTextLCD();
@@ -78,24 +87,48 @@ public class Display implements TimerListener{
 	 * Classic display, useful readings and space for debug messages
 	 */
 	public void displayStandard(){
-		Position p = odo.getPosition();
 		LCD.clear();
-		LCD.drawString("__ODOMETER__",0,0);
-		LCD.drawString("X: "+p.getX(),0,1);
-		LCD.drawString("Y: "+p.getY(),0,2);
-		LCD.drawString("Theta: "+p.getTheta(),0,3);
-		LCD.drawString("---------------",0,4);
+		Position p = odo.getPosition();
+		LCD.drawString("X: "+p.getX(),0,0);
+		LCD.drawString("Y: "+p.getY(),0,1);
+		LCD.drawString("Theta: "+p.getTheta(),0,2);
 
 		if(US_ON){
 			//If the ultrasonic sensor is on
-			LCD.drawString("USSensor: ", 0, 5);
+			LCD.drawString("USSensor: "+USSensor.getInstance().getDistance(), 0, 3);
 		}
 		if(CS_ON){
 			//If the color sensor is on
-			LCD.drawString("ColorSensor: ", 0, 6);
+			LCD.drawString("ColorSensor: "+ColorSensor.getInstance().scan(), 0, 4);
 		}
+		if(LLS_ON){
+			//If the left light sensor is on
+			LCD.drawString("LeftSensor: "+LeftLightSensor.getInstance().scan(), 0, 5);
+		}
+		if(RLS_ON){
+			//If the right light sensor is on
+			LCD.drawString("RightSensor: "+RightLightSensor.getInstance().scan(), 0, 6);
+		}
+		
 		LCD.drawString(message,0,7);
 
+	}
+	
+	//setters method 
+	public static void setUS_ON(boolean uS_ON) {
+		US_ON = uS_ON;
+	}
+
+	public static void setCS_ON(boolean cS_ON) {
+		CS_ON = cS_ON;
+	}
+
+	public static void setLLS_ON(boolean lLS_ON) {
+		LLS_ON = lLS_ON;
+	}
+
+	public static void setRLS_ON(boolean rLS_ON) {
+		RLS_ON = rLS_ON;
 	}
 
 	public void displayDebug(){

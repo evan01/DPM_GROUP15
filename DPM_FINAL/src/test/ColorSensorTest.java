@@ -2,6 +2,7 @@ package test;/*
  * Created by evanknox on 2015-11-02.
  */
 
+import lejos.hardware.Button;
 import lejos.hardware.ev3.LocalEV3;
 import lejos.hardware.lcd.TextLCD;
 import robot.constants.Color;
@@ -11,7 +12,18 @@ public class ColorSensorTest {
     private static TextLCD LCD = LocalEV3.get().getTextLCD();
 
     public static void main(String[] args) {
-        Color color;
+    	//thread to allow exit at any time;
+    	(new Thread() {
+			public void run() {
+				int buttonPressed=Button.waitForAnyPress();
+				while (buttonPressed != Button.ID_ESCAPE){
+					buttonPressed=Button.waitForAnyPress();
+				}
+				System.exit(0);
+			}
+		}).start();
+    	
+    	Color color;
         ColorSensor cs = ColorSensor.getInstance();
         new Thread(cs).start();
 

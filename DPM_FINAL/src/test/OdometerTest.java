@@ -1,5 +1,6 @@
 package test;
 
+import lejos.hardware.Button;
 import lejos.hardware.ev3.LocalEV3;
 import lejos.hardware.motor.EV3LargeRegulatedMotor;
 import robot.display.Display;
@@ -13,6 +14,17 @@ public class OdometerTest {
 	 * @param args
 	 */
 	public static void main(String[] args) {
+		//thread to allow exit at any time;
+    	(new Thread() {
+			public void run() {
+				int buttonPressed=Button.waitForAnyPress();
+				while (buttonPressed != Button.ID_ESCAPE){
+					buttonPressed=Button.waitForAnyPress();
+				}
+				System.exit(0);
+			}
+		}).start();
+		
 		Navigation nav = Navigation.getInstance();
 		//create display instance
 		Display lcd = Display.getInstance();

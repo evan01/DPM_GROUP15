@@ -31,6 +31,7 @@ import lejos.hardware.motor.EV3LargeRegulatedMotor;
 import lejos.hardware.motor.EV3MediumRegulatedMotor;
 import lejos.utility.Timer;
 import lejos.utility.TimerListener;
+import robot.constants.Constants;
 import robot.constants.Position;
 
 /**
@@ -41,9 +42,9 @@ public class Odometer implements TimerListener {
     /**
      * This is a singleton class
      */
-    // private static final Odometer ourInstance = new Odometer(30, true);
+    private static final Odometer ourInstance = new Odometer(30, true);
     public static Odometer getInstance() {
-        return new Odometer(30, true);
+        return ourInstance;
     }
 
 
@@ -69,16 +70,17 @@ public class Odometer implements TimerListener {
         this.clawMotor = mtrs.getClawMotor();
 
         // default values, modify for your robot
-        this.rightRadius = 2.2;
-        this.leftRadius = 2.2;
-        this.TRACK = 11.5;
+        this.rightRadius = Constants.WHEEL_RADIUS;
+        this.leftRadius = Constants.WHEEL_RADIUS;
+        this.TRACK = Constants.TRACK;
 
         this.x = 0.0;
         this.y = 0.0;
-        this.theta = 90.0;
+        this.theta = 0;
         this.oldDH = new double[2];
         this.dDH = new double[2];
-
+        this.position=new Position(0,0,0);
+        
         if (autostart) {
             // if the timeout interval is given as <= 0, default to 20ms timeout
             this.timer = new Timer((INTERVAL <= 0) ? INTERVAL : DEFAULT_TIMEOUT_PERIOD, this);
@@ -116,21 +118,25 @@ public class Odometer implements TimerListener {
      * Recompute the odometer values using the displacement and heading changes
      */
     public void timedOut() {
-        this.getDisplacementAndHeading(dDH);
-        dDH[0] -= oldDH[0];
-        dDH[1] -= oldDH[1];
-
+        
         // update the position in a critical region
         synchronized (this) {
+        	this.getDisplacementAndHeading(dDH);
+            dDH[0] -= oldDH[0];
+            dDH[1] -= oldDH[1];
+        	
             theta += dDH[1];
             theta = fixDegAngle(theta);
 
             x += dDH[0] * Math.cos(Math.toRadians(theta));
             y += dDH[0] * Math.sin(Math.toRadians(theta));
+            position.setX(x);
+            position.setY(y);
+            position.setTheta(theta);
+            
+            oldDH[0] += dDH[0];
+            oldDH[1] += dDH[1];
         }
-
-        oldDH[0] += dDH[0];
-        oldDH[1] += dDH[1];
     }
 
     // return X value
@@ -148,7 +154,7 @@ public class Odometer implements TimerListener {
     }
 
     // return theta value
-    public double getAng() {
+    public double getTheta() {
         synchronized (this) {
             return theta;
         }
@@ -172,18 +178,18 @@ public class Odometer implements TimerListener {
     }
 
     // UPDATED.. INDIVIDUAL SETTERS
-    public void setX(final double x) {
+    public void setX(double x) {
         synchronized (this) {
             this.x = x;
         }
     }
 
-    public void setY(final double y) {
+    public void setY(double y) {
         synchronized (this) {
             this.y = y;
         }
     }
-    public void setTheta(final double theta) {
+    public void setTheta(double theta) {
         synchronized (this) {
             this.theta = theta;
         }
@@ -201,7 +207,7 @@ public class Odometer implements TimerListener {
 
     public synchronized Position getPosition() {
         synchronized (this) {
-            return new Position(x, y, theta);
+            return this.position;
         }
     }
 

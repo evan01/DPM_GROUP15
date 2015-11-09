@@ -1,5 +1,6 @@
 package test;
 
+import lejos.hardware.Button;
 import robot.navigation.Navigation;
 import robot.navigation.Odometer;
 
@@ -10,6 +11,17 @@ public class ClawTest {
 	 * @param args
 	 */
 	public static void main(String[] args) {
+		//thread to allow exit at any time;
+    	(new Thread() {
+			public void run() {
+				int buttonPressed=Button.waitForAnyPress();
+				while (buttonPressed != Button.ID_ESCAPE){
+					buttonPressed=Button.waitForAnyPress();
+				}
+				System.exit(0);
+			}
+		}).start();
+    	
 		testClaw();	
 	}
 	

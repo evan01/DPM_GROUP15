@@ -24,15 +24,17 @@ public class Constants {
 	// Constants for Odometer and Robot
 		// Motors
 		public static final double WHEEL_RADIUS = 2.2;
-		public static final double TRACK = 10.5;
+		public static final double TRACK = 15.1;
+		public static final float LIGHT_LOCALIZATION_FORWARD_SPEED=60;
 		public static final int forwardSpeed = 150;
-		public static final int ROTATE_SPEED = 30;
+		public static final int ROTATE_SPEED = 50;
 		public final static int FAST = 200;
 		public final static int SLOW = 100;
 		public final static int ACCELERATION = 4000;
 		public final static double DEG_ERR = 3.0;
 		public final static double CM_ERR = 1.0;
 		public final static float motorStraight = 150;
+		public static final double LRS_TO_AXIS_DISTANCE = 6.6;	//distance from the left/right sensors to the center of the wheel axis
 
 		// US SENSOR
 		public static final int SCANPERIOD = 80;
@@ -52,7 +54,7 @@ public class Constants {
 		public static final double THRESHOLD_DISTANCE_ERROR = 1.25;
 
 		// LCD DISPLAY
-		public static final int LCD_REFRESH = 250;
+		public static final int LCD_REFRESH = 50;
 
 		// LightSensor
 	

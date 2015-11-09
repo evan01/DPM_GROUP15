@@ -51,7 +51,7 @@ public class Localizer {
 					LCD.drawString("US: "+usDistance+"  ", 0, 0);
 				}	
 																								  	// Wall is seen !!
-				angleA = odo.getAng();															  	// latch angle A
+				angleA = odo.getTheta();															  	// latch angle A
 				LCD.drawString("angle A: "+angleA, 0,1);										  	// debugging tool
 				Sound.buzz();
 				
@@ -71,7 +71,7 @@ public class Localizer {
 					LCD.drawString("US: "+usDistance+"  ", 0, 0);
 				}
 																								   // 2nd wall seen !!
-				angleB = odo.getAng();															   // latch angle B 																		   //2nd wall detected
+				angleB = odo.getTheta();															   // latch angle B 																		   //2nd wall detected
 				LCD.drawString("angle B: "+angleB, 0,2);										   // debugging tool
 				Sound.buzz(); 
 
@@ -81,7 +81,7 @@ public class Localizer {
 				deltaTheta = 42-((angleA + angleB)/2);													
 				Sound.beep();
 				odo.correctTheta(deltaTheta);														// adds the error dtheta onto the odomerters theta
-				LCD.drawString("Theta: "+odo.getAng()+"  ", 0,4);
+				LCD.drawString("Theta: "+odo.getTheta()+"  ", 0,4);
 				
 																									// now we MEASURE
 																									// measuring x and y can be found belowwww
@@ -91,7 +91,7 @@ public class Localizer {
 					navigate.setRotationSpeed(10); 												    // rotate slowly
 					for( ; ; ) 																		// orienting robot
 					{																				// Exit only if robot is with 
-						double theta = odo.getAng();
+						double theta = odo.getTheta();
 						if(theta > 180) 
 						theta -= 360;
 						if(theta >= 0 && theta < 20) 												
@@ -102,7 +102,7 @@ public class Localizer {
 					LCD.drawString(" DONE.", 9,5);
 					Sound.twoBeeps();	
 				}
-				LCD.drawString("Theta : "+odo.getAng()+"  ", 0,3);		
+				LCD.drawString("Theta : "+odo.getTheta()+"  ", 0,3);		
 				
 
 		} else 
@@ -128,7 +128,7 @@ public class Localizer {
 					LCD.drawString("US: "+usDistance+"  ", 0, 0);
 				}	
 																								  // Wall is cleared !!
-				angleA = odo.getAng();															  // latch angle A
+				angleA = odo.getTheta();															  // latch angle A
 				LCD.drawString("angle A: "+angleA, 0,1);										  // debugging tool
 				Sound.buzz();
 																	
@@ -148,7 +148,7 @@ public class Localizer {
 					LCD.drawString("US: "+usDistance+"  ", 0, 0);
 				}
 																								   // 2nd wall cleared !!
-				angleB = odo.getAng();															   // latch angle B 																		   //2nd wall detected
+				angleB = odo.getTheta();															   // latch angle B 																		   //2nd wall detected
 				LCD.drawString("angle B: "+angleB, 0,2);										   // debugging tool
 				Sound.buzz(); 
 
@@ -161,7 +161,7 @@ public class Localizer {
 			odo.correctTheta(deltaTheta); 															// ensure theta doesnt go out of bounds
 			Button.LEDPattern(3);													
 	
-			LCD.drawString("Theta: "+odo.getAng()+"  ", 0,4);
+			LCD.drawString("Theta: "+odo.getTheta()+"  ", 0,4);
 			
 			try { Thread.sleep(2000); } catch (InterruptedException e) {}
 																									// now we MEASURE
@@ -170,7 +170,7 @@ public class Localizer {
 				navigate.setRotationSpeed(-10); 													// rotate slowly
 				for( ; ; ) 																			// orienting robot
 				{																					// exit
-					double theta = odo.getAng();
+					double theta = odo.getTheta();
 					if(theta > 180) 
 						theta -= 360;
 					if(theta <= 0 && theta > -20) 
@@ -181,7 +181,7 @@ public class Localizer {
 				LCD.drawString(" DONE.", 9,5);
 				Sound.twoBeeps();
 			}
-			LCD.drawString("Theta: "+odo.getAng()+"  ", 0,3);
+			LCD.drawString("Theta: "+odo.getTheta()+"  ", 0,3);
 			
 		}
 		if(!isMeasured) 
@@ -193,10 +193,10 @@ public class Localizer {
 			double error, theta;																	
 			for( ; ; ) 																				//Start with x
 			{
-				theta = odo.getAng();
+				theta = odo.getTheta();
 				if(theta <= 45) 																	
 				theta = theta + 360; 																
-				error = odo.getAng() - 270;															// we want angle to be 270 to corrcelty calculate US X distance
+				error = odo.getTheta() - 270;															// we want angle to be 270 to corrcelty calculate US X distance
 				if(error < 0.5) 																	// ERROR SHOULD BE <0.5 to break and measure
 					break;
 				navigate.setRotationSpeed((float) (-error - 20));									// Robot going clockwise; accelerated by random constant
@@ -209,8 +209,8 @@ public class Localizer {
 			LCD.drawString("X :"+usDistance, 0,1);													// Store X
 			for( ; ; ) 																				// now get y
 			{
-				theta = odo.getAng();																
-				error = odo.getAng() - 180;															// we want angle to be 180 to corrcelty calculate US Y distance
+				theta = odo.getTheta();																
+				error = odo.getTheta() - 180;															// we want angle to be 180 to corrcelty calculate US Y distance
 				if(error < 0.5) 																	// ERROR SHOULD BE <0.5 to break and measure
 					break;
 				navigate.setRotationSpeed((float) (-error - 20));									// Robot going clockwise; accelerated by random constant
@@ -229,7 +229,7 @@ public class Localizer {
 		
 			xCoord = odo.getX();											// get NEW X and Y with respect to NEW (0,0)
 			yCoord = odo.getY();
-			double T = odo.getAng();
+			double T = odo.getTheta();
 			
 			LCD.drawString("X "+xCoord+"\nY: "+yCoord+"\nT: "+T+" ", 0,3);
 		}

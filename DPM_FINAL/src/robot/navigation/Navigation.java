@@ -20,7 +20,7 @@ public class Navigation {
 	private EV3LargeRegulatedMotor leftMotor, rightMotor, clawMotor;
 	private EV3MediumRegulatedMotor armMotor;
 	private float rotationSpeed;
-	private double RADIUS = 2.2, TRACK = 11.5;
+	private double RADIUS = Constants.WHEEL_RADIUS, TRACK = Constants.TRACK;
 	private int SEARCH_SPEED = 20;
 	private boolean isNavigating;
 	public boolean hasStyro = false;
@@ -121,11 +121,20 @@ public class Navigation {
 	 */
 	public void travelTo(double x, double y) {
 		double minAng;
+		int counter=0;
 		while (Math.abs(x - odometer.getX()) > CM_ERR || Math.abs(y - odometer.getY()) > CM_ERR) {
 			minAng = (Math.atan2(y - odometer.getY(), x - odometer.getX())) * (180.0 / Math.PI);
-			if (minAng < 0)
-				minAng += 360.0;
-			this.turnTo(minAng, false);
+			//if (minAng < 0 && !(minAng>-1 && minAng<1))
+			//	minAng += 360.0;
+			//this.turnTo(minAng, false);
+			
+			if(counter==0){
+				if(minAng<0){
+					minAng+=360;;
+				}
+				this.turnTo(minAng, false);
+				counter++;
+			}
 			// this.setSpeeds(FAST, FAST);
 			// calculates magnitude to travel
 			double distance = Math.sqrt(Math.pow((y - odometer.getY()), 2) + Math.pow((x - odometer.getX()), 2));
@@ -158,17 +167,19 @@ public class Navigation {
 	 */
 	public void turnTo(double angle, boolean stop) {
 
-		double error = angle - this.odometer.getAng();
+		double error = angle - this.odometer.getTheta();
 
 		while (Math.abs(error) > DEG_ERR) {
 
-			error = angle - this.odometer.getAng();
+			error = angle - this.odometer.getTheta();
 
 			if (error < -180.0) {
 				this.setSpeeds(-SLOW, SLOW);
 			} else if (error < 0.0) {
+				//Sound.beep();
 				this.setSpeeds(SLOW, -SLOW);
 			} else if (error > 180.0) {
+				//Sound.beepSequence();
 				this.setSpeeds(SLOW, -SLOW);
 			} else {
 				this.setSpeeds(-SLOW, SLOW);
@@ -213,7 +224,7 @@ public class Navigation {
 
 		leftMotor.setSpeed(SLOW);
 		rightMotor.setSpeed(SLOW);
-		Sound.beep();
+		//Sound.beep();
 		isNavigating = true;
 
 		leftMotor.rotate(-convertDistance(RADIUS, distance), true);
@@ -247,8 +258,12 @@ public class Navigation {
 		}
 	}
 
-	private static int convertDistance(double radius, double distance) {
+	public static int convertDistance(double radius, double distance) {
 		return (int) ((180.0 * distance) / (Math.PI * radius));
+	}
+	
+	public static int convertAngle(double radius, double width, double angle) {
+		return convertDistance(radius, Math.PI * width * angle / 360.0);
 	}
 
 	public boolean isNavigating() {
@@ -485,12 +500,12 @@ public class Navigation {
 	private void performOdometerCorrection()
 	{
 		// Updates the x, y and theta values on the Odometer according to the correction
-		double heading = odometer.getAng();
+		double heading = odometer.getTheta();
 		
 		// Heading EAST (x++)
 		if(heading >= 45 && heading < 135)
 		{
-			double xActual = odometer.getX() + Math.sin(odometer.getAng()*Constants.LIGHT_SENS_OFFSET);
+			double xActual = odometer.getX() + Math.sin(odometer.getTheta()*Constants.LIGHT_SENS_OFFSET);
 			double correctionX = (xActual%30.48);
 			horizontalLinesCrossed++;
 			odometer.setPosition(new double[] {correctionX + odometer.getX(), 0.0, 90.0}, 
@@ -502,7 +517,7 @@ public class Navigation {
 			if(verticalLinesCrossed < 0)
 				verticalLinesCrossed = 0;
 			
-			double yActual = odometer.getY() + Math.cos(odometer.getAng()*Constants.LIGHT_SENS_OFFSET);
+			double yActual = odometer.getY() + Math.cos(odometer.getTheta()*Constants.LIGHT_SENS_OFFSET);
 			double correctionY = (yActual%30.48);
 			odometer.setPosition(new double[] {0.0, correctionY + odometer.getY() , 180.0}, 
 								  new boolean[] {false, true, true});
@@ -514,7 +529,7 @@ public class Navigation {
 			if(horizontalLinesCrossed < 0)
 				horizontalLinesCrossed = 0;
 			
-			double xActual = odometer.getX() + Math.sin(odometer.getAng()*Constants.LIGHT_SENS_OFFSET);
+			double xActual = odometer.getX() + Math.sin(odometer.getTheta()*Constants.LIGHT_SENS_OFFSET);
 			double correctionX = (xActual%30.48);
 			
 			odometer.setPosition(new double[] {correctionX + odometer.getX(), 0.0, 270.0},
@@ -524,7 +539,7 @@ public class Navigation {
 		// Heading NORTH (y++)
 		else
 		{
-			double yActual = odometer.getY() + Math.cos(odometer.getAng()*Constants.LIGHT_SENS_OFFSET);
+			double yActual = odometer.getY() + Math.cos(odometer.getTheta()*Constants.LIGHT_SENS_OFFSET);
 			double correctionY = (yActual%30.48);
 			verticalLinesCrossed++;
 			odometer.setPosition(new double[] {0.0, correctionY + odometer.getY(), 0.0}, 

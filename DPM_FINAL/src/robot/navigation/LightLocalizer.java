@@ -40,12 +40,12 @@ public class LightLocalizer {
             scanL = scanLeft(ls);
             if (scanR || scanL) {
                 if (scanRight(rs)) {
-                    rightIntersectionAngles[rightCount] = Odometer.getInstance().getAng();
+                    rightIntersectionAngles[rightCount] = Odometer.getInstance().getTheta();
                     rightCount++;
                     intersectionCount++;
                 }
                 if (scanLeft(ls)) {
-                    leftIntersectionAngles[leftCount] = Odometer.getInstance().getAng();
+                    leftIntersectionAngles[leftCount] = Odometer.getInstance().getTheta();
                     leftCount++;
                     intersectionCount++;
                 }

@@ -48,7 +48,7 @@ public class USLocalizer {
 			while(getFilteredData() > USDISTANCE_THRESHOLD) {
 			}
 			// Wall is seen !!
-			angleA = odo.getAng();															  	// latch angle A
+			angleA = odo.getTheta();															  	// latch angle A
 			Sound.buzz();
 
 			navigate.setRotationSpeed(-ROTATION_SPEED); 									 	 // switch rotation direction
@@ -63,7 +63,7 @@ public class USLocalizer {
 			while(getFilteredData() > USDISTANCE_THRESHOLD) {					// wait until you see 2nd wall !
 			}
 			// 2nd wall seen !!
-			angleB = odo.getAng();															   // latch angle B 																		   //2nd wall detected
+			angleB = odo.getTheta();															   // latch angle B 																		   //2nd wall detected
 			Sound.buzz();
 
 			//use formulas
@@ -80,7 +80,7 @@ public class USLocalizer {
 				navigate.setRotationSpeed(10); 												    // rotate slowly
 				for( ; ; ) 																		// orienting robot
 				{																				// Exit only if robot is with
-					double theta = odo.getAng();
+					double theta = odo.getTheta();
 					if(theta > 180)
 						theta -= 360;
 					if(theta >= 0 && theta < 20)
@@ -111,7 +111,7 @@ public class USLocalizer {
 			while(getFilteredData() < USDISTANCE_THRESHOLD) {
 			}
 			// Wall is cleared !!
-			angleA = odo.getAng();															  // latch angle A
+			angleA = odo.getTheta();															  // latch angle A
 			Sound.buzz();
 
 			navigate.setRotationSpeed(-ROTATION_SPEED); 										// switch rotation direction
@@ -126,7 +126,7 @@ public class USLocalizer {
 			while(getFilteredData() == USDISTANCE_THRESHOLD) {				   // wait to clear off first wall!
 			}
 			// 2nd wall cleared !!
-			angleB = odo.getAng();															   // latch angle B 																		   //2nd wall detected
+			angleB = odo.getTheta();															   // latch angle B 																		   //2nd wall detected
 			Sound.buzz();
 
 			// use formulas
@@ -145,7 +145,7 @@ public class USLocalizer {
 				navigate.setRotationSpeed(-10); 													// rotate slowly
 				for( ; ; ) 																			// orienting robot
 				{																					// exit
-					double theta = odo.getAng();
+					double theta = odo.getTheta();
 					if(theta > 180)
 						theta -= 360;
 					if(theta <= 0 && theta > -20)
@@ -166,10 +166,10 @@ public class USLocalizer {
 			double error, theta;
 			for( ; ; ) 																				//Start with x
 			{
-				theta = odo.getAng();
+				theta = odo.getTheta();
 				if(theta <= 45)
 					theta = theta + 360;
-				error = odo.getAng() - 270;															// we want angle to be 270 to corrcelty calculate US X distance
+				error = odo.getTheta() - 270;															// we want angle to be 270 to corrcelty calculate US X distance
 				if(error < 0.5) 																	// ERROR SHOULD BE <0.5 to break and measure
 					break;
 				navigate.setRotationSpeed((float) (-error - 20));									// Robot going clockwise; accelerated by random constant
@@ -180,8 +180,8 @@ public class USLocalizer {
 
 			for( ; ; ) 																				// now get y
 			{
-				theta = odo.getAng();
-				error = odo.getAng() - 180;															// we want angle to be 180 to corrcelty calculate US Y distance
+				theta = odo.getTheta();
+				error = odo.getTheta() - 180;															// we want angle to be 180 to corrcelty calculate US Y distance
 				if(error < 0.5) 																	// ERROR SHOULD BE <0.5 to break and measure
 					break;
 				navigate.setRotationSpeed((float) (-error - 20));									// Robot going clockwise; accelerated by random constant
@@ -199,7 +199,7 @@ public class USLocalizer {
 
 			xCoord = odo.getX();											// get NEW X and Y with respect to NEW (0,0)
 			yCoord = odo.getY();
-			double T = odo.getAng();
+			double T = odo.getTheta();
 
 		}
 	}
