@@ -72,15 +72,6 @@ public class LeftLightSensor implements Runnable{
     	return average;
     }
     
-    public synchronized boolean scanWithDiffrentialFilter(double average1,double average2,double difference){
-    	if (Math.abs(average1-average2)>difference){
-    		return true;
-    	}
-    	return false;
-    	
-    }
-    
-    
     public synchronized float getIntensity() {
         return lightIntensity;
     }

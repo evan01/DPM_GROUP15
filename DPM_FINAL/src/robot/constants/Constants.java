@@ -43,7 +43,7 @@ public class Constants {
 
 		// LIGHT SENSOR
 		public static final int LIGHT_SENSOR_UPDATE_TIME = 200;
-		public static final int LIGHT_THRESHOLD = 45; 
+		public static final int LIGHT_THRESHOLD = 50; 
 		public static final double LIGHT_SENS_OFFSET = 5.4;
 		
 		public static final double SQUARE_WIDTH = 30.48;

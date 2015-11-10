@@ -55,7 +55,7 @@ public class Navigation {
 		this.odometer = Odometer.getInstance();
 		this.leftLS = LeftLightSensor.getInstance();
 		this.rightLS = RightLightSensor.getInstance();
-		this.lightLocalTwo = LightLocalizerTwo.getInstance();
+		//this.lightLocalTwo = LightLocalizerTwo.getInstance();
 
 		EV3LargeRegulatedMotor[] motors = new EV3LargeRegulatedMotor[2];
 		motors = this.odometer.getMotors();

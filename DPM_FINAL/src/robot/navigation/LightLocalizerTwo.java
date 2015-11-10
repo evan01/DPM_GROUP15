@@ -6,6 +6,7 @@ import lejos.hardware.ev3.LocalEV3;
 import lejos.hardware.lcd.TextLCD;
 import lejos.hardware.motor.EV3LargeRegulatedMotor;
 import lejos.utility.Delay;
+
 import robot.constants.Constants;
 import robot.display.Display;
 import robot.sensors.LeftLightSensor;
@@ -24,12 +25,7 @@ public class LightLocalizerTwo {
 	private boolean scanLeft;
 	private Display display;
 
-	// this is a singleton class
-	private static final LightLocalizerTwo ourInstance = new LightLocalizerTwo();
 
-	public static LightLocalizerTwo getInstance() {
-		return ourInstance;
-	}
 	public LightLocalizerTwo(){
 		leftLightSensor=LeftLightSensor.getInstance();
 		rightLightSensor=RightLightSensor.getInstance();
@@ -41,13 +37,13 @@ public class LightLocalizerTwo {
 		scanRight=false;
 		scanLeft=false;
 		//display=Display.getInstance();
-		
+
 	}
 
 	//*************************
 	// Note: Uncomment Sound.beep() from goBackward() in navigation class
 	//*************************
-	
+
 	public void lightLocalize(){
 		//display.setLLS_ON(true);
 		//display.setRLS_ON(true);
@@ -67,7 +63,7 @@ public class LightLocalizerTwo {
 				}
 			}
 		}).start();
-		
+
 		performBlackLineDetection();
 
 		//correct odometer x
@@ -123,20 +119,95 @@ public class LightLocalizerTwo {
 		//navigation.travelTo(0, 0);
 		//navigation.turnTo(0, true);
 		//display.stop();
-		 	
-		}
-	
+
+	}
+
+
+
+
+
+
 
 	public void performBlackLineDetection(){
+		double rightReading1,rightReading2,leftReading1,leftReading2;
 		while(isBlackLineDetected==false){
 			navigation.setSpeeds(Constants.LIGHT_LOCALIZATION_FORWARD_SPEED,Constants.LIGHT_LOCALIZATION_FORWARD_SPEED);
-			
-			double averageRight1=rightLightSensor.scanWithAverageFilter();
-			double averageRight2=rightLightSensor.scanWithAverageFilter();
-			
-			double averageLeft1=leftLightSensor.scanWithAverageFilter();
-			double averageLeft2=leftLightSensor.scanWithAverageFilter();
-			
+
+			rightReading1=rightLightSensor.scan();
+			Delay.msDelay(50);
+			rightReading2=rightLightSensor.scan();
+
+			leftReading1=leftLightSensor.scan();
+			Delay.msDelay(50);
+			leftReading2=leftLightSensor.scan();
+
+			scanRight=scanWithDiffrentialFilter(rightReading1,rightReading2);
+			scanLeft=scanWithDiffrentialFilter(leftReading1,leftReading2);
+			isBlackLineDetected=scanRight || scanLeft;	
+		}
+		Sound.beep();
+
+		if(scanRight==true && scanLeft==true){
+			//do nothing
+			Sound.beepSequence();
+			navigation.setSpeeds(0, 0);
+		}
+
+		else if(scanRight==true){
+			//turn clockwise leftMotor only
+			while(scanLeft==false){
+				navigation.setSpeeds(Constants.ROTATE_SPEED,0);
+				leftReading1=leftLightSensor.scan();
+				Delay.msDelay(50);
+				leftReading2=leftLightSensor.scan();
+				scanLeft=scanWithDiffrentialFilter(leftReading1,leftReading2);
+			}
+			Sound.beep();
+			navigation.setSpeeds(0, 0);
+		}
+
+		else if(scanLeft==true){
+			//turn counterclockwise rightMotor only
+			while(scanRight==false){
+				navigation.setSpeeds(0,Constants.ROTATE_SPEED);
+				rightReading1=rightLightSensor.scan();
+				Delay.msDelay(50);
+				rightReading2=rightLightSensor.scan();
+				scanRight=scanWithDiffrentialFilter(rightReading1,rightReading2);
+			}
+			Sound.beep();
+			navigation.setSpeeds(0, 0);
+		}
+
+		scanRight=false;
+		scanLeft=false;
+		isBlackLineDetected=false;
+
+	}
+
+
+
+
+
+
+
+
+
+
+
+
+
+	/*public void performBlackLineDetection(){
+		double averageRight1=0,averageRight2=0,averageLeft1=0,averageLeft2=0;
+		while(isBlackLineDetected==false){
+			navigation.setSpeeds(Constants.LIGHT_LOCALIZATION_FORWARD_SPEED,Constants.LIGHT_LOCALIZATION_FORWARD_SPEED);
+
+			averageRight1=rightLightSensor.scanWithAverageFilter();
+			averageRight2=rightLightSensor.scanWithAverageFilter();
+
+			averageLeft1=leftLightSensor.scanWithAverageFilter();
+			averageLeft2=leftLightSensor.scanWithAverageFilter();
+
 			scanRight=rightLightSensor.scanWithDiffrentialFilter(averageRight1,averageRight2,12);
 			scanLeft=leftLightSensor.scanWithDiffrentialFilter(averageLeft1,averageLeft2,12);
 			isBlackLineDetected=scanRight || scanLeft;	
@@ -153,7 +224,7 @@ public class LightLocalizerTwo {
 			//turn clockwise leftMotor only
 			while(scanLeft==false){
 				navigation.setSpeeds(Constants.ROTATE_SPEED,0);
-				scanLeft=scanLeft(leftLightSensor);
+				scanLeft=leftLightSensor.scanWithDiffrentialFilter(averageLeft1,averageLeft2,12);
 			}
 			Sound.beep();
 			navigation.setSpeeds(0, 0);
@@ -163,17 +234,17 @@ public class LightLocalizerTwo {
 			//turn counterclockwise rightMotor only
 			while(scanRight==false){
 				navigation.setSpeeds(0,Constants.ROTATE_SPEED);
-				scanRight=scanRight(rightLightSensor);
+				scanRight=rightLightSensor.scanWithDiffrentialFilter(averageRight1,averageRight2,12);
 			}
 			Sound.beep();
 			navigation.setSpeeds(0, 0);
 		}
-		
+
 		scanRight=false;
 		scanLeft=false;
 		isBlackLineDetected=false;
 
-	}
+	}*/
 
 
 
@@ -185,7 +256,15 @@ public class LightLocalizerTwo {
 	private boolean scanRight(RightLightSensor rs){
 		return isBlackLineDetected(rs.scan());
 	}
-	
+
+	public boolean scanWithDiffrentialFilter(double average1,double average2){
+		if ((average1<Constants.LIGHT_THRESHOLD || average2<Constants.LIGHT_THRESHOLD) ){
+			return true;
+		}
+		return false;
+
+	}
+
 	/**
 	 * Check if the leftLightSensor detected a black line
 	 * @return
@@ -193,14 +272,14 @@ public class LightLocalizerTwo {
 	private boolean scanLeft(LeftLightSensor ls){
 		return isBlackLineDetected(ls.scan());
 	}
-	
+
 	private boolean isBlackLineDetected(double val){
-		if(val<Constants.LIGHT_THRESHOLD)
+		if(val<45)
 			return true;
 		else
 			return false;
 	}
-	
+
 
 }
 
