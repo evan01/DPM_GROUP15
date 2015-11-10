@@ -61,6 +61,14 @@ public class Constants {
 
 	// Constants for the environment
 	public static final double GRID_LINE_SPACING = 31.2;
+	//needs to be measured
+	public static final double STYRO_BLOCK=12;
+	
+	//Robot physical constants, will measure soon
+	public static final double ROBOT_WIDTH=12;
+	public static final double ROBOT_LENTGH=12;
+	public static final double COLOR_TO_CENTER=12;
+	public static final double US_TO_CENTER=12;
 
 
 }

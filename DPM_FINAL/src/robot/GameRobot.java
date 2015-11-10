@@ -23,6 +23,10 @@ public class GameRobot implements Robot {
 	public void moveTo(double x, double y) {
 
 	}
+	//standard travel to method, not from center to center of square
+	public void travelTo(double x, double y){
+		
+	}
 
 	public void turnTo(int angle) {
 

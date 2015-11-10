@@ -11,6 +11,13 @@ public interface Robot {
 	void moveTo(double x, double y);
 	
 	/**
+	 * This will perform the standard travel to method,
+	 * without moving from square center to square center
+	 * @param x
+	 * @param y
+	 */
+	void travelTo(double x, double y);
+	/**
 	 * This will rotate the robot to whatever angle is specified
 	 * @param angle
 	 */
@@ -20,6 +27,7 @@ public interface Robot {
 	 * Orders robot to do a single ultrasonic scan
 	 * @return distance scanned by ultrasonic sensor
 	 */
+	
 	int usScan();
 
 	/**
