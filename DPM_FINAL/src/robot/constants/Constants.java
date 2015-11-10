@@ -34,7 +34,7 @@ public class Constants {
 		public final static double DEG_ERR = 3.0;
 		public final static double CM_ERR = 1.0;
 		public final static float motorStraight = 150;
-		public static final double LRS_TO_AXIS_DISTANCE = 6.6;	//distance from the left/right sensors to the center of the wheel axis
+		public static final double LRS_TO_AXIS_DISTANCE = 7.2;	//distance from the left/right sensors to the center of the wheel axis
 
 		// US SENSOR
 		public static final int SCANPERIOD = 80;

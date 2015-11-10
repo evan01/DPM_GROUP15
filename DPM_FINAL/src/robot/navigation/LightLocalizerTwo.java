@@ -43,14 +43,15 @@ public class LightLocalizerTwo {
 	//*************************
 	// Note: Uncomment Sound.beep() from goBackward() in navigation class
 	//*************************
-
+	
+	/*
 	public void lightLocalize(){
 		//display.setLLS_ON(true);
 		//display.setRLS_ON(true);
 		//display.start();
 
 
-		
+
 		(new Thread() {
 			public void run() {
 				TextLCD LCD = LocalEV3.get().getTextLCD();
@@ -65,7 +66,121 @@ public class LightLocalizerTwo {
 				}
 			}
 		}).start();
-		 		 
+
+		//turn 90 degrees counterclockwise
+		leftMotor.setSpeed(Constants.ROTATE_SPEED);
+		rightMotor.setSpeed(Constants.ROTATE_SPEED);
+
+		leftMotor.rotate(+navigation.convertAngle(Constants.WHEEL_RADIUS, Constants.TRACK, 90.0), true);	//use new "TRACK" not the one in "Constants" class
+		rightMotor.rotate(-navigation.convertAngle(Constants.WHEEL_RADIUS, Constants.TRACK, 90.0), false);	//use new "TRACK" not the one in "Constants" class
+
+		Delay.msDelay(5000);
+
+		 
+
+
+		performBlackLineDetection();
+
+		scanRight=false;
+		scanLeft=false;
+		isBlackLineDetected=false;
+
+		//correct odometer x
+		odometer.setY(Constants.LRS_TO_AXIS_DISTANCE);
+		//correct odometer angle
+		odometer.setTheta(0);
+
+		double newPos1[] = {Constants.LRS_TO_AXIS_DISTANCE,0,0};
+		boolean newUpdates1[] = {true,false,true};
+		odometer.setPosition(newPos1,newUpdates1);
+
+		//Delay.msDelay(5000);
+
+
+		if(odometer.getTheta()==0 && odometer.getX()==Constants.LRS_TO_AXIS_DISTANCE){
+			Sound.beepSequence();
+		}
+
+		//go backwards 10 cm to avoid detecting the y-axis while correcting odometer y later
+		navigation.goBackward(Constants.LRS_TO_AXIS_DISTANCE);
+
+		//turn 90 degrees counterclockwise
+		leftMotor.setSpeed(Constants.ROTATE_SPEED);
+		rightMotor.setSpeed(Constants.ROTATE_SPEED);
+
+		leftMotor.rotate(-navigation.convertAngle(Constants.WHEEL_RADIUS, Constants.TRACK, 90.0), true);	//use new "TRACK" not the one in "Constants" class
+		rightMotor.rotate(+navigation.convertAngle(Constants.WHEEL_RADIUS, Constants.TRACK, 90.0), false);	//use new "TRACK" not the one in "Constants" class
+
+		performBlackLineDetection();
+
+		//correct theta again
+		odometer.setTheta(90);
+		//correct odometer y
+		odometer.setX(Constants.LRS_TO_AXIS_DISTANCE);
+		//Delay.msDelay(5000);
+
+		double newPos2[] = {0,Constants.LRS_TO_AXIS_DISTANCE,90};
+		boolean newUpdates2[] = {false,true,true};
+		odometer.setPosition(newPos2,newUpdates2);
+
+		if(odometer.getTheta()==0 && odometer.getY()==Constants.LRS_TO_AXIS_DISTANCE){
+			Sound.beepSequence();
+		}
+
+		navigation.travelTo(0, 0);
+
+		//turn 90 degrees clockwise
+		leftMotor.setSpeed(Constants.ROTATE_SPEED);
+		rightMotor.setSpeed(Constants.ROTATE_SPEED);
+
+		leftMotor.rotate(navigation.convertAngle(Constants.WHEEL_RADIUS, Constants.TRACK, 90.0), true);	//use new "TRACK" not the one in "Constants" class
+		rightMotor.rotate(-navigation.convertAngle(Constants.WHEEL_RADIUS, Constants.TRACK, 90.0), false);	//use new "TRACK" not the one in "Constants" class
+
+
+		//navigation.turnTo(0, true);
+
+		//display.stop();
+	}
+	*/
+	
+	
+	
+	
+	public void lightLocalize(){
+		//display.setLLS_ON(true);
+		//display.setRLS_ON(true);
+		//display.start();
+
+
+
+		(new Thread() {
+			public void run() {
+				TextLCD LCD = LocalEV3.get().getTextLCD();
+				while (true){
+					//Sound.beep();
+					LCD.drawString("X "+odometer.getX(), 0, 0);
+					LCD.drawString("Y "+odometer.getY(), 0, 1);
+					LCD.drawString("Theta "+odometer.getTheta(), 0, 2);
+
+					LCD.drawString("LLS "+LeftLightSensor.getInstance().scan(), 0, 5);
+					LCD.drawString("RLS "+RightLightSensor.getInstance().scan(), 0, 6);
+				}
+			}
+		}).start();
+		
+		/*
+		//turn 90 degrees counterclockwise
+		leftMotor.setSpeed(Constants.ROTATE_SPEED);
+		rightMotor.setSpeed(Constants.ROTATE_SPEED);
+
+		leftMotor.rotate(+navigation.convertAngle(Constants.WHEEL_RADIUS, Constants.TRACK, 90.0), true);	//use new "TRACK" not the one in "Constants" class
+		rightMotor.rotate(-navigation.convertAngle(Constants.WHEEL_RADIUS, Constants.TRACK, 90.0), false);	//use new "TRACK" not the one in "Constants" class
+
+		Delay.msDelay(5000);
+		*/
+		 
+
+
 		performBlackLineDetection();
 
 		scanRight=false;
@@ -89,7 +204,7 @@ public class LightLocalizerTwo {
 		}
 
 		//go backwards 10 cm to avoid detecting the y-axis while correcting odometer y later
-		navigation.goBackward(10);
+		navigation.goBackward(Constants.LRS_TO_AXIS_DISTANCE);
 
 		//turn 90 degrees counterclockwise
 		leftMotor.setSpeed(Constants.ROTATE_SPEED);
@@ -105,21 +220,38 @@ public class LightLocalizerTwo {
 		//correct odometer y
 		odometer.setY(Constants.LRS_TO_AXIS_DISTANCE);
 		//Delay.msDelay(5000);
-		
+
 		double newPos2[] = {0,Constants.LRS_TO_AXIS_DISTANCE,90};
 		boolean newUpdates2[] = {false,true,true};
 		odometer.setPosition(newPos2,newUpdates2);
-		
+
 		if(odometer.getTheta()==0 && odometer.getY()==Constants.LRS_TO_AXIS_DISTANCE){
 			Sound.beepSequence();
 		}
+		navigation.goBackward(Constants.LRS_TO_AXIS_DISTANCE);
+		
+		
+		//navigation.travelTo(0, 0);
 
-		navigation.travelTo(0, 0);
-		navigation.turnTo(0, true);
+		//turn 90 degrees clockwise
+		leftMotor.setSpeed(Constants.ROTATE_SPEED);
+		rightMotor.setSpeed(Constants.ROTATE_SPEED);
+
+		leftMotor.rotate(navigation.convertAngle(Constants.WHEEL_RADIUS, Constants.TRACK, 90.0), true);	//use new "TRACK" not the one in "Constants" class
+		rightMotor.rotate(-navigation.convertAngle(Constants.WHEEL_RADIUS, Constants.TRACK, 90.0), false);	//use new "TRACK" not the one in "Constants" class
+
+
+		//navigation.turnTo(0, true);
+
 		//display.stop();
-	}
-
-
+		 	
+		}
+	
+	
+	
+	
+	
+	
 
 	public void performBlackLineDetection(){
 		while(isBlackLineDetected==false){
@@ -179,7 +311,7 @@ public class LightLocalizerTwo {
 	}
 
 	private boolean isBlackLineDetected(double val){
-		if(val<25)
+		if(val<45)
 			return true;
 		else
 			return false;
