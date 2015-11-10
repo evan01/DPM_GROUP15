@@ -6,7 +6,6 @@ import lejos.hardware.ev3.LocalEV3;
 import lejos.hardware.lcd.TextLCD;
 import lejos.hardware.motor.EV3LargeRegulatedMotor;
 import lejos.utility.Delay;
-
 import robot.constants.Constants;
 import robot.display.Display;
 import robot.sensors.LeftLightSensor;
@@ -25,7 +24,12 @@ public class LightLocalizerTwo {
 	private boolean scanLeft;
 	private Display display;
 
+	// this is a singleton class
+	private static final LightLocalizerTwo ourInstance = new LightLocalizerTwo();
 
+	public static LightLocalizerTwo getInstance() {
+		return ourInstance;
+	}
 	public LightLocalizerTwo(){
 		leftLightSensor=LeftLightSensor.getInstance();
 		rightLightSensor=RightLightSensor.getInstance();
@@ -37,7 +41,7 @@ public class LightLocalizerTwo {
 		scanRight=false;
 		scanLeft=false;
 		//display=Display.getInstance();
-
+		
 	}
 
 	//*************************
@@ -122,11 +126,6 @@ public class LightLocalizerTwo {
 		 	
 		}
 	
-	
-	
-	
-	
-	
 
 	public void performBlackLineDetection(){
 		while(isBlackLineDetected==false){
@@ -196,7 +195,7 @@ public class LightLocalizerTwo {
 	}
 	
 	private boolean isBlackLineDetected(double val){
-		if(val<45)
+		if(val<Constants.LIGHT_THRESHOLD)
 			return true;
 		else
 			return false;
