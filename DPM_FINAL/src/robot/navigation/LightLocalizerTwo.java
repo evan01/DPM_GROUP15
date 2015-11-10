@@ -66,10 +66,6 @@ public class LightLocalizerTwo {
 		
 		performBlackLineDetection();
 
-		scanRight=false;
-		scanLeft=false;
-		isBlackLineDetected=false;
-
 		//correct odometer x
 		odometer.setX(Constants.LRS_TO_AXIS_DISTANCE);
 		//correct odometer angle
@@ -167,6 +163,10 @@ public class LightLocalizerTwo {
 			Sound.beep();
 			navigation.setSpeeds(0, 0);
 		}
+		
+		scanRight=false;
+		scanLeft=false;
+		isBlackLineDetected=false;
 
 	}
 
