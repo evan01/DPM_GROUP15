@@ -131,9 +131,15 @@ public class LightLocalizerTwo {
 	public void performBlackLineDetection(){
 		while(isBlackLineDetected==false){
 			navigation.setSpeeds(Constants.LIGHT_LOCALIZATION_FORWARD_SPEED,Constants.LIGHT_LOCALIZATION_FORWARD_SPEED);
-
-			scanRight=scanRight(rightLightSensor);
-			scanLeft=scanLeft(leftLightSensor);
+			
+			double averageRight1=rightLightSensor.scanWithAverageFilter();
+			double averageRight2=rightLightSensor.scanWithAverageFilter();
+			
+			double averageLeft1=leftLightSensor.scanWithAverageFilter();
+			double averageLeft2=leftLightSensor.scanWithAverageFilter();
+			
+			scanRight=rightLightSensor.scanWithDiffrentialFilter(averageRight1,averageRight2,12);
+			scanLeft=leftLightSensor.scanWithDiffrentialFilter(averageLeft1,averageLeft2,12);
 			isBlackLineDetected=scanRight || scanLeft;	
 		}
 		Sound.beep();
@@ -180,7 +186,7 @@ public class LightLocalizerTwo {
 	private boolean scanRight(RightLightSensor rs){
 		return isBlackLineDetected(rs.scan());
 	}
-
+	
 	/**
 	 * Check if the leftLightSensor detected a black line
 	 * @return
@@ -188,13 +194,14 @@ public class LightLocalizerTwo {
 	private boolean scanLeft(LeftLightSensor ls){
 		return isBlackLineDetected(ls.scan());
 	}
-
+	
 	private boolean isBlackLineDetected(double val){
 		if(val<45)
 			return true;
 		else
 			return false;
 	}
+	
 
 }
 

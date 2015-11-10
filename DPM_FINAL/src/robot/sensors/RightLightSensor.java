@@ -56,6 +56,32 @@ public class RightLightSensor implements Runnable{
     	lightSensorR.fetchSample(sampleRight, 0); // acquire data
         return (sampleRight[0] * 100.0);
     }
+    
+    public synchronized double scanWithAverageFilter(){
+    	lightSensorR.fetchSample(sampleRight, 0); // acquire data
+    	double reading1=sampleRight[0] * 100.0;
+    	lightSensorR.fetchSample(sampleRight, 0); // acquire data
+    	double reading2=sampleRight[0] * 100.0;
+    	lightSensorR.fetchSample(sampleRight, 0); // acquire data
+    	double reading3=sampleRight[0] * 100.0;
+    	lightSensorR.fetchSample(sampleRight, 0); // acquire data
+    	double reading4=sampleRight[0] * 100.0;
+    	lightSensorR.fetchSample(sampleRight, 0); // acquire data
+    	double reading5=sampleRight[0] * 100.0;
+        double average=(reading1+reading2+reading3+reading4+reading5);
+    	return average;
+    }
+    
+    
+    public synchronized boolean scanWithDiffrentialFilter(double average1,double average2,double difference){
+    	if (Math.abs(average1-average2)>difference){
+    		return true;
+    	}
+    	return false;
+    	
+    }
+    
+    
     public synchronized float getIntensity() {
         return lightIntensity;
     }
