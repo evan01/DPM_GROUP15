@@ -1,6 +1,7 @@
 package test;
 
 import lejos.hardware.Button;
+import robot.display.Display;
 import robot.navigation.Navigation;
 import robot.navigation.Odometer;
 
@@ -28,12 +29,13 @@ public class OdoCorrectionTest {
 	public static void testCorrection(){
 		Odometer odo = Odometer.getInstance();
 		Navigation nav = Navigation.getInstance();
+		Display display = Display.getInstance();
 		
-		
+		display.start();
 		nav.clawUp();
 		nav.grab();
 		odo.setPosition(new double[] {0, 0,0,}, new boolean[]{true,true,true});
-		nav.travelToWithCorrection(0, 90, odo.getTheta());
+		nav.travelToWithCorrection(60, 90, odo.getTheta());
 		
 		
 	}

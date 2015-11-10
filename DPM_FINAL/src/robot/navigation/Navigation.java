@@ -26,7 +26,6 @@ public class Navigation {
 	public boolean hasStyro = false;
 	private static LeftLightSensor leftLS;
 	private static RightLightSensor rightLS;
-	private LightLocalizerTwo lightLocalTwo;
 	private boolean isBlackLineDetected;
 	private boolean scanRight;
 	private boolean scanLeft;
@@ -35,8 +34,6 @@ public class Navigation {
 	// for odo correction
 	public int horizontalLinesCrossed = -1;
 	public int verticalLinesCrossed = -1; 
-	private boolean hasLeftLine;
-	private boolean hasRightLine;
 	
 	
 
@@ -55,7 +52,10 @@ public class Navigation {
 		this.odometer = Odometer.getInstance();
 		this.leftLS = LeftLightSensor.getInstance();
 		this.rightLS = RightLightSensor.getInstance();
+<<<<<<< Updated upstream
 		//this.lightLocalTwo = LightLocalizerTwo.getInstance();
+=======
+>>>>>>> Stashed changes
 
 		EV3LargeRegulatedMotor[] motors = new EV3LargeRegulatedMotor[2];
 		motors = this.odometer.getMotors();
@@ -199,6 +199,7 @@ public class Navigation {
 	}
 	/**
 	 * Go foward a set distance in cm
+	 * @param distance the distance with which to move forward
 	 */
 	public void goForward(double distance) {
 		leftMotor.setSpeed(SLOW);
@@ -296,8 +297,6 @@ public class Navigation {
 				performBlackLineDetection();
 				performOdometerCorrection();
 			}
-			odometer.getLeftMotor().stop(true);
-			odometer.getRightMotor().stop();
 			if(odometer.getX() > x)
 			{
 				travelToBackwards(x, odometer.getY());
@@ -311,8 +310,6 @@ public class Navigation {
 				performBlackLineDetection();
 				performOdometerCorrection();
 			}
-			odometer.getLeftMotor().stop(true);
-			odometer.getRightMotor().stop();
 			if(odometer.getY() < y)
 			{
 				travelToBackwards(odometer.getX(), y);
@@ -326,8 +323,6 @@ public class Navigation {
 				performBlackLineDetection();
 				performOdometerCorrection();
 			}
-			odometer.getLeftMotor().stop(true);
-			odometer.getRightMotor().stop();
 			if(odometer.getX() < x)
 			{
 				travelToBackwards(x, odometer.getY());
@@ -343,8 +338,6 @@ public class Navigation {
 				performBlackLineDetection();
 				performOdometerCorrection();
 			}
-			odometer.getLeftMotor().stop(true);
-			odometer.getRightMotor().stop();
 			if(odometer.getY() > y)
 			{
 				travelToBackwards(odometer.getX(), y );
@@ -353,13 +346,20 @@ public class Navigation {
 		Delay.msDelay(500);
 	}
 	
-
 	public void performBlackLineDetection(){
 		while(isBlackLineDetected==false){
 			setSpeeds(Constants.SLOW,Constants.SLOW);
-
-			scanRight=scanRight(rightLS);
-			scanLeft=scanLeft(leftLS);
+//
+//			scanRight=scanRight(rightLS);
+//			scanLeft=scanLeft(leftLS);
+			double averageRight1=rightLS.scanWithAverageFilter();
+			double averageRight2=rightLS.scanWithAverageFilter();
+			
+			double averageLeft1=leftLS.scanWithAverageFilter();
+			double averageLeft2=leftLS.scanWithAverageFilter();
+			
+			scanRight=rightLS.scanWithDiffrentialFilter(averageRight1,averageRight2,12);
+			scanLeft=leftLS.scanWithDiffrentialFilter(averageLeft1,averageLeft2,12);
 			isBlackLineDetected=scanRight || scanLeft;	
 		}
 		Sound.beep();
