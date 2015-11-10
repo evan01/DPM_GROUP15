@@ -19,7 +19,7 @@ public class Stage1 {
 
     	//Stage 1 begins by localizing
         robot.localize();
-        robot.capture();
+
         
         //go to center of square it is currently in (one of the 4 corners)
         //since it is known robot starts in a corner, can use current odometer values to find
