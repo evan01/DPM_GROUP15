@@ -52,10 +52,6 @@ public class Navigation {
 		this.odometer = Odometer.getInstance();
 		this.leftLS = LeftLightSensor.getInstance();
 		this.rightLS = RightLightSensor.getInstance();
-<<<<<<< Updated upstream
-		//this.lightLocalTwo = LightLocalizerTwo.getInstance();
-=======
->>>>>>> Stashed changes
 
 		EV3LargeRegulatedMotor[] motors = new EV3LargeRegulatedMotor[2];
 		motors = this.odometer.getMotors();
@@ -295,7 +291,7 @@ public class Navigation {
 			while(odometer.getX() < x)
 			{
 				performBlackLineDetection();
-				performOdometerCorrection();
+				performOdometerCorrection();	
 			}
 			if(odometer.getX() > x)
 			{
@@ -309,6 +305,7 @@ public class Navigation {
 			{
 				performBlackLineDetection();
 				performOdometerCorrection();
+				
 			}
 			if(odometer.getY() < y)
 			{
@@ -347,19 +344,22 @@ public class Navigation {
 	}
 	
 	public void performBlackLineDetection(){
+		double rightReading1,rightReading2,leftReading1,leftReading2;
 		while(isBlackLineDetected==false){
 			setSpeeds(Constants.SLOW,Constants.SLOW);
-//
+//			Delay.msDelay(500);
 //			scanRight=scanRight(rightLS);
 //			scanLeft=scanLeft(leftLS);
-			double averageRight1=rightLS.scanWithAverageFilter();
-			double averageRight2=rightLS.scanWithAverageFilter();
+			rightReading1=rightLS.scan();
+		//	Delay.msDelay(50);
+			rightReading2=rightLS.scan();
+
+			leftReading1=leftLS.scan();
+		//	Delay.msDelay(50);
+			leftReading2=leftLS.scan();
 			
-			double averageLeft1=leftLS.scanWithAverageFilter();
-			double averageLeft2=leftLS.scanWithAverageFilter();
-			
-			scanRight=rightLS.scanWithDiffrentialFilter(averageRight1,averageRight2,12);
-			scanLeft=leftLS.scanWithDiffrentialFilter(averageLeft1,averageLeft2,12);
+			scanRight= scanWithDiffrentialFilter(rightReading1,rightReading2);
+			scanLeft= scanWithDiffrentialFilter(leftReading1,leftReading2);
 			isBlackLineDetected=scanRight || scanLeft;	
 		}
 		Sound.beep();
@@ -374,7 +374,10 @@ public class Navigation {
 			//turn clockwise leftMotor only
 			while(scanLeft==false){
 				setSpeeds(Constants.ROTATE_SPEED,0);
-				scanLeft=scanLeft(leftLS);
+				leftReading1=leftLS.scan();
+			//	Delay.msDelay(50);
+				leftReading2=leftLS.scan();
+				scanLeft=scanWithDiffrentialFilter(leftReading1,leftReading2);
 			}
 			Sound.beep();
 			setSpeeds(0, 0);
@@ -384,17 +387,21 @@ public class Navigation {
 			//turn counterclockwise rightMotor only
 			while(scanRight==false){
 				setSpeeds(0,Constants.ROTATE_SPEED);
-				scanRight=scanRight(rightLS);
+				rightReading1=rightLS.scan();
+			//	Delay.msDelay(50);
+				rightReading2=rightLS.scan();
+				scanRight=scanWithDiffrentialFilter(rightReading1,rightReading2);
 			}
 			Sound.beep();
 			setSpeeds(0, 0);
 		}
-		
+
 		scanRight=false;
 		scanLeft=false;
 		isBlackLineDetected=false;
 
 	}
+
 
 
 
@@ -405,6 +412,14 @@ public class Navigation {
 	 */
 	private boolean scanRight(RightLightSensor rs){
 		return isBlackLineDetected(rs.scan());
+	}
+	
+	public boolean scanWithDiffrentialFilter(double average1,double average2){
+		if ((average1<Constants.LIGHT_THRESHOLD || average2<Constants.LIGHT_THRESHOLD) ){
+			return true;
+		}
+		return false;
+
 	}
 
 	/**
