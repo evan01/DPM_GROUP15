@@ -392,14 +392,6 @@ public class Navigation {
 		isBlackLineDetected=false;
 
 	}
-	/**
-	 * Check if the rightLightSensor detected a black line
-	 * @return
-	 */
-	private boolean scanRight(RightLightSensor rs){
-		return isBlackLineDetected(rs.scan());
-	}
-	
 	public boolean scanWithDiffrentialFilter(double average1,double average2){
 		if ((average1<Constants.LIGHT_THRESHOLD || average2<Constants.LIGHT_THRESHOLD) ){
 			return true;
@@ -407,23 +399,6 @@ public class Navigation {
 		return false;
 
 	}
-
-	/**
-	 * Check if the leftLightSensor detected a black line
-	 * @return
-	 */
-	private boolean scanLeft(LeftLightSensor ls){
-		return isBlackLineDetected(ls.scan());
-	}
-
-	private boolean isBlackLineDetected(double val){
-		if(val<Constants.LIGHT_THRESHOLD)
-			return true;
-		else
-			return false;
-	}
-	
-
 	//###### ODOMETRY CORRECTION ########
 	// this could have been simpler but I needed to keep count of gridline number - Mahmood
 	private void performOdometerCorrection()
@@ -494,7 +469,7 @@ public class Navigation {
         goForward(3);
         armMotor.forward();
         armMotor.setSpeed(150);
-        armMotor.rotate(-180);
+        armMotor.rotate(-120);
         Delay.msDelay(250);
         armMotor.stop();
     }
