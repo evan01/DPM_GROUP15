@@ -107,7 +107,7 @@ public class LightLocalizerTwo {
 		if(odometer.getTheta()==0 && odometer.getY()==Constants.LRS_TO_AXIS_DISTANCE){
 			Sound.beepSequence();
 		}
-		navigation.goBackward(Constants.LRS_TO_AXIS_DISTANCE);
+		navigation.goBackward(Constants.LRS_TO_AXIS_DISTANCE );
 
 		//turn 90 degrees clockwise
 		leftMotor.setSpeed(Constants.ROTATE_SPEED);

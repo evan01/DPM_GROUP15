@@ -285,61 +285,49 @@ public class Navigation {
 		odometer.getLeftMotor().forward();
 		odometer.getRightMotor().forward();
 
+		turnTo(theta, true);
+		
 		Sound.buzz();
 		// Heading EAST (x++)
 		if(theta >= 45 && theta < 135)
 		{
-			while(odometer.getX() < x)
+			while(odometer.getY() < y)
 			{
 				performBlackLineDetection();
 				performOdometerCorrection();	
 			}
-			if(odometer.getX() > x)
-			{
-				travelToBackwards(x, odometer.getY());
-			}
+			setSpeeds(0,0);
 		}
 		// Heading SOUTH (y--)
 		else if(theta >= 135 && theta < 225)
 		{
-			while(odometer.getY() > y)
+			while(odometer.getX() > x)
 			{
 				performBlackLineDetection();
 				performOdometerCorrection();
 				
 			}
-			if(odometer.getY() < y)
-			{
-				travelToBackwards(odometer.getX(), y);
-			}
 		}
 		// Heading WEST (x--)
 		else if(theta >= 225 && theta < 315)
 		{
-			while(odometer.getX() > x )
+			while(odometer.getY() > y )
 			{
 				performBlackLineDetection();
 				performOdometerCorrection();
 			}
-			if(odometer.getX() < x)
-			{
-				travelToBackwards(x, odometer.getY());
-			}
-
+			setSpeeds(0,0);
 		}
 		// Heading NORTH (y++)
 		else
 		{
 			
-			while(odometer.getY() < y)
+			while(odometer.getX() < x)
 			{
 				performBlackLineDetection();
 				performOdometerCorrection();
 			}
-			if(odometer.getY() > y)
-			{
-				travelToBackwards(odometer.getX(), y );
-			}
+			setSpeeds(0,0);
 		}
 		Delay.msDelay(500);
 	}
@@ -368,7 +356,8 @@ public class Navigation {
 		if(scanRight==true && scanLeft==true){
 			//do nothing
 			Sound.beepSequence();
-			setSpeeds(0, 0);
+			//setSpeeds(0, 0);
+			Delay.msDelay(500);
 		}
 
 		else if(scanRight==true){
@@ -381,7 +370,9 @@ public class Navigation {
 				scanLeft=scanWithDiffrentialFilter(leftReading1,leftReading2);
 			}
 			Sound.beep();
-			setSpeeds(0, 0);
+			setSpeeds(Constants.SLOW, Constants.SLOW);
+			Delay.msDelay(1000);
+		
 		}
 
 		else if(scanLeft==true){
@@ -394,7 +385,9 @@ public class Navigation {
 				scanRight=scanWithDiffrentialFilter(rightReading1,rightReading2);
 			}
 			Sound.beep();
-			setSpeeds(0, 0);
+			//setSpeeds(0, 0);
+			setSpeeds(Constants.SLOW, Constants.SLOW);
+			Delay.msDelay(1000);
 		}
 
 		scanRight=false;
@@ -446,48 +439,48 @@ public class Navigation {
 		// Updates the x, y and theta values on the Odometer according to the correction
 		double heading = odometer.getTheta();
 		
-		// Heading EAST (x++)
+		// Heading EAST (y++)
 		if(heading >= 45 && heading < 135)
 		{
-			double xActual = odometer.getX() + Math.sin(odometer.getTheta()*Constants.LIGHT_SENS_OFFSET);
-			double correctionX = (xActual%30.48);
+			double yActual = odometer.getY() + Math.cos(odometer.getTheta()*Constants.LIGHT_SENS_OFFSET);
+			double correctionY = -(yActual%30.48);
 			horizontalLinesCrossed++;
-			odometer.setPosition(new double[] {correctionX + odometer.getX(), 0.0, 90.0}, 
-								  new boolean[] {true, false, true});
+			odometer.setPosition(new double[] {0.0, correctionY + odometer.getY(), 90.0}, 
+								  new boolean[] {false,true, true});
 		}
-		// Heading SOUTH (y--)
+		// Heading SOUTH (x--)
 		else if(heading >= 135 && heading < 225)
 		{
 			if(verticalLinesCrossed < 0)
 				verticalLinesCrossed = 0;
 			
-			double yActual = odometer.getY() + Math.cos(odometer.getTheta()*Constants.LIGHT_SENS_OFFSET);
-			double correctionY = (yActual%30.48);
-			odometer.setPosition(new double[] {0.0, correctionY + odometer.getY() , 180.0}, 
-								  new boolean[] {false, true, true});
+			double xActual = odometer.getX() + Math.sin(odometer.getTheta()*Constants.LIGHT_SENS_OFFSET);
+			double correctionX = -(xActual%30.48);
+			odometer.setPosition(new double[] { correctionX + odometer.getX() ,0.0, 180.0}, 
+								  new boolean[] {true,false,true});
 			verticalLinesCrossed--;
 		}
-		// Heading WEST (x--)
+		// Heading WEST (y--)
 		else if(heading >= 225 && heading < 315)
 		{
 			if(horizontalLinesCrossed < 0)
 				horizontalLinesCrossed = 0;
 			
-			double xActual = odometer.getX() + Math.sin(odometer.getTheta()*Constants.LIGHT_SENS_OFFSET);
-			double correctionX = (xActual%30.48);
+			double yActual = odometer.getY() + Math.cos(odometer.getTheta()*Constants.LIGHT_SENS_OFFSET);
+			double correctionY = -(yActual%30.48);
 			
-			odometer.setPosition(new double[] {correctionX + odometer.getX(), 0.0, 270.0},
-								  new boolean[] {true, false, true});
+			odometer.setPosition(new double[] {0.0, correctionY + odometer.getY(), 270.0}, 
+					  new boolean[] {false,true, true});
 			horizontalLinesCrossed--;
 		}
 		// Heading NORTH (y++)
 		else
 		{
-			double yActual = odometer.getY() + Math.cos(odometer.getTheta()*Constants.LIGHT_SENS_OFFSET);
-			double correctionY = (yActual%30.48);
+			double xActual = odometer.getX() + Math.sin(odometer.getTheta()*Constants.LIGHT_SENS_OFFSET);
+			double correctionX = -(xActual%30.48);
 			verticalLinesCrossed++;
-			odometer.setPosition(new double[] {0.0, correctionY + odometer.getY(), 0.0}, 
-								  new boolean[] {false, true, true});
+			odometer.setPosition(new double[] { correctionX + odometer.getX() ,0.0, 0.0}, 
+					  new boolean[] {true,false,true});
 		}
 
 	}
