@@ -288,7 +288,7 @@ public class Navigation {
 		turnTo(theta, true);
 		
 		Sound.buzz();
-		// Heading EAST (x++)
+		// Heading EAST (y++)
 		if(theta >= 45 && theta < 135)
 		{
 			while(odometer.getY() < y)
@@ -296,19 +296,19 @@ public class Navigation {
 				performBlackLineDetection();
 				performOdometerCorrection();	
 			}
-			setSpeeds(0,0);
+			stopMoving();
 		}
-		// Heading SOUTH (y--)
+		// Heading SOUTH (x--)
 		else if(theta >= 135 && theta < 225)
 		{
 			while(odometer.getX() > x)
 			{
 				performBlackLineDetection();
 				performOdometerCorrection();
-				
 			}
+			stopMoving();
 		}
-		// Heading WEST (x--)
+		// Heading WEST (y--)
 		else if(theta >= 225 && theta < 315)
 		{
 			while(odometer.getY() > y )
@@ -316,9 +316,9 @@ public class Navigation {
 				performBlackLineDetection();
 				performOdometerCorrection();
 			}
-			setSpeeds(0,0);
+			stopMoving();
 		}
-		// Heading NORTH (y++)
+		// Heading NORTH (x++)
 		else
 		{
 			
@@ -327,7 +327,7 @@ public class Navigation {
 				performBlackLineDetection();
 				performOdometerCorrection();
 			}
-			setSpeeds(0,0);
+			stopMoving();
 		}
 		Delay.msDelay(500);
 	}
@@ -336,9 +336,6 @@ public class Navigation {
 		double rightReading1,rightReading2,leftReading1,leftReading2;
 		while(isBlackLineDetected==false){
 			setSpeeds(Constants.SLOW,Constants.SLOW);
-//			Delay.msDelay(500);
-//			scanRight=scanRight(rightLS);
-//			scanLeft=scanLeft(leftLS);
 			rightReading1=rightLS.scan();
 		//	Delay.msDelay(50);
 			rightReading2=rightLS.scan();
@@ -395,11 +392,6 @@ public class Navigation {
 		isBlackLineDetected=false;
 
 	}
-
-
-
-
-
 	/**
 	 * Check if the rightLightSensor detected a black line
 	 * @return
