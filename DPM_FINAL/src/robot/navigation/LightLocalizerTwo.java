@@ -8,7 +8,6 @@ import lejos.hardware.motor.EV3LargeRegulatedMotor;
 import lejos.utility.Delay;
 
 import robot.constants.Constants;
-import robot.display.Display;
 import robot.sensors.LeftLightSensor;
 import robot.sensors.RightLightSensor;
 import robot.sensors.USSensor;
@@ -23,7 +22,7 @@ public class LightLocalizerTwo {
 	private boolean isBlackLineDetected;
 	private boolean scanRight;
 	private boolean scanLeft;
-	private Display display;
+	//private Display display;
 
 
 	public LightLocalizerTwo(){

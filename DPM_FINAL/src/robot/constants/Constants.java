@@ -25,11 +25,11 @@ public class Constants {
 		// Motors
 		public static final double WHEEL_RADIUS = 2.2;
 		public static final double TRACK = 15.1;
-		public static final float LIGHT_LOCALIZATION_FORWARD_SPEED=60;
+		public static final float LIGHT_LOCALIZATION_FORWARD_SPEED=70;
 		public static final int forwardSpeed = 150;
 		public static final int ROTATE_SPEED = 50;
 		public final static int FAST = 200;
-		public final static int SLOW = 100;
+		public final static int SLOW = 110;
 		public final static int ACCELERATION = 4000;
 		public final static double DEG_ERR = 3.0;
 		public final static double CM_ERR = 1.0;
@@ -43,7 +43,7 @@ public class Constants {
 
 		// LIGHT SENSOR
 		public static final int LIGHT_SENSOR_UPDATE_TIME = 200;
-		public static final int LIGHT_THRESHOLD = 55; 
+		public static final int LIGHT_THRESHOLD = 58; 
 		public static final double LIGHT_SENS_OFFSET = 7.1;
 		public static final double C_SENS_OFFSET = 2;
 		public static final double SQUARE_WIDTH = 30.48;

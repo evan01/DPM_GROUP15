@@ -6,6 +6,7 @@ import robot.constants.Constants;
 import robot.constants.Move;
 import robot.constants.Position;
 
+import java.util.LinkedList;
 import java.util.Queue;
 import java.util.concurrent.PriorityBlockingQueue;
 
@@ -40,7 +41,7 @@ public class Traveler {
     boolean movingInY = true;
     Queue<Move> xInstructions;
     Queue<Move> yInstructions;
-    private double gridSpace = 30.4;
+    private double gridSpace = Constants.SQUARE_WIDTH;
 
 
 
@@ -48,8 +49,8 @@ public class Traveler {
         nav = Navigation.getInstance();
         odo = Odometer.getInstance();
         grid = new boolean[12][12];
-        xInstructions = new PriorityBlockingQueue<Move>();
-        yInstructions = new PriorityBlockingQueue<Move>();
+        xInstructions = new LinkedList<Move>();
+        yInstructions = new LinkedList<Move>();
     }
 
 
@@ -60,8 +61,8 @@ public class Traveler {
      */
     public void goTo(int x, int y){
         //First find the number of X and Y moves to make
-        int xMoves = currentX - x;
-        int yMoves = currentY - y;
+        int xMoves = x - currentX;
+        int yMoves = y -  currentY;
 
         //Create a set of moves from each of these instructions
         addToQueue(yMoves,true);
@@ -80,7 +81,7 @@ public class Traveler {
      */
     private void startTraveling(){
 
-        while(currentX != finalX || currentY != finalY){
+        while(currentX != finalX && currentY != finalY){
             //While we aren't there yet, still instructions to execute
 
             //First fetch the next instruction to execute from the correct queue
@@ -200,15 +201,19 @@ public class Traveler {
         switch (move.direction){
             case up:
                 nav.turnTo(90,true);
+
                 break;
             case down:
                 nav.turnTo(270,true);
+
                 break;
             case left:
                 nav.turnTo(180,true);
+
                 break;
             case right:
                 nav.turnTo(0,true);
+
                 break;
         }
         return scan();
@@ -318,7 +323,7 @@ public class Traveler {
     private void goRight(){
         Position p = odo.getPosition();
         double newX = p.getY() + gridSpace;
-
+        System.out.println("right");
         //Make sure we are facing the correct way
         nav.turnTo(0,true);
         nav.travelToWithCorrection(newX,p.getY(),0);
@@ -331,7 +336,7 @@ public class Traveler {
     private void goUP(){
         Position p = odo.getPosition();
         double newY = p.getY() + gridSpace;
-
+        System.out.println("up");
         //Make sure we are facing the correct way
         nav.turnTo(90,true);
         nav.travelToWithCorrection(p.getX(),newY,90);
@@ -344,7 +349,7 @@ public class Traveler {
     private void goDown(){
         Position p = odo.getPosition();
         double newY = p.getY() - gridSpace;
-
+        
         //Make sure we are facing the correct way
         nav.turnTo(270,true);
         nav.travelToWithCorrection(p.getX(),newY,270);

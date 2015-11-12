@@ -28,7 +28,7 @@ public class OdoCorrectionTest {
 	}
 	
 	public static void testCorrection(){
-		//Odometer odo = Odometer.getInstance();
+		Odometer odo = Odometer.getInstance();
 		Navigation nav = Navigation.getInstance();
 		Display display = Display.getInstance();
     	LightLocalizerTwo lightLocalizaerTwo = new LightLocalizerTwo();
@@ -38,7 +38,7 @@ public class OdoCorrectionTest {
     	lightLocalizaerTwo.lightLocalize();
 		display.start();
 
-		nav.travelToWithCorrection(62, 0, 0);
+		nav.travelToWithCorrection(40, 0, 0);
 		nav.setSpeeds(0, 0);
 		
 		
