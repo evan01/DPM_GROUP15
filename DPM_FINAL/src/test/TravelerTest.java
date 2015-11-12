@@ -5,6 +5,7 @@ package test;/*
 import lejos.hardware.Button;
 import robot.display.Display;
 import robot.navigation.LightLocalizerTwo;
+import robot.navigation.Navigation;
 import robot.navigation.Odometer;
 import robot.navigation.Traveler;
 
@@ -30,6 +31,8 @@ public class TravelerTest {
     	//Display.getInstance().start();
     	LightLocalizerTwo ll = new LightLocalizerTwo();
     	ll.lightLocalize();
+    	Navigation.getInstance().travelTo(-15, -15);
+    	Navigation.getInstance().turnTo(0, true);
         Traveler trav = new Traveler();
         trav.goTo(2,2);
         //trav.goTo(2, 0);
