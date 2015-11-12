@@ -4,6 +4,7 @@ package robot.navigation;/*
 
 import robot.constants.Constants;
 import robot.constants.Move;
+import robot.constants.Move.Direction;
 import robot.constants.Position;
 
 import java.util.LinkedList;
@@ -11,20 +12,17 @@ import java.util.Queue;
 import java.util.concurrent.PriorityBlockingQueue;
 
 /**
- * This class will represent an object which controls the navigation of our robot in such a way, that we can move our robot to
- * individual squares on the map. This is another layer on top of the navigation that seperates moving in cm to moving in tiles.
- *
- *
- *
+ * This class will represent an object which controls the navigation of our
+ * robot in such a way, that we can move our robot to individual squares on the
+ * map. This is another layer on top of the navigation that seperates moving in
+ * cm to moving in tiles.
+ * 
+ * 
+ * 
  * Just as a reference this is how we perceive the coordinate system
- *
- *           Up
- *           |
- * Left<_____|______>Right
- *           |
- *           |
- *          Down
- *
+ * 
+ * Up | Left<_____|______>Right | | Down
+ * 
  * RIGHT NOW SCAN WILL ALWAYS RETURN TRUE. JUST TO TEST WITHOUT COL DETECTION
  */
 public class Traveler {
@@ -119,30 +117,45 @@ public class Traveler {
     }
 
 
-    /**
-     * Returns the next best move for our robot to make if there's an obstacel in its way
-     * @param mv the move that we can't make anymore
-     * @return the next best move
-     */
-    private Move getBestDirection(Move mv) {
-        //TODO implement this method
-        /*  if our robot is facing in the x direction, it has to move up or down to avoid obstacle
-            if our robot is facing in the y direction, it has to move left or right to avoid obstacle
+	/**
+	 * Returns the next best move for our robot to make if there's an obstacle
+	 * in its way
+	 * 
+	 * @param mv
+	 *            the move that we can't make anymore due to object
+	 * @return the next best move,
+	 * @author morganmattone
+	 */
+	private Move getBestDirection(Move mv) {
+		
+		// If our robot is moving either up or down (y direction), turn left or
+		// right to avoid the object
+		if (mv.direction == Move.Direction.up
+				|| mv.direction == Move.Direction.down) {
 
-            if on the bottom of map then move up when there is a x obstacle
-            if on the top of the map then move down when there is an x obstacle
+			if (currentX <= 6) {
+				// If our robot is on the left side of the grid, turn right so
+				// as not to hit the wall by accident
+				return new Move(Move.Direction.right);
+			} else {
+				// If our robot is on the right side of the grid, turn left
+				return new Move(Move.Direction.left);
+			}
 
-            if on the right of the map then move left when there is a y obstacle
-            if on the left of the map then move right when there is a y obstacle
+		} else {
+			// If our robot is moving either left or right (x direction), turn
+			// up or down to avoid the object
 
-            if we move to the right, it wasn't intended, so then at some point we need to correct for this, add a
-            left move onto the queue
-            if we move to the left, it wasn't intended, so then add a right move on the queue
-            if we move up, then add down move to queue
-            move down, add up move
-       */
-        return null;
-    }
+			if (currentY <= 6) {
+				// If our robot is at the bottom of the grid, turn up
+				return new Move(Move.Direction.up);
+			} else {
+				// If our robot is at the top of the grid, turn down
+				return new Move(Move.Direction.down);
+			}
+		}
+
+	}
 
     private void correctAvoidanceMove(Move direction){
         //TODO implement this method
@@ -373,12 +386,12 @@ public class Traveler {
 }
 
 /*
-
-Ideas
-
-What we could do is that at every iteration of the start traveling loop,
-Just check to see how far we have to go in the x and y direction
-Then its in this method that we will decide what move to make
-We won't have to use a queue in this case... hmm food for thought
-This class is getting pretty intense but we master this and we're golden!
+ * 
+ * Ideas
+ * 
+ * What we could do is that at every iteration of the start traveling loop, Just
+ * check to see how far we have to go in the x and y direction Then its in this
+ * method that we will decide what move to make We won't have to use a queue in
+ * this case... hmm food for thought This class is getting pretty intense but we
+ * master this and we're golden!
  */
