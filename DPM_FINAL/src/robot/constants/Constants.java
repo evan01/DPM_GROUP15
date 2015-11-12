@@ -46,7 +46,7 @@ public class Constants {
 		public static final int LIGHT_THRESHOLD = 58; 
 		public static final double LIGHT_SENS_OFFSET = 7.1;
 		public static final double C_SENS_OFFSET = 2;
-		public static final double SQUARE_WIDTH = 30.48;
+		public static final double SQUARE_WIDTH = 15.48;
 
 		// Odometer
 		public static final int ODOMETER_UPDATE_INTERVAL = 20;

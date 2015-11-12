@@ -46,22 +46,7 @@ public class LightLocalizerTwo {
 	public void lightLocalize(){
 		//display.setLLS_ON(true);
 		//display.setRLS_ON(true);
-		//display.start();
-
-		(new Thread() {
-			public void run() {
-				TextLCD LCD = LocalEV3.get().getTextLCD();
-				while (true){
-					//Sound.beep();
-					LCD.drawString("X "+odometer.getX(), 0, 0);
-					LCD.drawString("Y "+odometer.getY(), 0, 1);
-					LCD.drawString("Theta "+odometer.getTheta(), 0, 2);
-
-					LCD.drawString("LLS "+LeftLightSensor.getInstance().scan(), 0, 5);
-					LCD.drawString("RLS "+RightLightSensor.getInstance().scan(), 0, 6);
-				}
-			}
-		}).start();
+		//display.start();s
 
 		performBlackLineDetection();
 

@@ -34,10 +34,10 @@ public class Traveler {
     Navigation nav;
     Odometer odo;
     boolean grid[][]; //Stores whether the square is empty or not
-    int currentX = 0;
-    int currentY =0;
-    int finalX;
-    int finalY;
+    public static int currentX = 1;
+    public static int currentY = 1;
+    public static int finalX;
+    public static int finalY;
     boolean movingInY = true;
     Queue<Move> xInstructions;
     Queue<Move> yInstructions;
@@ -63,7 +63,7 @@ public class Traveler {
         //First find the number of X and Y moves to make
         int xMoves = x - currentX;
         int yMoves = y -  currentY;
-
+       
         //Create a set of moves from each of these instructions
         addToQueue(yMoves,true);
         addToQueue(xMoves, false);
@@ -80,10 +80,15 @@ public class Traveler {
      * Orders the robot to start moving to the correct positions
      */
     private void startTraveling(){
+        
 
-        while(currentX != finalX && currentY != finalY){
+        while(currentX != finalX || currentY != finalY){
             //While we aren't there yet, still instructions to execute
-
+        	System.out.println("Curr X:"+currentX);
+            System.out.println("Curr Y:"+currentY);
+            System.out.println("FinalY:"+finalY);
+            System.out.println("Final X:"+finalX);
+            
             //First fetch the next instruction to execute from the correct queue
             Move mv = fetchInstruction(movingInY);
 
@@ -201,7 +206,6 @@ public class Traveler {
         switch (move.direction){
             case up:
                 nav.turnTo(90,true);
-
                 break;
             case down:
                 nav.turnTo(270,true);
@@ -213,10 +217,10 @@ public class Traveler {
                 break;
             case right:
                 nav.turnTo(0,true);
-
                 break;
         }
-        return scan();
+//        return scan();
+        return true;
     }
 
 
@@ -252,7 +256,7 @@ public class Traveler {
         // Store all of these moves in the navigation queue
         //We either create left directions or right directions
         if(moves < 0){
-            for (int i=0; i<moves;i--){
+            for (int i=0; i>moves;i--){
                 if(isYMove){
                     yInstructions.add(new Move(Move.Direction.down));
                 }else {
