@@ -19,6 +19,7 @@ public class RightLightSensor implements Runnable{
     private static SampleProvider lightSensorR;
     private float lightIntensity;
     private float[] sampleRight;
+    public double TILE_COLOR_VALUE;
 
 
     //This will help manage the threads execution loop
@@ -32,6 +33,7 @@ public class RightLightSensor implements Runnable{
         lightSensorR = sensorRight.getRedMode();     
         sampleRight = new float[lightSensorR.sampleSize()];
         sensorRight.setFloodlight(true);
+        this.TILE_COLOR_VALUE=scanWithAverageFilter();
     }
 	
 	@Override

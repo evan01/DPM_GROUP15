@@ -394,7 +394,7 @@ public class Navigation {
 
 	}
 	public boolean scanFilter(double average1,double average2){
-		if((((average1+average2)/2.0)/leftLS.TILE_COLOR_VALUE)*100 < 50){
+		if((((average1+average2)/2.0)/rightLS.TILE_COLOR_VALUE)*100 < 50){
 			return true;
 		} else{
 			return false;
