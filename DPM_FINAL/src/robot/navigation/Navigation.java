@@ -19,6 +19,7 @@ public class Navigation {
 	public static Odometer odometer;
 	private EV3LargeRegulatedMotor leftMotor, rightMotor, clawMotor;
 	private EV3MediumRegulatedMotor armMotor;
+	private Traveler path;
 	private float rotationSpeed;
 	private double RADIUS = Constants.WHEEL_RADIUS, TRACK = Constants.TRACK;
 	private int SEARCH_SPEED = 20;
@@ -412,6 +413,7 @@ public class Navigation {
 			double yActual = odometer.getY() + Math.cos(odometer.getTheta()*Constants.LIGHT_SENS_OFFSET);
 			double correctionY = -(yActual%30.48);
 			horizontalLinesCrossed++;
+			Traveler.currentY++;
 			odometer.setPosition(new double[] {0.0, correctionY + odometer.getY(), 90.0}, 
 								  new boolean[] {false,true, true});
 		}
@@ -423,6 +425,7 @@ public class Navigation {
 			
 			double xActual = odometer.getX() + Math.sin(odometer.getTheta()*Constants.LIGHT_SENS_OFFSET);
 			double correctionX = -(xActual%30.48);
+			Traveler.currentX--;
 			odometer.setPosition(new double[] { correctionX + odometer.getX() ,0.0, 180.0}, 
 								  new boolean[] {true,false,true});
 			verticalLinesCrossed--;
@@ -435,7 +438,7 @@ public class Navigation {
 			
 			double yActual = odometer.getY() + Math.cos(odometer.getTheta()*Constants.LIGHT_SENS_OFFSET);
 			double correctionY = -(yActual%30.48);
-			
+			Traveler.currentY--;
 			odometer.setPosition(new double[] {0.0, correctionY + odometer.getY(), 270.0}, 
 					  new boolean[] {false,true, true});
 			horizontalLinesCrossed--;
@@ -446,6 +449,7 @@ public class Navigation {
 			double xActual = odometer.getX() + Math.sin(odometer.getTheta()*Constants.LIGHT_SENS_OFFSET);
 			double correctionX = -(xActual%30.48);
 			verticalLinesCrossed++;
+			Traveler.currentX++;
 			odometer.setPosition(new double[] { correctionX + odometer.getX() ,0.0, 0.0}, 
 					  new boolean[] {true,false,true});
 		}

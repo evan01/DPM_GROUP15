@@ -35,7 +35,15 @@ public class TravelerTest {
     	Navigation.getInstance().turnTo(0, true);
         Traveler trav = new Traveler();
     //    trav.goTo(2,2);
+        trav.goTo(3, 8);
         trav.goTo(1, 1);
+//        try {
+//			Thread.sleep(1000);
+//		} catch (InterruptedException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+//        trav.goTo(1, 1);
         //trav.goTo(2, 0);
        // trav.goTo(0,0);
         //trav.goTo(1,3);

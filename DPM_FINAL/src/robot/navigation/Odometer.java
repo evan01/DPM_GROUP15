@@ -51,7 +51,7 @@ public class Odometer implements TimerListener {
     private Timer timer;
     private EV3LargeRegulatedMotor leftMotor, rightMotor, clawMotor;
     private EV3MediumRegulatedMotor armMotor;
-    private final int DEFAULT_TIMEOUT_PERIOD = 20;
+    private final int DEFAULT_TIMEOUT_PERIOD = 120;
     private double leftRadius, rightRadius, TRACK;
     private double x, y, theta;
     private double[] oldDH, dDH;

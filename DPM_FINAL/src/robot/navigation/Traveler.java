@@ -32,8 +32,8 @@ public class Traveler {
     Navigation nav;
     Odometer odo;
     boolean grid[][]; //Stores whether the square is empty or not
-    public static int currentX = 0;
-    public static int currentY = 0;
+    public static int currentX = 1;
+    public static int currentY = 1;
     public static int finalX;
     public static int finalY;
     boolean movingInY = true;
@@ -90,8 +90,8 @@ public class Traveler {
             System.out.println("Final X:"+finalX);
             
             //First fetch the next instruction to execute from the correct queue
-            if (yInstructions.size()==0)
-            		movingInY = false;
+//            if (yInstructions.size()==0)
+//            		movingInY = false;
             
             Move mv = fetchInstruction(movingInY);
 
@@ -330,52 +330,61 @@ public class Traveler {
      * Moves the robot left 1 tile x-=1
      */
     private void goLeft(){
+    	
         Position p = odo.getPosition();
         double newX = p.getX() - gridSpace;
 
         //Make sure we are facing the correct way
         nav.turnTo(180,true);
-        nav.travelToWithCorrection(newX,p.getY(),0);
-        currentX-=1;
+        nav.travelToWithCorrection(newX,p.getY(),180);
+        //currentX-=1;
     }
 
     /**
      * Moves the robot right 1 tile x+=1
      */
     private void goRight(){
+    	
         Position p = odo.getPosition();
         double newX = p.getX() + gridSpace;
         System.out.println("right");
         //Make sure we are facing the correct way
         nav.turnTo(0,true);
         nav.travelToWithCorrection(newX,p.getY(),0);
-        currentX+=1;
+        nav.stopMoving();
+        //currentX+=1;
+        
     }
 
     /**
      * Moves the robot up 1 tile, y += 1
      */
     private void goUP(){
+    	
         Position p = odo.getPosition();
         double newY = p.getY() + gridSpace;
         System.out.println("up");
         //Make sure we are facing the correct way
         nav.turnTo(90,true);
         nav.travelToWithCorrection(p.getX(),newY,90);
-        currentY+=1;
+        nav.stopMoving();
+       	//currentY+=1;
+        
     }
 
     /**
      * Moves the robot down 1 tile, y-=1
      */
     private void goDown(){
+
         Position p = odo.getPosition();
         double newY = p.getY() - gridSpace;
         
         //Make sure we are facing the correct way
         nav.turnTo(270,true);
         nav.travelToWithCorrection(p.getX(),newY,270);
-        currentY-=1;
+        nav.stopMoving();
+        //currentY-=1;
     }
 
     /**

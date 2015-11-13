@@ -38,8 +38,13 @@ public class OdoCorrectionTest {
     	lightLocalizaerTwo.lightLocalize();
 		display.start();
 
-		nav.travelToWithCorrection(40, 0, 0);
-		nav.setSpeeds(0, 0);
+		nav.travelToWithCorrection(0, 30.48, 90);
+		nav.travelToWithCorrection(30.48, 30.48, 0);
+		nav.travelToWithCorrection(30.48, 0, 270);
+		nav.travelToWithCorrection(0, 0, 180);
+		nav.turnTo(90,true);
+		
+		nav.stopMoving();
 		
 		
 	}
