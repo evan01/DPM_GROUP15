@@ -32,8 +32,8 @@ public class Traveler {
     Navigation nav;
     Odometer odo;
     boolean grid[][]; //Stores whether the square is empty or not
-    public static int currentX = 1;
-    public static int currentY = 1;
+    public static int currentX = 0;
+    public static int currentY = 0;
     public static int finalX;
     public static int finalY;
     boolean movingInY = true;
@@ -61,6 +61,8 @@ public class Traveler {
         //First find the number of X and Y moves to make
         int xMoves = x - currentX;
         int yMoves = y -  currentY;
+        
+        
        
         //Create a set of moves from each of these instructions
         addToQueue(yMoves,true);
@@ -88,6 +90,9 @@ public class Traveler {
             System.out.println("Final X:"+finalX);
             
             //First fetch the next instruction to execute from the correct queue
+            if (yInstructions.size()==0)
+            		movingInY = false;
+            
             Move mv = fetchInstruction(movingInY);
 
             //Then check to see if we can execute the move or not
@@ -326,7 +331,7 @@ public class Traveler {
      */
     private void goLeft(){
         Position p = odo.getPosition();
-        double newX = p.getY() - gridSpace;
+        double newX = p.getX() - gridSpace;
 
         //Make sure we are facing the correct way
         nav.turnTo(180,true);
@@ -339,7 +344,7 @@ public class Traveler {
      */
     private void goRight(){
         Position p = odo.getPosition();
-        double newX = p.getY() + gridSpace;
+        double newX = p.getX() + gridSpace;
         System.out.println("right");
         //Make sure we are facing the correct way
         nav.turnTo(0,true);

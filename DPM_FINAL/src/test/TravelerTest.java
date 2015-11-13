@@ -31,10 +31,11 @@ public class TravelerTest {
     	//Display.getInstance().start();
     	LightLocalizerTwo ll = new LightLocalizerTwo();
     	ll.lightLocalize();
-    	Navigation.getInstance().travelTo(-15, -15);
+    	Navigation.getInstance().travelTo(-16, -16);
     	Navigation.getInstance().turnTo(0, true);
         Traveler trav = new Traveler();
-        trav.goTo(2,2);
+    //    trav.goTo(2,2);
+        trav.goTo(1, 1);
         //trav.goTo(2, 0);
        // trav.goTo(0,0);
         //trav.goTo(1,3);
