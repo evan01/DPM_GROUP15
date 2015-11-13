@@ -129,9 +129,9 @@ public class Navigation {
 		int counter=0;
 		while (Math.abs(x - odometer.getX()) > CM_ERR || Math.abs(y - odometer.getY()) > CM_ERR) {
 			minAng = (Math.atan2(y - odometer.getY(), x - odometer.getX())) * (180.0 / Math.PI);
-			//if (minAng < 0 && !(minAng>-1 && minAng<1))
-			//	minAng += 360.0;
-			//this.turnTo(minAng, false);
+			if (minAng < 0 && !(minAng>-1 && minAng<1))
+				minAng += 360.0;
+			this.turnTo(minAng, false);
 			
 			if(counter==0){
 				if(minAng<0){
@@ -140,7 +140,7 @@ public class Navigation {
 				this.turnTo(minAng, false);
 				counter++;
 			}
-			// this.setSpeeds(FAST, FAST);
+			//this.setSpeeds(FAST, FAST);
 			// calculates magnitude to travel
 			double distance = Math.sqrt(Math.pow((y - odometer.getY()), 2) + Math.pow((x - odometer.getX()), 2));
 			goForward(distance);
@@ -345,8 +345,8 @@ public class Navigation {
 		//	Delay.msDelay(50);
 			leftReading2=leftLS.scan();
 			
-			scanRight= scanWithDiffrentialFilter(rightReading1,rightReading2);
-			scanLeft= scanWithDiffrentialFilter(leftReading1,leftReading2);
+			scanRight= scanFilter(rightReading1,rightReading2);
+			scanLeft= scanFilter(leftReading1,leftReading2);
 			isBlackLineDetected=scanRight || scanLeft;	
 		}
 		Sound.beep();
@@ -365,7 +365,7 @@ public class Navigation {
 				leftReading1=leftLS.scan();
 			//	Delay.msDelay(50);
 				leftReading2=leftLS.scan();
-				scanLeft=scanWithDiffrentialFilter(leftReading1,leftReading2);
+				scanLeft=scanFilter(leftReading1,leftReading2);
 			}
 			Sound.beep();
 			setSpeeds(Constants.SLOW, Constants.SLOW);
@@ -380,7 +380,7 @@ public class Navigation {
 				rightReading1=rightLS.scan();
 			//	Delay.msDelay(50);
 				rightReading2=rightLS.scan();
-				scanRight=scanWithDiffrentialFilter(rightReading1,rightReading2);
+				scanRight=scanFilter(rightReading1,rightReading2);
 			}
 			Sound.beep();
 			//setSpeeds(0, 0);
@@ -393,11 +393,12 @@ public class Navigation {
 		isBlackLineDetected=false;
 
 	}
-	public boolean scanWithDiffrentialFilter(double average1,double average2){
-		if ((average1<Constants.LIGHT_THRESHOLD || average2<Constants.LIGHT_THRESHOLD) ){
+	public boolean scanFilter(double average1,double average2){
+		if((((average1+average2)/2.0)/leftLS.TILE_COLOR_VALUE)*100 < 50){
 			return true;
+		} else{
+			return false;
 		}
-		return false;
 
 	}
 	//###### ODOMETRY CORRECTION ########

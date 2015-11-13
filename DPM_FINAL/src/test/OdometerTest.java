@@ -31,6 +31,7 @@ public class OdometerTest {
 		lcd.start();
 		//cart moves along gridline accomplishing 1x1 square
 		
+		
 		nav.travelTo(0, 30.48);
 		nav.travelTo(30.48, 30.48);
 		nav.travelTo(30.48, 0);
