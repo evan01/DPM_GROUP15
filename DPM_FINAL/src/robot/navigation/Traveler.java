@@ -32,13 +32,13 @@ public class Traveler {
     Navigation nav;
     Odometer odo;
     boolean grid[][]; //Stores whether the square is empty or not
-<<<<<<< Updated upstream
+
     public static int currentX = 1;
     public static int currentY = 1;
-=======
+
     //public static int nav.verticalLinesCrossed = 0;
     //public static int nav.horizontalLinesCrossed = 0;
->>>>>>> Stashed changes
+
     public static int finalX;
     public static int finalY;
     boolean movingInY = true;
@@ -343,13 +343,10 @@ public class Traveler {
 
         //Make sure we are facing the correct way
         nav.turnTo(180,true);
-<<<<<<< Updated upstream
         nav.travelToWithCorrection(newX,p.getY(),180);
         //currentX-=1;
-=======
         nav.travelToWithCorrection(newX,p.getY(),0);
         //nav.verticalLinesCrossed-=1;
->>>>>>> Stashed changes
     }
 
     /**
@@ -366,13 +363,7 @@ public class Traveler {
         //Make sure we are facing the correct way
         nav.turnTo(0,true);
         nav.travelToWithCorrection(newX,p.getY(),0);
-<<<<<<< Updated upstream
         nav.stopMoving();
-        //currentX+=1;
-        
-=======
-        //nav.verticalLinesCrossed+=1;
->>>>>>> Stashed changes
     }
 
     /**
@@ -389,13 +380,8 @@ public class Traveler {
         //Make sure we are facing the correct way
         nav.turnTo(90,true);
         nav.travelToWithCorrection(p.getX(),newY,90);
-<<<<<<< Updated upstream
         nav.stopMoving();
        	//currentY+=1;
-        
-=======
-        //nav.horizontalLinesCrossed+=1;
->>>>>>> Stashed changes
     }
 
     /**
@@ -411,12 +397,10 @@ public class Traveler {
         //Make sure we are facing the correct way
         nav.turnTo(270,true);
         nav.travelToWithCorrection(p.getX(),newY,270);
-<<<<<<< Updated upstream
         nav.stopMoving();
         //currentY-=1;
-=======
+
         //nav.horizontalLinesCrossed-=1;
->>>>>>> Stashed changes
     }
 
     /**

@@ -421,11 +421,6 @@ public class Navigation {
 				}
 			}
 			horizontalLinesCrossed++;
-<<<<<<< Updated upstream
-			Traveler.currentY++;
-=======
-			//System.out.println("Curr Y:"+horizontalLinesCrossed);
->>>>>>> Stashed changes
 			odometer.setPosition(new double[] {0.0, correctionY + odometer.getY(), 90.0}, 
 								  new boolean[] {false,true, true});
 		}
@@ -434,10 +429,6 @@ public class Navigation {
 		{
 			double correctionX=0;
 			double xActual = odometer.getX() + Math.sin(odometer.getTheta()*Constants.LIGHT_SENS_OFFSET);
-<<<<<<< Updated upstream
-			double correctionX = -(xActual%30.48);
-			Traveler.currentX--;
-=======
 			if (verticalLinesCrossed != 0){
 			if (xActual > (Constants.SQUARE_WIDTH + + Math.sin(odometer.getTheta()*Constants.LIGHT_SENS_OFFSET))){
 			correctionX = -(xActual%30.48);
@@ -447,7 +438,6 @@ public class Navigation {
 			}
 			verticalLinesCrossed--;
 			//System.out.println("Curr X:"+verticalLinesCrossed);
->>>>>>> Stashed changes
 			odometer.setPosition(new double[] { correctionX + odometer.getX() ,0.0, 180.0}, 
 								  new boolean[] {true,false,true});
 
@@ -456,10 +446,7 @@ public class Navigation {
 		else if(heading >= 225 && heading < 315)
 		{
 			double yActual = odometer.getY() + Math.cos(odometer.getTheta()*Constants.LIGHT_SENS_OFFSET);
-<<<<<<< Updated upstream
-			double correctionY = -(yActual%30.48);
 			Traveler.currentY--;
-=======
 			double correctionY=0;
 			if (horizontalLinesCrossed != 0){
 			if (yActual > (Constants.SQUARE_WIDTH + Math.cos(odometer.getTheta()*Constants.LIGHT_SENS_OFFSET))){
@@ -469,8 +456,6 @@ public class Navigation {
 				}
 			}
 			horizontalLinesCrossed--;
-			//System.out.println("Curr Y:"+horizontalLinesCrossed);
->>>>>>> Stashed changes
 			odometer.setPosition(new double[] {0.0, correctionY + odometer.getY(), 270.0}, 
 					  new boolean[] {false,true, true});
 
@@ -488,11 +473,6 @@ public class Navigation {
 			}
 			}
 			verticalLinesCrossed++;
-<<<<<<< Updated upstream
-			Traveler.currentX++;
-=======
-			//System.out.println("Curr X:"+verticalLinesCrossed);
->>>>>>> Stashed changes
 			odometer.setPosition(new double[] { correctionX + odometer.getX() ,0.0, 0.0}, 
 					  new boolean[] {true,false,true});
 		}
