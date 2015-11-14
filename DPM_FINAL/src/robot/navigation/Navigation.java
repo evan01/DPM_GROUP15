@@ -332,21 +332,25 @@ public class Navigation {
 		}
 		Delay.msDelay(500);
 	}
-	
+
+
+
+
 	public void performBlackLineDetection(){
 		double rightReading1,rightReading2,leftReading1,leftReading2;
 		while(isBlackLineDetected==false){
 			setSpeeds(Constants.SLOW,Constants.SLOW);
+
 			rightReading1=rightLS.scan();
-		//	Delay.msDelay(50);
+			Delay.msDelay(50);
 			rightReading2=rightLS.scan();
 
 			leftReading1=leftLS.scan();
-		//	Delay.msDelay(50);
+			Delay.msDelay(50);
 			leftReading2=leftLS.scan();
-			
-			scanRight= scanFilter(rightReading1,rightReading2);
-			scanLeft= scanFilter(leftReading1,leftReading2);
+
+			scanRight=scanFilter(rightReading1,rightReading2);
+			scanLeft=scanFilter(leftReading1,leftReading2);
 			isBlackLineDetected=scanRight || scanLeft;	
 		}
 		Sound.beep();
@@ -354,7 +358,6 @@ public class Navigation {
 		if(scanRight==true && scanLeft==true){
 			//do nothing
 			Sound.beepSequence();
-			//setSpeeds(0, 0);
 			Delay.msDelay(500);
 		}
 
@@ -363,14 +366,13 @@ public class Navigation {
 			while(scanLeft==false){
 				setSpeeds(Constants.ROTATE_SPEED,0);
 				leftReading1=leftLS.scan();
-			//	Delay.msDelay(50);
+				Delay.msDelay(50);
 				leftReading2=leftLS.scan();
 				scanLeft=scanFilter(leftReading1,leftReading2);
 			}
 			Sound.beep();
 			setSpeeds(Constants.SLOW, Constants.SLOW);
 			Delay.msDelay(1000);
-		
 		}
 
 		else if(scanLeft==true){
@@ -378,12 +380,11 @@ public class Navigation {
 			while(scanRight==false){
 				setSpeeds(0,Constants.ROTATE_SPEED);
 				rightReading1=rightLS.scan();
-			//	Delay.msDelay(50);
+				Delay.msDelay(50);
 				rightReading2=rightLS.scan();
 				scanRight=scanFilter(rightReading1,rightReading2);
 			}
 			Sound.beep();
-			//setSpeeds(0, 0);
 			setSpeeds(Constants.SLOW, Constants.SLOW);
 			Delay.msDelay(1000);
 		}
@@ -393,8 +394,9 @@ public class Navigation {
 		isBlackLineDetected=false;
 
 	}
+
 	public boolean scanFilter(double average1,double average2){
-		if((((average1+average2)/2.0)/rightLS.TILE_COLOR_VALUE)*100 < 50){
+		if(average1< Constants.LIGHT_THRESHOLD || average2< Constants.LIGHT_THRESHOLD){
 			return true;
 		} else{
 			return false;
