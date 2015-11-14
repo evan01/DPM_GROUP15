@@ -25,8 +25,18 @@ public class TravelerTest {
 			
 			
 		}).start();
- 
-        //Using the travler should be as easy as this!
+    	
+    	Display display=Display.getInstance();
+    	display.start();
+    	LightLocalizerTwo ll = new LightLocalizerTwo();
+    	ll.lightLocalize();
+    	//Navigation.getInstance().travelTo(-15, -15);
+    	
+    	
+    	Navigation.getInstance().travelToWithCorrection(0, 150, 90);
+    	Navigation.getInstance().travelToWithCorrection(90, 0, 0);
+    	
+        /*//Using the travler should be as easy as this!
     	Odometer.getInstance();
     	//Display.getInstance().start();
     	LightLocalizerTwo ll = new LightLocalizerTwo();
@@ -35,6 +45,7 @@ public class TravelerTest {
     	Navigation.getInstance().turnTo(0, true);
         Traveler trav = new Traveler();
     //    trav.goTo(2,2);
+<<<<<<< Updated upstream
         trav.goTo(3, 8);
         trav.goTo(1, 1);
 //        try {
@@ -44,9 +55,14 @@ public class TravelerTest {
 //			e.printStackTrace();
 //		}
 //        trav.goTo(1, 1);
+=======
+        trav.goTo(4, 4);
+>>>>>>> Stashed changes
         //trav.goTo(2, 0);
        // trav.goTo(0,0);
         //trav.goTo(1,3);
+*/        
+        
     }
 
 }

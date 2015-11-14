@@ -88,7 +88,7 @@ public class LightLocalizerTwo {
 		boolean newUpdates2[] = {false,true,true};
 		odometer.setPosition(newPos2,newUpdates2);
 
-		if(odometer.getTheta()==0 && odometer.getY()==Constants.LRS_TO_AXIS_DISTANCE){
+		if(odometer.getTheta()==90 && odometer.getY()==Constants.LRS_TO_AXIS_DISTANCE){
 			Sound.beepSequence();
 		}
 		navigation.goBackward(Constants.LRS_TO_AXIS_DISTANCE );

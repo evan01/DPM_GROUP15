@@ -7,6 +7,7 @@ import lejos.utility.Timer;
 import lejos.utility.TimerListener;
 import robot.constants.Constants;
 import robot.constants.Position;
+import robot.navigation.Navigation;
 import robot.navigation.Odometer;
 import robot.sensors.ColorSensor;
 import robot.sensors.LeftLightSensor;
@@ -92,6 +93,9 @@ public class Display implements TimerListener{
 		LCD.drawString("X: "+p.getX(),0,0);
 		LCD.drawString("Y: "+p.getY(),0,1);
 		LCD.drawString("Theta: "+p.getTheta(),0,2);
+		//LCD.drawString("Curr X:"+Navigation.getInstance().verticalLinesCrossed);
+		//LCD.drawString("Curr Y:"+Navigation.getInstance().horizontalLinesCrossed);
+		
 
 		if(US_ON){
 			//If the ultrasonic sensor is on
@@ -101,7 +105,8 @@ public class Display implements TimerListener{
 			//If the color sensor is on
 			LCD.drawString("ColorSensor: "+ColorSensor.getInstance().scan(), 0, 4);
 		}
-		if(LLS_ON){
+		
+		/*if(LLS_ON){
 			//If the left light sensor is on
 			LCD.drawString("LeftSensor: "+LeftLightSensor.getInstance().scan(), 0, 5);
 		}
@@ -109,7 +114,7 @@ public class Display implements TimerListener{
 			//If the right light sensor is on
 			LCD.drawString("RightSensor: "+RightLightSensor.getInstance().scan(), 0, 6);
 		}
-		
+		*/
 		LCD.drawString(message,0,7);
 
 	}

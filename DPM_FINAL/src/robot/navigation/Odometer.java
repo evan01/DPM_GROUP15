@@ -79,7 +79,7 @@ public class Odometer implements TimerListener {
         this.theta = 90.0;				//changed this back to 90 !
         this.oldDH = new double[2];
         this.dDH = new double[2];
-        this.position=new Position(0,0,0);
+        this.position=new Position(0,0,90);
         
         if (autostart) {
             // if the timeout interval is given as <= 0, default to 20ms timeout

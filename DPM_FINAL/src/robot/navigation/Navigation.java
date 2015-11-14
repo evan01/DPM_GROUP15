@@ -33,8 +33,8 @@ public class Navigation {
 
 	
 	// for odo correction
-	public int horizontalLinesCrossed = -1;
-	public int verticalLinesCrossed = -1; 
+	public static int horizontalLinesCrossed = 0;	//currentY
+	public static int verticalLinesCrossed = 0; 	//currentX
 	
 	
 
@@ -412,45 +412,87 @@ public class Navigation {
 		if(heading >= 45 && heading < 135)
 		{
 			double yActual = odometer.getY() + Math.cos(odometer.getTheta()*Constants.LIGHT_SENS_OFFSET);
-			double correctionY = -(yActual%30.48);
+			double correctionY=0;
+			if (horizontalLinesCrossed != 0){
+			if (yActual > (Constants.SQUARE_WIDTH +Math.cos(odometer.getTheta()*Constants.LIGHT_SENS_OFFSET))){
+				correctionY = -(yActual%30.48);
+				}else {
+				correctionY = 30.48-(yActual%30.48);
+				}
+			}
 			horizontalLinesCrossed++;
+<<<<<<< Updated upstream
 			Traveler.currentY++;
+=======
+			//System.out.println("Curr Y:"+horizontalLinesCrossed);
+>>>>>>> Stashed changes
 			odometer.setPosition(new double[] {0.0, correctionY + odometer.getY(), 90.0}, 
 								  new boolean[] {false,true, true});
 		}
 		// Heading SOUTH (x--)
 		else if(heading >= 135 && heading < 225)
 		{
-			if(verticalLinesCrossed < 0)
-				verticalLinesCrossed = 0;
-			
+			double correctionX=0;
 			double xActual = odometer.getX() + Math.sin(odometer.getTheta()*Constants.LIGHT_SENS_OFFSET);
+<<<<<<< Updated upstream
 			double correctionX = -(xActual%30.48);
 			Traveler.currentX--;
+=======
+			if (verticalLinesCrossed != 0){
+			if (xActual > (Constants.SQUARE_WIDTH + + Math.sin(odometer.getTheta()*Constants.LIGHT_SENS_OFFSET))){
+			correctionX = -(xActual%30.48);
+			}else {
+			correctionX = 30.48-(xActual%30.48);
+			}
+			}
+			verticalLinesCrossed--;
+			//System.out.println("Curr X:"+verticalLinesCrossed);
+>>>>>>> Stashed changes
 			odometer.setPosition(new double[] { correctionX + odometer.getX() ,0.0, 180.0}, 
 								  new boolean[] {true,false,true});
-			verticalLinesCrossed--;
+
 		}
 		// Heading WEST (y--)
 		else if(heading >= 225 && heading < 315)
 		{
-			if(horizontalLinesCrossed < 0)
-				horizontalLinesCrossed = 0;
-			
 			double yActual = odometer.getY() + Math.cos(odometer.getTheta()*Constants.LIGHT_SENS_OFFSET);
+<<<<<<< Updated upstream
 			double correctionY = -(yActual%30.48);
 			Traveler.currentY--;
+=======
+			double correctionY=0;
+			if (horizontalLinesCrossed != 0){
+			if (yActual > (Constants.SQUARE_WIDTH + Math.cos(odometer.getTheta()*Constants.LIGHT_SENS_OFFSET))){
+				correctionY = -(yActual%30.48);
+				} else {
+				correctionY = 30.48-(yActual%30.48);
+				}
+			}
+			horizontalLinesCrossed--;
+			//System.out.println("Curr Y:"+horizontalLinesCrossed);
+>>>>>>> Stashed changes
 			odometer.setPosition(new double[] {0.0, correctionY + odometer.getY(), 270.0}, 
 					  new boolean[] {false,true, true});
-			horizontalLinesCrossed--;
+
 		}
-		// Heading NORTH (y++)
+		// Heading NORTH (x++)
 		else
 		{
+			double correctionX=0;
 			double xActual = odometer.getX() + Math.sin(odometer.getTheta()*Constants.LIGHT_SENS_OFFSET);
-			double correctionX = -(xActual%30.48);
+			if (verticalLinesCrossed != 0){ 
+			if (xActual > (Constants.SQUARE_WIDTH + + Math.sin(odometer.getTheta()*Constants.LIGHT_SENS_OFFSET))){
+			correctionX = -(xActual%30.48);
+			}else {
+			correctionX = 30.48-(xActual%30.48);
+			}
+			}
 			verticalLinesCrossed++;
+<<<<<<< Updated upstream
 			Traveler.currentX++;
+=======
+			//System.out.println("Curr X:"+verticalLinesCrossed);
+>>>>>>> Stashed changes
 			odometer.setPosition(new double[] { correctionX + odometer.getX() ,0.0, 0.0}, 
 					  new boolean[] {true,false,true});
 		}
