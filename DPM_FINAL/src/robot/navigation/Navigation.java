@@ -33,8 +33,8 @@ public class Navigation {
 
 	
 	// for odo correction
-	public static int horizontalLinesCrossed = 0;	//currentY
-	public static int verticalLinesCrossed = 0; 	//currentX
+	public static int horizontalLinesCrossed = 1;	//currentY
+	public static int verticalLinesCrossed = 1; 	//currentX
 	
 	
 
@@ -415,8 +415,8 @@ public class Navigation {
 		{
 			double yActual = odometer.getY() + Math.cos(odometer.getTheta()*Constants.LIGHT_SENS_OFFSET);
 			double correctionY=0;
-			if (horizontalLinesCrossed != 0){
-			if (yActual > (Constants.SQUARE_WIDTH +Math.cos(odometer.getTheta()*Constants.LIGHT_SENS_OFFSET))){
+			if (horizontalLinesCrossed != 1){
+			if (yActual > (horizontalLinesCrossed*Constants.SQUARE_WIDTH +Math.cos(odometer.getTheta()*Constants.LIGHT_SENS_OFFSET))){
 				correctionY = -(yActual%30.48);
 				}else {
 				correctionY = 30.48-(yActual%30.48);
@@ -431,8 +431,8 @@ public class Navigation {
 		{
 			double correctionX=0;
 			double xActual = odometer.getX() + Math.sin(odometer.getTheta()*Constants.LIGHT_SENS_OFFSET);
-			if (verticalLinesCrossed != 0){
-			if (xActual > (Constants.SQUARE_WIDTH + + Math.sin(odometer.getTheta()*Constants.LIGHT_SENS_OFFSET))){
+			if (verticalLinesCrossed != 1){
+			if (xActual > (verticalLinesCrossed*Constants.SQUARE_WIDTH + Math.sin(odometer.getTheta()*Constants.LIGHT_SENS_OFFSET))){
 			correctionX = -(xActual%30.48);
 			}else {
 			correctionX = 30.48-(xActual%30.48);
@@ -448,10 +448,9 @@ public class Navigation {
 		else if(heading >= 225 && heading < 315)
 		{
 			double yActual = odometer.getY() + Math.cos(odometer.getTheta()*Constants.LIGHT_SENS_OFFSET);
-			Traveler.currentY--;
 			double correctionY=0;
-			if (horizontalLinesCrossed != 0){
-			if (yActual > (Constants.SQUARE_WIDTH + Math.cos(odometer.getTheta()*Constants.LIGHT_SENS_OFFSET))){
+			if (horizontalLinesCrossed != 1){
+			if (yActual > (horizontalLinesCrossed*Constants.SQUARE_WIDTH + Math.cos(odometer.getTheta()*Constants.LIGHT_SENS_OFFSET))){
 				correctionY = -(yActual%30.48);
 				} else {
 				correctionY = 30.48-(yActual%30.48);
@@ -467,8 +466,8 @@ public class Navigation {
 		{
 			double correctionX=0;
 			double xActual = odometer.getX() + Math.sin(odometer.getTheta()*Constants.LIGHT_SENS_OFFSET);
-			if (verticalLinesCrossed != 0){ 
-			if (xActual > (Constants.SQUARE_WIDTH + + Math.sin(odometer.getTheta()*Constants.LIGHT_SENS_OFFSET))){
+			if (verticalLinesCrossed != 1){ 
+			if (xActual > (verticalLinesCrossed*Constants.SQUARE_WIDTH + Math.sin(odometer.getTheta()*Constants.LIGHT_SENS_OFFSET))){
 			correctionX = -(xActual%30.48);
 			}else {
 			correctionX = 30.48-(xActual%30.48);

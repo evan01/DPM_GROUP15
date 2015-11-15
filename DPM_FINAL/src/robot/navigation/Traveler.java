@@ -33,8 +33,8 @@ public class Traveler {
     Odometer odo;
     boolean grid[][]; //Stores whether the square is empty or not
 
-    public static int currentX = 1;
-    public static int currentY = 1;
+    public static int currentX = 0;
+    public static int currentY = 0;
 
     //public static int nav.verticalLinesCrossed = 0;
     //public static int nav.horizontalLinesCrossed = 0;
@@ -64,8 +64,8 @@ public class Traveler {
      */
     public void goTo(int x, int y){
         //First find the number of X and Y moves to make
-        int xMoves = x - nav.verticalLinesCrossed;
-        int yMoves = y -  nav.horizontalLinesCrossed;
+        int xMoves = x - currentX;
+        int yMoves = y - currentY;
         
         
        
@@ -87,7 +87,7 @@ public class Traveler {
     private void startTraveling(){
         
 
-        while(nav.verticalLinesCrossed != finalX || nav.horizontalLinesCrossed != finalY){
+        while(currentX!= finalX || currentY != finalY){
             //While we aren't there yet, still instructions to execute
         	//System.out.println("Curr X:"+nav.verticalLinesCrossed);
             //System.out.println("Curr Y:"+nav.horizontalLinesCrossed);
@@ -143,7 +143,7 @@ public class Traveler {
 		if (mv.direction == Move.Direction.up
 				|| mv.direction == Move.Direction.down) {
 
-			if (nav.verticalLinesCrossed <= 6) {
+			if (currentX <= 6) {
 				// If our robot is on the left side of the grid, turn right so
 				// as not to hit the wall by accident
 				return new Move(Move.Direction.right);
@@ -156,7 +156,7 @@ public class Traveler {
 			// If our robot is moving either left or right (x direction), turn
 			// up or down to avoid the object
 
-			if (nav.horizontalLinesCrossed <= 6) {
+			if (currentY <= 6) {
 				// If our robot is at the bottom of the grid, turn up
 				return new Move(Move.Direction.up);
 			} else {
@@ -344,8 +344,7 @@ public class Traveler {
         //Make sure we are facing the correct way
         nav.turnTo(180,true);
         nav.travelToWithCorrection(newX,p.getY(),180);
-        //currentX-=1;
-        nav.travelToWithCorrection(newX,p.getY(),0);
+        currentX-=1;
         //nav.verticalLinesCrossed-=1;
     }
 
@@ -363,7 +362,7 @@ public class Traveler {
         //Make sure we are facing the correct way
         nav.turnTo(0,true);
         nav.travelToWithCorrection(newX,p.getY(),0);
-        nav.stopMoving();
+        currentX++;
     }
 
     /**
@@ -380,8 +379,7 @@ public class Traveler {
         //Make sure we are facing the correct way
         nav.turnTo(90,true);
         nav.travelToWithCorrection(p.getX(),newY,90);
-        nav.stopMoving();
-       	//currentY+=1;
+       	currentY+=1;
     }
 
     /**
@@ -397,8 +395,7 @@ public class Traveler {
         //Make sure we are facing the correct way
         nav.turnTo(270,true);
         nav.travelToWithCorrection(p.getX(),newY,270);
-        nav.stopMoving();
-        //currentY-=1;
+        currentY-=1;
 
         //nav.horizontalLinesCrossed-=1;
     }
@@ -408,7 +405,7 @@ public class Traveler {
      */
 
     private void updateGrid(){
-        grid[nav.verticalLinesCrossed][nav.horizontalLinesCrossed] = true;//Set the grid we're in currently to be a 'safe' space
+        grid[currentX][currentY] = true;//Set the grid we're in currently to be a 'safe' space
     }
 
 
