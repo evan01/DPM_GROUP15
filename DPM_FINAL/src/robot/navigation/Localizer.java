@@ -18,7 +18,7 @@ public class Localizer {
 	private LocalizationType locType;
 	
 	private double usDistance; 
-	private final double USDISTANCE_THRESHOLD = 35;
+	private final double USDISTANCE_THRESHOLD = 25;
 //	private final double TILE_DIMENSION = 30;		not needed anymore
 	private static boolean isMeasured  = false;
 	

@@ -105,7 +105,7 @@ public class ObjectSearch {
 
 		//lcd.drawString("Odometer Angle: "+odo.getTheta(),0,0);
 
-		while((odo.getTheta() < 165 && numDetections<1) || (odo.getTheta() > 330 && numDetections<1)){
+		while((odo.getTheta() < 300 && numDetections<1) || (odo.getTheta() > 170 && numDetections<1)){
 			distance = us.scan();
 			/*try {
 				Thread.sleep(1000);

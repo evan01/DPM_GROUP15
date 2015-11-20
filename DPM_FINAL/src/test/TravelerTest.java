@@ -6,6 +6,7 @@ import lejos.hardware.Button;
 import robot.display.Display;
 import robot.navigation.LightLocalizerTwo;
 import robot.navigation.Navigation;
+import robot.navigation.ObjectSearch;
 import robot.navigation.Odometer;
 import robot.navigation.Traveler;
 import robot.navigation.USLocalizer;
@@ -29,22 +30,38 @@ public class TravelerTest {
 		}).start();
     	
    
+		Display display=Display.getInstance();
+		display.start();
+		display.setUS_ON(true);
+		//display.setCS_ON(true);
+
+		Odometer odo=Odometer.getInstance();
+		Navigation nav=Navigation.getInstance();
+		
+		
     	USLocalizer ul = new USLocalizer(Odometer.getInstance(),LocalizationType.FALLING_EDGE);
     	ul.doLocalization();
     	
-    	Navigation.getInstance().turnTo(0, true);
+    	nav.turnTo(0, true);
     	
     	LightLocalizerTwo ll = new LightLocalizerTwo();
     	ll.lightLocalize();
     	
     	Traveler trav = new Traveler();
         trav.goTo(7, 7);
-//    	
-//    	Display.getInstance().start();
-//    	Navigation.getInstance().travelTo(16, 16);
-//    	Navigation.getInstance().turnTo(0, true);
+
+        nav.turnTo(180, true);
+    	int expectedColorID=1;
+        startSearch(nav,odo,expectedColorID);
 
             
     }
+	
+	//Launches the search routine
+	private static void startSearch(Navigation nav,Odometer odo,int expectedColorID ){
+		ObjectSearch search = new ObjectSearch(nav,odo,expectedColorID);
+		search.begin();
+	}
+
 
 }
