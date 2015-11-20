@@ -206,7 +206,7 @@ public class Navigation {
 		isNavigating = true;
 
 		leftMotor.rotate(convertDistance(RADIUS, distance), true);
-		rightMotor.rotate(convertDistance(RADIUS, distance), true);
+		rightMotor.rotate(convertDistance(RADIUS, distance), false);
 
 		isNavigating = false;
 	}
