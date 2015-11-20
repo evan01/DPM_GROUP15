@@ -24,7 +24,7 @@ public class USLocalizer {
 
 	private float getFilteredData() {
 		int dist;
-		dist = us.getDistance();
+		dist = us.scan();
 														// thus makes anything above the threshold distance irrelevant
 		return dist;
 	}
@@ -194,8 +194,8 @@ public class USLocalizer {
 			double xCoord = xPrime - 1	;									// now we know where bot is with respect to arena corner
 			double yCoord = yPrime - 1  ;
 
-			odo.setX(-30 + xCoord);												// now we move (0,0) to arena corner
-			odo.setY(-30+yCoord);
+			odo.setX(xCoord);												// now we move (0,0) to arena corner
+			odo.setY(yCoord);
 
 			xCoord = odo.getX();											// get NEW X and Y with respect to NEW (0,0)
 			yCoord = odo.getY();

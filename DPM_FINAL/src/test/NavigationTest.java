@@ -24,17 +24,21 @@ public class NavigationTest {
 			}
 		}).start();
 		
-		testLocalization();
-		//testNavigation();	
+		//testLocalization();
+		testNavigation();	
 	}
 	
 	public static void testNavigation(){
 		Odometer odo = Odometer.getInstance();
 		Navigation nav = Navigation.getInstance();
-		nav.travelTo(50, 0);
-		nav.travelTo(50, 50);
-		nav.travelTo(0, 50);
-		nav.travelTo(0, 0);
+		nav.goForward(15);
+		try {
+			Thread.sleep(3000);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		nav.turnTo(45, false);
 	}
 	
 	public static void testLocalization(){

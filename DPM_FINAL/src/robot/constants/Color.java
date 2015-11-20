@@ -64,7 +64,7 @@ public class Color {
 	}
 
 	public boolean isSampleLightBlue() {
-		if ((this.G / this.B) * 100 >= 90 && (this.G / this.B)*100 <=120 
+		if ((this.G / this.B) * 100 >= 90 && (this.G / this.B)*100 <=145 
 				&&  !isSampleWhite()) {
 			return true;
 		} else {

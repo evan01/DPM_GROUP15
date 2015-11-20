@@ -90,22 +90,22 @@ public class Display implements TimerListener{
 	public void displayStandard(){
 		LCD.clear();
 		Position p = odo.getPosition();
-		LCD.drawString("X: "+p.getX(),0,0);
-		LCD.drawString("Y: "+p.getY(),0,1);
-		LCD.drawString("Theta: "+p.getTheta(),0,2);
+		LCD.drawString("X: "+p.getX(),0,1);
+		LCD.drawString("Y: "+p.getY(),0,2);
+		LCD.drawString("Theta: "+p.getTheta(),0,3);
 		//LCD.drawString("Curr X:"+Navigation.getInstance().verticalLinesCrossed);
 		//LCD.drawString("Curr Y:"+Navigation.getInstance().horizontalLinesCrossed);
 		
-
-		if(US_ON){
-			//If the ultrasonic sensor is on
-			LCD.drawString("USSensor: "+USSensor.getInstance().getDistance(), 0, 3);
-		}
-		if(CS_ON){
-			//If the color sensor is on
-			LCD.drawString("ColorSensor: "+ColorSensor.getInstance().scan(), 0, 4);
-		}
-		
+//
+//		if(US_ON){
+//			//If the ultrasonic sensor is on
+//			LCD.drawString("USSensor: "+USSensor.getInstance().getDistance(), 0, 3);
+//		}
+//		if(CS_ON){
+//			//If the color sensor is on
+//			LCD.drawString("ColorSensor: "+ColorSensor.getInstance().scan(), 0, 4);
+//		}
+//		
 		/*if(LLS_ON){
 			//If the left light sensor is on
 			LCD.drawString("LeftSensor: "+LeftLightSensor.getInstance().scan(), 0, 5);

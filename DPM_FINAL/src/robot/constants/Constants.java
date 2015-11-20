@@ -27,7 +27,7 @@ public class Constants {
 		public static final double TRACK = 13.6;
 		public static final float LIGHT_LOCALIZATION_FORWARD_SPEED=70;
 		public static final int forwardSpeed = 150;
-		public static final int ROTATE_SPEED = 50;
+		public static final int ROTATE_SPEED = 70;
 		public final static int FAST = 200;
 		public final static int SLOW = 110;
 		public final static int ACCELERATION = 4000;
@@ -40,6 +40,7 @@ public class Constants {
 		public static final int SCANPERIOD = 80;
 		public static final int OBJECT_DETECTION_DIST = 15;
 		public static final int MOTOR_STRAIGHT = 200;
+		public static final int OBJECT_AVOIDANCE_DIST = 35;
 
 		// LIGHT SENSOR
 		public static final int LIGHT_SENSOR_UPDATE_TIME = 200;
@@ -69,6 +70,23 @@ public class Constants {
 	public static final double ROBOT_LENTGH=12;
 	public static final double COLOR_TO_CENTER=12;
 	public static final double US_TO_CENTER=12;
+	
+	//Wifi values
+		public static wifi.StartCorner StartingCorner;
+		public static final String SERVER_IP = "192.168.10.102";
+		public static final int TEAM_NUMBER = 15;
+		public static int homeZoneBL_X;
+		public static int homeZoneBL_Y;
+		public static int homeZoneTR_X;
+		public static int homeZoneTR_Y;
+		public static int opponentHomeZoneBL_X;
+		public static int opponentHomeZoneBL_Y;
+		public static int opponentHomeZoneTR_X;
+		public static int opponentHomeZoneTR_Y;
+		public static int dropZone_X;
+		public static int dropZone_Y;
+		public static int flagType;
+		public static int opponentFlagType;
 
 
 }

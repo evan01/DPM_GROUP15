@@ -15,7 +15,7 @@ import lejos.utility.Delay;
 public class Navigation {
 
 	final static int FAST = 200, SLOW = 100, ACCELERATION = 4000;
-	final static double DEG_ERR = 3.0, CM_ERR = 1.0;
+	final static double DEG_ERR = 3.2, CM_ERR = 1.0;
 	public static Odometer odometer;
 	private EV3LargeRegulatedMotor leftMotor, rightMotor, clawMotor;
 	private EV3MediumRegulatedMotor armMotor;
@@ -30,6 +30,7 @@ public class Navigation {
 	private boolean isBlackLineDetected;
 	private boolean scanRight;
 	private boolean scanLeft;
+	private boolean lineDetected = false;
 
 	
 	// for odo correction
@@ -295,8 +296,12 @@ public class Navigation {
 			while(odometer.getY() < y)
 			{
 				performBlackLineDetection();
-				performOdometerCorrection();	
+//				lineDetected = isBlacklineDetected();
+//				if (lineDetected){
+				performOdometerCorrection();
+//				}
 			}
+			System.out.println("1 tile moved");
 			stopMoving();
 		}
 		// Heading SOUTH (x--)
@@ -305,8 +310,12 @@ public class Navigation {
 			while(odometer.getX() > x)
 			{
 				performBlackLineDetection();
+//				lineDetected = isBlacklineDetected();
+//				if (lineDetected){
 				performOdometerCorrection();
+//				}
 			}
+			System.out.println("1 tile moved");
 			stopMoving();
 		}
 		// Heading WEST (y--)
@@ -315,8 +324,13 @@ public class Navigation {
 			while(odometer.getY() > y )
 			{
 				performBlackLineDetection();
+//				lineDetected = isBlacklineDetected();
+//				if (lineDetected){
 				performOdometerCorrection();
+//				}
+				
 			}
+			System.out.println("1 tile moved");
 			stopMoving();
 		}
 		// Heading NORTH (x++)
@@ -326,16 +340,74 @@ public class Navigation {
 			while(odometer.getX() < x)
 			{
 				performBlackLineDetection();
+//				lineDetected = isBlacklineDetected();
+//				if (lineDetected){
 				performOdometerCorrection();
+//				}
 			}
+			System.out.println("1 tile moved");
 			stopMoving();
 		}
 		Delay.msDelay(500);
 	}
+	
+	public boolean isBlacklineDetected(){
+		double rightReading1,rightReading2,leftReading1,leftReading2;
+		rightReading1=rightLS.scan();
+		Delay.msDelay(50);
+		rightReading2=rightLS.scan();
 
+		leftReading1=leftLS.scan();
+		Delay.msDelay(50);
+		leftReading2=leftLS.scan();
 
+		scanRight=scanFilter(rightReading1,rightReading2);
+		scanLeft=scanFilter(leftReading1,leftReading2);
+		isBlackLineDetected=scanRight || scanLeft;
+		
+		if(scanRight==true && scanLeft==true){
+			//do nothing
+			Sound.beepSequence();
+			Delay.msDelay(500);
+			return true;
+		}
 
+		else if(scanRight==true){
+			//turn clockwise leftMotor only
+			while(scanLeft==false){
+				setSpeeds(Constants.ROTATE_SPEED,0);
+				leftReading1=leftLS.scan();
+				Delay.msDelay(50);
+				leftReading2=leftLS.scan();
+				scanLeft=scanFilter(leftReading1,leftReading2);
+			}
+			Sound.beep();
+			setSpeeds(Constants.SLOW, Constants.SLOW);
+//			Delay.msDelay(1000);
+			return true;
+		}
 
+		else if(scanLeft==true){
+			//turn counterclockwise rightMotor only
+			while(scanRight==false){
+				setSpeeds(0,Constants.ROTATE_SPEED);
+				rightReading1=rightLS.scan();
+				Delay.msDelay(50);
+				rightReading2=rightLS.scan();
+				scanRight=scanFilter(rightReading1,rightReading2);
+			}
+			Sound.beep();
+			setSpeeds(Constants.SLOW, Constants.SLOW);
+			return true;
+//			Delay.msDelay(1000);
+		}
+		return false;
+
+	}
+	
+	
+	
+  
 	public void performBlackLineDetection(){
 		double rightReading1,rightReading2,leftReading1,leftReading2;
 		while(isBlackLineDetected==false){

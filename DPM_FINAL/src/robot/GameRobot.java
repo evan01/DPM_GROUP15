@@ -37,19 +37,18 @@ public class GameRobot implements Robot {
 	}
 
 	public int colorScan() {
-		// object for synchronized lock
-		Object lock = new Object();
+	
 		ColorSensor cs = ColorSensor.getInstance();
 		Color color = new Color();
 		int counterScan = 0;
 		ArrayList<Color> colorPings = new ArrayList<Color>();
-		synchronized (lock) {
+		
 			// continuously get colour values
 			while (counterScan != 10) {
 				color = cs.scan();
 				colorPings.add(color);
 				counterScan++;
-			}
+			
 		}
 		
 		return color.colorValue(colorPings);
