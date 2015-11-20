@@ -10,7 +10,7 @@ import robot.constants.Constants;
  * certain moments.
  */
 public class USSensor implements Runnable{
-
+	
     //This is a singleton class, get the
     private static final USSensor ourInstance = new USSensor();
 

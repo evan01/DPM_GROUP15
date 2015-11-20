@@ -43,17 +43,17 @@ public class ColorSensor implements Runnable{
     @Override
     public void run() {
         threadRunning = true;
-        Color clr = new Color();
+        //Color clr = new Color();
 
         while (threadRunning){
 
             colorRGBSensor.fetchSample(sample, 0);
-            clr.setR(sample[0]*1024);
-            clr.setG(sample[1]*1024);
-            clr.setB(sample[2]*1024);
+            color.setR(sample[0]*1024);
+            color.setG(sample[1]*1024);
+            color.setB(sample[2]*1024);
 
             synchronized (this){
-                setColor(clr);
+                setColor(color);
             }
 
             try {
@@ -79,12 +79,12 @@ public class ColorSensor implements Runnable{
         ColorSensor.color = color;
     }
     public synchronized Color scan(){
-    	Color clr = new Color();
+    	//Color clr = new Color();
     	colorRGBSensor.fetchSample(sample, 0);
-        clr.setR(sample[0]*1024);
-        clr.setG(sample[1]*1024);
-        clr.setB(sample[2]*1024);
-        return clr;
+        color.setR(sample[0]*1024);
+        color.setG(sample[1]*1024);
+        color.setB(sample[2]*1024);
+        return color;
     }
 }
 

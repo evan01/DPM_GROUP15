@@ -31,15 +31,15 @@ public class ColorSensorTest {
         while (true) {
             color = cs.getColor();
             if (color.isSampleBlue()) {
-                LCD.drawString("Blue", 0, 0);
+                LCD.drawString("Blue", 0, 4);
             } else if (color.isSampleYellow()) {
-                LCD.drawString("Yellow", 0, 0);
+                LCD.drawString("Yellow", 0, 4);
             } else if (color.isSampleWhite()) {
-                LCD.drawString("White", 0, 0);
+                LCD.drawString("White", 0, 4);
             } else if (color.isSampleRed()) {
-                LCD.drawString("Red", 0, 0);
+                LCD.drawString("Red", 0, 4);
             } else{
-                LCD.drawString("gros", 0, 0);
+                LCD.drawString("gros", 0, 4);
             }
             try {
                 Thread.sleep(100);

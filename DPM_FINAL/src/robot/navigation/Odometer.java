@@ -38,7 +38,7 @@ import robot.constants.Position;
  * This class represents the odometer of our robot, will always run as a thread as long as the robot is playing the game
  */
 public class Odometer implements TimerListener {
-
+	
     /**
      * This is a singleton class
      */
@@ -51,7 +51,7 @@ public class Odometer implements TimerListener {
     private Timer timer;
     private EV3LargeRegulatedMotor leftMotor, rightMotor, clawMotor;
     private EV3MediumRegulatedMotor armMotor;
-    private final int DEFAULT_TIMEOUT_PERIOD = 120;
+    private final int DEFAULT_TIMEOUT_PERIOD = 20;
     private double leftRadius, rightRadius, TRACK;
     private double x, y, theta;
     private double[] oldDH, dDH;
@@ -76,7 +76,7 @@ public class Odometer implements TimerListener {
 
         this.x = 0.0;
         this.y = 0.0;
-        this.theta = 90.0;				//changed this back to 90 !
+        this.theta = 90.0;	//set this to 0 temporarily, change it back to 90				//changed this back to 90 !
         this.oldDH = new double[2];
         this.dDH = new double[2];
         this.position=new Position(0,0,90);

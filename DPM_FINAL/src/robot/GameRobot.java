@@ -56,7 +56,7 @@ public class GameRobot implements Robot {
 	}
 
 	public void capture() {
-		Capturer.capture();
+		//Capturer.capture();
 	}
 
 	public void localize() {

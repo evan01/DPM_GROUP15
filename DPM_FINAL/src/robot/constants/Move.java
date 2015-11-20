@@ -3,8 +3,8 @@ package robot.constants;/*
  */
 
 public class Move {
-    public enum Direction{left,right,up,down}
-    public Direction direction;
+    public static enum Direction{left,right,up,down}
+    public static Direction direction;
 
     public Move(Direction dir){
         this.direction = dir;

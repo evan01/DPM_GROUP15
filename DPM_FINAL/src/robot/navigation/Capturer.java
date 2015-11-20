@@ -13,8 +13,10 @@ public class Capturer {
 //    EV3LargeRegulatedMotor clawMotor = Motors.getInstance().getClawMotor();
     boolean hasStyro;
 
-    public static void capture(){
 
+    public static void capture(){
+       Capturer capt = new Capturer();
+       capt.capture();
     }
 
     /**

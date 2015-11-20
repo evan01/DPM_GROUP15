@@ -39,6 +39,8 @@ public class Display implements TimerListener{
 		US_ON = false;
 		LLS_ON=false;
 		RLS_ON=false;
+		//NumOf_Detections_ON=false;
+		
 	}
 
 	/**
@@ -55,7 +57,8 @@ public class Display implements TimerListener{
 	private static boolean CS_ON;
 	private static boolean LLS_ON;
 	private static boolean RLS_ON;
-
+	//private static boolean NumOf_Detections_ON;
+	
 	//The actual lcd display of our robot
 	public static TextLCD LCD = LocalEV3.get().getTextLCD();
 
@@ -96,16 +99,15 @@ public class Display implements TimerListener{
 		//LCD.drawString("Curr X:"+Navigation.getInstance().verticalLinesCrossed);
 		//LCD.drawString("Curr Y:"+Navigation.getInstance().horizontalLinesCrossed);
 		
-//
-//		if(US_ON){
-//			//If the ultrasonic sensor is on
-//			LCD.drawString("USSensor: "+USSensor.getInstance().getDistance(), 0, 3);
-//		}
-//		if(CS_ON){
-//			//If the color sensor is on
-//			LCD.drawString("ColorSensor: "+ColorSensor.getInstance().scan(), 0, 4);
-//		}
-//		
+		if(US_ON){
+			//If the ultrasonic sensor is on
+			LCD.drawString("USSensor: "+USSensor.getInstance().scan(), 0, 4);
+		}
+		if(CS_ON){
+			//If the color sensor is on
+			LCD.drawString("ColorSensor: "+ColorSensor.getInstance().scan(), 0, 5);
+		}
+		
 		/*if(LLS_ON){
 			//If the left light sensor is on
 			LCD.drawString("LeftSensor: "+LeftLightSensor.getInstance().scan(), 0, 5);
@@ -115,27 +117,43 @@ public class Display implements TimerListener{
 			LCD.drawString("RightSensor: "+RightLightSensor.getInstance().scan(), 0, 6);
 		}
 		*/
-		LCD.drawString(message,0,7);
+		
+		
+		
+		/*if(NumOf_Detections_ON){
+			//When we are detecting our styrofoam object after getting close to it  
+			LCD.drawString("Detections: "+USSensor.getInstance().getDistance(), 0, 7);
+		}
+		*/
+		
+		
+		//LCD.drawString(message,0,7);
+		
 
 	}
 	
 	//setters method 
-	public static void setUS_ON(boolean uS_ON) {
+	public void setUS_ON(boolean uS_ON) {
 		US_ON = uS_ON;
 	}
 
-	public static void setCS_ON(boolean cS_ON) {
+	public void setCS_ON(boolean cS_ON) {
 		CS_ON = cS_ON;
 	}
 
-	public static void setLLS_ON(boolean lLS_ON) {
+	public void setLLS_ON(boolean lLS_ON) {
 		LLS_ON = lLS_ON;
 	}
 
-	public static void setRLS_ON(boolean rLS_ON) {
+	public void setRLS_ON(boolean rLS_ON) {
 		RLS_ON = rLS_ON;
 	}
-
+	
+	/*public void setNumOf_Detections_ON(boolean numOfDetections_ON) {
+		NumOf_Detections_ON = numOfDetections_ON;
+	}
+*/
+	
 	public void displayDebug(){
 
 	}

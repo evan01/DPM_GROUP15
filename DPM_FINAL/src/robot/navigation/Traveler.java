@@ -3,6 +3,7 @@ package robot.navigation;/*
  */
 
 import robot.constants.Constants;
+
 import robot.constants.Move;
 import robot.constants.Move.Direction;
 import robot.constants.Position;
@@ -11,6 +12,13 @@ import robot.sensors.USSensor;
 import java.util.LinkedList;
 import java.util.Queue;
 import java.util.concurrent.PriorityBlockingQueue;
+import javax.swing.GroupLayout.Alignment;
+
+import lejos.hardware.ev3.LocalEV3;
+import lejos.hardware.port.Port;
+import lejos.hardware.sensor.EV3UltrasonicSensor;
+import lejos.hardware.sensor.SensorModes;
+import lejos.robotics.SampleProvider;
 
 /**
  * This class will represent an object which controls the navigation of our
@@ -27,6 +35,7 @@ import java.util.concurrent.PriorityBlockingQueue;
  * RIGHT NOW SCAN WILL ALWAYS RETURN TRUE. JUST TO TEST WITHOUT COL DETECTION
  */
 public class Traveler {
+
 
     //This will also be a singleton class?
 
@@ -47,6 +56,7 @@ public class Traveler {
     Queue<Move> yInstructions;
     private double gridSpace = 30;
     
+
 	private Move.Direction lastDirection=Move.Direction.up;	//should be up or right, keep it up for now
 	private Direction [] directionsArrayPriority1 = {Move.Direction.up,Move.Direction.right,Move.Direction.down,Move.Direction.left}; 
 	private Direction [] directionsArrayPriority2 = {Move.Direction.down,Move.Direction.left,Move.Direction.up,Move.Direction.right};
@@ -137,6 +147,7 @@ public class Traveler {
     }
 
 
+
 	/**
 	 * Returns the next best move for our robot to make if there's an obstacle
 	 * in its way
@@ -162,6 +173,7 @@ public class Traveler {
 			// new direction 
 			if(executeScan(new Move(currentDirection))){	// if this direction is free return it 
 				return new Move(currentDirection);
+
 			}
 		}
 		
@@ -453,8 +465,6 @@ public class Traveler {
 														// thus makes anything above the threshold distance irrelevant
 		return dist;
 	}
-
-
 
 }
 
