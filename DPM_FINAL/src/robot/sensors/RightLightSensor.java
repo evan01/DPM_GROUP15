@@ -70,7 +70,7 @@ public class RightLightSensor implements Runnable{
     	double reading4=sampleRight[0] * 100.0;
     	lightSensorR.fetchSample(sampleRight, 0); // acquire data
     	double reading5=sampleRight[0] * 100.0;
-        double average=(reading1+reading2+reading3+reading4+reading5);
+        double average=(reading1+reading2+reading3+reading4+reading5)/5.0;
     	return average;
     }
     

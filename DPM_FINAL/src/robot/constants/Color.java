@@ -17,7 +17,7 @@ public class Color {
 	
 
 	public boolean isSampleRed() {
-		if (this.R > this.G && this.R > this.B && (this.G/this.R)*100<=40) {
+		if (this.R > this.G && this.R > this.B && (this.B/this.R)*100<=30) {
 			return true;
 		} else {
 			return false;
@@ -28,8 +28,7 @@ public class Color {
 	// value to 90% as white colour has similar RGB values
 	public boolean isSampleWhite() {
 		if (!isSampleRed()) {
-			if ((this.R / this.B) * 100 >= 94 && (this.R / this.B) * 100 <= 120
-					&& (this.R / this.G) * 100 >= 94 && (this.R / this.B) * 100 <= 120) {
+			if ((this.R / this.G) * 100 >= 85 && (this.R / this.G) * 100 <= 140) {
 				return true;
 			} else {
 				return false;
@@ -45,7 +44,7 @@ public class Color {
 	public boolean isSampleYellow() {
 		if (!isSampleBlue()) {
 			if (this.R > this.B && this.R > this.G && !isSampleWhite()
-					&& ((this.B / this.R) * 100 <= 28)) {
+					&& ((this.G / this.R) * 100 >= 50)) {
 				return true;
 			} else {
 				return false;
