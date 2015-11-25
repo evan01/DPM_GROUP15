@@ -31,37 +31,36 @@ public class TravelerTest {
     	
    
 		Display display=Display.getInstance();
-		display.start();
-		display.setUS_ON(true);
+//		display.start();
+//		display.setUS_ON(true);
 		//display.setCS_ON(true);
 
 		Odometer odo=Odometer.getInstance();
 		Navigation nav=Navigation.getInstance();
-		
-		
-    	USLocalizer ul = new USLocalizer(Odometer.getInstance(),LocalizationType.FALLING_EDGE);
-    	ul.doLocalization();
-    	
-    	nav.turnTo(0, true);
-    	
-    	LightLocalizerTwo ll = new LightLocalizerTwo();
-    	ll.lightLocalize();
-    	
     	Traveler trav = new Traveler();
-        trav.goTo(7, 7);
+		
+//    	LightLocalizerTwo ll = new LightLocalizerTwo();
+//    	ll.lightLocalize();
+////    	
+//
+////        trav.goTo(7, 7);
+//    	nav.turnTo(240, true);
+//    	nav.travelTo(10 , 15);
 
-        nav.turnTo(180, true);
-    	int expectedColorID=1;
-        startSearch(nav,odo,expectedColorID);
+    	trav.goTo(3, 3);
+//
+//        nav.turnTo(180, true);
+//    	int expectedColorID=1;
+//        startSearch(nav,odo,expectedColorID);
 
             
     }
 	
-	//Launches the search routine
-	private static void startSearch(Navigation nav,Odometer odo,int expectedColorID ){
-		ObjectSearch search = new ObjectSearch(nav,odo,expectedColorID);
-		search.begin();
-	}
+//	//Launches the search routine
+//	private static void startSearch(Navigation nav,Odometer odo,int expectedColorID ){
+//		ObjectSearch search = new ObjectSearch(nav,odo,expectedColorID);
+//		search.begin();
+//	}
 
 
 }

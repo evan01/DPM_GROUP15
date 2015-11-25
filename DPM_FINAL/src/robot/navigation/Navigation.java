@@ -295,11 +295,11 @@ public class Navigation {
 		{
 			while(odometer.getY() < y)
 			{
-				performBlackLineDetection();
-//				lineDetected = isBlacklineDetected();
-//				if (lineDetected){
+				setSpeeds(Constants.SLOW,Constants.SLOW);
+//				performBlackLineDetection();
+				if (isBlacklineDetected()){
 				performOdometerCorrection();
-//				}
+				}
 			}
 			System.out.println("1 tile moved");
 			stopMoving();
@@ -309,11 +309,11 @@ public class Navigation {
 		{
 			while(odometer.getX() > x)
 			{
-				performBlackLineDetection();
-//				lineDetected = isBlacklineDetected();
-//				if (lineDetected){
+				setSpeeds(Constants.SLOW,Constants.SLOW);
+//				performBlackLineDetection();
+				if (isBlacklineDetected()){
 				performOdometerCorrection();
-//				}
+				}
 			}
 			System.out.println("1 tile moved");
 			stopMoving();
@@ -323,11 +323,11 @@ public class Navigation {
 		{
 			while(odometer.getY() > y )
 			{
-				performBlackLineDetection();
-//				lineDetected = isBlacklineDetected();
-//				if (lineDetected){
+				setSpeeds(Constants.SLOW,Constants.SLOW);
+//				performBlackLineDetection();
+				if (isBlacklineDetected()){
 				performOdometerCorrection();
-//				}
+				}
 				
 			}
 			System.out.println("1 tile moved");
@@ -339,11 +339,11 @@ public class Navigation {
 			
 			while(odometer.getX() < x)
 			{
-				performBlackLineDetection();
-//				lineDetected = isBlacklineDetected();
-//				if (lineDetected){
+				setSpeeds(Constants.SLOW,Constants.SLOW);
+//				performBlackLineDetection();
+				if (isBlacklineDetected()){
 				performOdometerCorrection();
-//				}
+				}
 			}
 			System.out.println("1 tile moved");
 			stopMoving();
@@ -363,13 +363,13 @@ public class Navigation {
 
 		scanRight=scanFilter(rightReading1,rightReading2);
 		scanLeft=scanFilter(leftReading1,leftReading2);
-		isBlackLineDetected=scanRight || scanLeft;
+		isBlackLineDetected = scanRight || scanLeft;
 		
 		if(scanRight==true && scanLeft==true){
 			//do nothing
 			Sound.beepSequence();
 			Delay.msDelay(500);
-			return true;
+			return isBlackLineDetected;
 		}
 
 		else if(scanRight==true){
@@ -384,7 +384,7 @@ public class Navigation {
 			Sound.beep();
 			setSpeeds(Constants.SLOW, Constants.SLOW);
 //			Delay.msDelay(1000);
-			return true;
+			return isBlackLineDetected;
 		}
 
 		else if(scanLeft==true){
@@ -401,7 +401,7 @@ public class Navigation {
 			return true;
 //			Delay.msDelay(1000);
 		}
-		return false;
+		return isBlackLineDetected;
 
 	}
 	

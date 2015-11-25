@@ -1,7 +1,6 @@
 package robot.display;
 
 import lejos.hardware.ev3.LocalEV3;
-
 import lejos.hardware.lcd.TextLCD;
 import lejos.utility.Timer;
 import lejos.utility.TimerListener;
@@ -9,6 +8,7 @@ import robot.constants.Constants;
 import robot.constants.Position;
 import robot.navigation.Navigation;
 import robot.navigation.Odometer;
+import robot.navigation.Traveler;
 import robot.sensors.ColorSensor;
 import robot.sensors.LeftLightSensor;
 import robot.sensors.RightLightSensor;
@@ -96,8 +96,8 @@ public class Display implements TimerListener{
 		LCD.drawString("X: "+p.getX(),0,1);
 		LCD.drawString("Y: "+p.getY(),0,2);
 		LCD.drawString("Theta: "+p.getTheta(),0,3);
-		//LCD.drawString("Curr X:"+Navigation.getInstance().verticalLinesCrossed);
-		//LCD.drawString("Curr Y:"+Navigation.getInstance().horizontalLinesCrossed);
+		LCD.drawString("Curr X:"+Traveler.currentX,0,6);
+		LCD.drawString("Curr Y:"+Traveler.currentY,0,7);
 		
 		if(US_ON){
 			//If the ultrasonic sensor is on

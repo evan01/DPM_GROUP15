@@ -29,7 +29,7 @@ public class Constants {
 		public static final int forwardSpeed = 150;
 		public static final int ROTATE_SPEED = 70;
 		public final static int FAST = 200;
-		public final static int SLOW = 110;
+		public final static int SLOW = 120;
 		public final static int ACCELERATION = 4000;
 		public final static double DEG_ERR = 3.0;
 		public final static double CM_ERR = 1.0;

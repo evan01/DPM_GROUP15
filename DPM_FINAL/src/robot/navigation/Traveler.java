@@ -51,10 +51,10 @@ public class Traveler {
 
     public static int finalX;
     public static int finalY;
-    boolean movingInY = true;
-    Queue<Move> xInstructions;
-    Queue<Move> yInstructions;
-    private double gridSpace = 30;
+    boolean isMovingInY = true;
+    private Queue<Move> xInstructions;
+    private Queue<Move> yInstructions;
+    private double gridSpace = 30.48;
     
 
 	private Move.Direction lastDirection=Move.Direction.up;	//should be up or right, keep it up for now
@@ -86,8 +86,6 @@ public class Traveler {
         int xMoves = x - currentX;
         int yMoves = y - currentY;
         
-        
-       
         //Create a set of moves from each of these instructions
         addToQueue(yMoves,true);
         addToQueue(xMoves, false);
@@ -96,6 +94,7 @@ public class Traveler {
         finalX = x;
         finalY = y;
 
+        
         //Execute all of the moves
         startTraveling();
     }
@@ -105,7 +104,6 @@ public class Traveler {
      */
     private void startTraveling(){
         
-
         while(currentX!= finalX || currentY != finalY){
             //While we aren't there yet, still instructions to execute
         	//System.out.println("Curr X:"+nav.verticalLinesCrossed);
@@ -116,7 +114,7 @@ public class Traveler {
             //First fetch the next instruction to execute from the correct queue
 //            if (yInstructions.size()==0)
 //            		movingInY = false;   
-            Move mv = fetchInstruction(movingInY,true);
+            Move mv = fetchInstruction();
 
             //Then check to see if we can execute the move or not
             //THIS WILL ALSO ROTATE OUR ROBOT
@@ -137,8 +135,8 @@ public class Traveler {
                 executeMove(newMove);
                 
                 //Add a 'correction' move onto the propper queue to compensate for this direction
-                if (newMove.direction == Direction.down || newMove.direction == Direction.left)
-                correctAvoidanceMove(newMove);
+//                if (newMove.direction == Direction.down || newMove.direction == Direction.left)
+//                correctAvoidanceMove(newMove);
 
             }
 
@@ -203,10 +201,10 @@ public class Traveler {
      * Changes the direction that our robot is traveling, called when there is a detection
      */
     private void changeDirection() {
-        if(movingInY)
-            movingInY = false;
+        if(isMovingInY)
+            isMovingInY = false;
         else
-            movingInY = true;
+            isMovingInY = true;
     }
 
     /**
@@ -216,46 +214,48 @@ public class Traveler {
      * @param toRemoveFromQ whether or not we want to remove from Queue
      * @return an instruction to execute next
      */
-	private Move fetchInstruction(boolean isMovingInY,boolean toRemoveFromQ) {
-		if(toRemoveFromQ){
+	private Move fetchInstruction() {
+//		if(toRemoveFromQ){
 			if(isMovingInY){
-				if(yInstructions.size()>0)
+				if(yInstructions.size()>0){
 					return yInstructions.remove();
+				}
 				else {
-					movingInY = false;
+					isMovingInY = false;
 					return xInstructions.remove();
 				}
 
 			}else{
-				if(xInstructions.size()>0)
+				if(xInstructions.size()>0){
 					return xInstructions.remove();
+				}
 				else {
-					movingInY = true;
+					isMovingInY = true;
 					return yInstructions.remove();
 				}
 			}
 		}
 
-		else{
-			if(isMovingInY){
-				if(yInstructions.size()>0)
-					return yInstructions.element();
-				else {
-					movingInY = false;
-					return xInstructions.element();
-				}
+//		else{
+//			if(isMovingInY){
+//				if(yInstructions.size()>0)
+//					return yInstructions.element();
+//				else {
+//					movingInY = false;
+//					return xInstructions.element();
+//				}
+//
+//			}else{
+//				if(xInstructions.size()>0)
+//					return xInstructions.element();
+//				else {
+//					movingInY = true;
+//					return yInstructions.element();
+//				}
+//			}
+//		}
 
-			}else{
-				if(xInstructions.size()>0)
-					return xInstructions.element();
-				else {
-					movingInY = true;
-					return yInstructions.element();
-				}
-			}
-		}
-
-	}
+//	}
 
     /**
      * Will scan in the direction of a proposed move, return whether safe or not
@@ -263,7 +263,8 @@ public class Traveler {
      * @return
      */
     private boolean executeScan(Move move){
-        boolean scanResult = false;
+        boolean scanResult = true;
+        boolean scanResult2 = true;
         switch (move.direction){
             case up:
                 nav.turnTo(90,true);
@@ -274,13 +275,14 @@ public class Traveler {
                 break;
             case left:
                 nav.turnTo(180,true);
-
                 break;
             case right:
                 nav.turnTo(0,true);
                 break;
         }
-        return scan();		// will return true if field is free 
+        scanResult = scan();
+        scanResult2 = scan();
+        return (scanResult && scanResult2) ;		// will return true if field is free 
     
     }
 
@@ -328,8 +330,11 @@ public class Traveler {
             for (int i=0; i<moves;i++){
                 if (isYMove){
                     yInstructions.add(new Move(Move.Direction.up));
+                    
+//                    System.out.println(yInstructions.peek().direction);
                 }else {
                     xInstructions.add(new Move(Move.Direction.right));
+//                    System.out.println(xInstructions.peek().direction);
                 }
             }
         }
@@ -370,8 +375,8 @@ public class Traveler {
     	System.out.println(distance);
         return false; 	
     	}
-    	else
-    	return true;
+    	else{
+    	return true;}
     }
 
 
@@ -381,16 +386,18 @@ public class Traveler {
     private void goLeft(){
     	
         Position p = odo.getPosition();
-        currentX-=1;
-//        double newX = p.getX() - gridSpace;
-        System.out.println("currentX : "+currentX);
-        double newX = currentX*gridSpace;
+
+        double newX = p.getX() - gridSpace;
+
+//        double newX = currentX*gridSpace;
         //if (nav.verticalLinesCrossed!=nav.verticalLinesCrossed)
         //	nav.verticalLinesCrossed=nav.verticalLinesCrossed;
 
         //Make sure we are facing the correct way
         //nav.turnTo(180,true);
         nav.travelToWithCorrection(newX,p.getY(),180);
+        currentX-=1;
+        System.out.println("currentX : "+currentX);
       
         //nav.verticalLinesCrossed-=1;
     }
@@ -401,16 +408,18 @@ public class Traveler {
     private void goRight(){
     	
         Position p = odo.getPosition();
-        currentX++;
-//        double newX = p.getX() + gridSpace;
-        double newX = currentX*gridSpace;
-        System.out.println("currentX : "+currentX);
+        double newX = p.getX() + gridSpace;
+        System.out.println("NewX: "+newX);
+//        double newX = currentX*gridSpace;
+
         //if (nav.verticalLinesCrossed!=nav.verticalLinesCrossed)
         //	nav.verticalLinesCrossed=nav.verticalLinesCrossed;
         
         //Make sure we are facing the correct way
         //nav.turnTo(0,true);
         nav.travelToWithCorrection(newX,p.getY(),0);
+        currentX++;
+        System.out.println("currentX : "+currentX);
     }
 
     /**
@@ -419,16 +428,18 @@ public class Traveler {
     private void goUP(){
     	
         Position p = odo.getPosition();
-//        double newY = p.getY() + gridSpace;
-       	currentY+=1;
-        double newY =currentY*gridSpace;
-        System.out.println("currentY : "+currentY);
+        double newY = p.getY() + gridSpace;
+        System.out.println("NewY: "+newY);
+
         //if (nav.horizontalLinesCrossed!=nav.horizontalLinesCrossed)
         //	nav.horizontalLinesCrossed=nav.horizontalLinesCrossed;
         
         //Make sure we are facing the correct way
         //nav.turnTo(90,true);
         nav.travelToWithCorrection(p.getX(),newY,90);
+       	currentY+=1;
+//      double newY =currentY*gridSpace;
+       	System.out.println("currentY : "+currentY);
     }
 
     /**
@@ -437,16 +448,17 @@ public class Traveler {
     private void goDown(){
 
         Position p = odo.getPosition();
-//        double newY = p.getY() - gridSpace;
-        currentY-=1;
-        System.out.println("currentY : "+currentY);
-        double newY =currentY*gridSpace;
+        double newY = p.getY() - gridSpace;
+
+//        double newY =currentY*gridSpace;
         //if (nav.horizontalLinesCrossed!=nav.horizontalLinesCrossed)
         //	nav.horizontalLinesCrossed=nav.horizontalLinesCrossed;
         
         //Make sure we are facing the correct way
         //nav.turnTo(270,true);
         nav.travelToWithCorrection(p.getX(),newY,270);
+        currentY-=1;
+        System.out.println("currentY : "+currentY);
 
         //nav.horizontalLinesCrossed-=1;
     }
