@@ -47,7 +47,7 @@ public class TravelerTest {
 //    	nav.turnTo(240, true);
 //    	nav.travelTo(10 , 15);
 
-    	trav.goTo(3, 3);
+    	trav.goTo(7, 7);
 //
 //        nav.turnTo(180, true);
 //    	int expectedColorID=1;

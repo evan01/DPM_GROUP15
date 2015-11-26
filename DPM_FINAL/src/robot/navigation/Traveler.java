@@ -58,8 +58,9 @@ public class Traveler {
     
 
 	private Move.Direction lastDirection=Move.Direction.up;	//should be up or right, keep it up for now
+	private Move.Direction lastDirection2=Move.Direction.right;
 	private Direction [] directionsArrayPriority1 = {Move.Direction.up,Move.Direction.right,Move.Direction.down,Move.Direction.left}; 
-	private Direction [] directionsArrayPriority2 = {Move.Direction.down,Move.Direction.left,Move.Direction.up,Move.Direction.right};
+	private Direction [] directionsArrayPriority2 = {Move.Direction.right,Move.Direction.up,Move.Direction.left,Move.Direction.down};
 	
 	private USSensor us;
 
@@ -128,15 +129,18 @@ public class Traveler {
                 //Depending on our robots map position, figure out if our avoidance goes, up, down, left, right
                 Move newMove = getBestDirection(mv, lastDirection); //Should possibly do a scan in both ways... idk...
 
-                //Place the move we would have made back onto it's propper queue
-               // placeMoveBack(mv);
+               //Place the move we would have made back onto it's propper queue
+               placeMoveBack(mv);
 
                 //Move to this new direction we calculated
-                executeMove(newMove);
+               executeMove(newMove);
                 
                 //Add a 'correction' move onto the propper queue to compensate for this direction
 //                if (newMove.direction == Direction.down || newMove.direction == Direction.left)
-//                correctAvoidanceMove(newMove);
+//                {          	
+//                	Move correcredMove = getBestDirection(newMove,lastDirection2);	
+//                	placeMoveBack(newMove);
+//                }
 
             }
 
@@ -182,6 +186,8 @@ public class Traveler {
 
     private void correctAvoidanceMove(Move direction){
         //TODO implement this method
+    	
+    	
     }
 
 
@@ -189,12 +195,15 @@ public class Traveler {
      *
      */
     private void placeMoveBack(Move mv){
-        if (mv.direction == Move.Direction.down ||  mv.direction == Move.Direction.up){
-            yInstructions.add(mv);
+        if (mv.direction == Move.Direction.down){
+            yInstructions.add(new Move(lastDirection));
+        }else if(mv.direction == Move.Direction.up){
+        	yInstructions.add(new Move(Move.Direction.down));
+        }else if(mv.direction == Move.Direction.right){
+            xInstructions.add(new Move(Move.Direction.left));
         }else{
-            xInstructions.add(mv);
+        	xInstructions.add(new Move(Move.Direction.right));
         }
-
     }
 
     /**
@@ -371,7 +380,7 @@ public class Traveler {
     public boolean scan(){
         //TODO need to implement a scan routine that detects if tile is free or not
     	int distance;
-    	if ((distance=getFilteredData())<35){
+    	if ((distance=getFilteredData())<25){
     	System.out.println(distance);
         return false; 	
     	}
