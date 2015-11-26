@@ -127,10 +127,11 @@ public class Traveler {
 
             	System.out.println("A7A");
                 //Depending on our robots map position, figure out if our avoidance goes, up, down, left, right
-                Move newMove = getBestDirection(mv, lastDirection); //Should possibly do a scan in both ways... idk...
-
+//                Move newMove = getBestDirection(mv, lastDirection); //Should possibly do a scan in both ways... idk...
+                
+                Move newMove = getBDirection(mv);
                //Place the move we would have made back onto it's propper queue
-               placeMoveBack(mv);
+//               placeMoveBack(mv);
 
                 //Move to this new direction we calculated
                executeMove(newMove);
@@ -183,6 +184,53 @@ public class Traveler {
 
 	}
 	
+	/**
+	 * This will return the next best move for our robot to make if there's an obstacle
+	 * @param mv the move that we were going to make
+	 * @return a new move to go to
+	 */
+	private Move getBDirection(Move mv){
+		//First, if we can just switch to the other queue of instructions then do that
+		Move move2;
+		if(isMovingInY)//Then get element from x queue
+			move2 = xInstructions.element();
+		else//Get element from the y queue
+			move2 = yInstructions.element();
+		
+		//Check to see if we can go in the direction of the other queue
+		if(executeScan(move2)){
+			//WE can!!
+			System.out.println("Good Move, direction: "+move2.direction);
+			//This if statement is necessary to change the direction for the future moves
+			if(isMovingInY)
+				isMovingInY = false;
+			else
+				isMovingInY = true;
+			return fetchInstruction();//Removes the element we just peeked at
+
+		}else{
+			//This is the worst case, we tried switching to other queue and we can't go there
+			//We've already tried 2 directions in this case
+			
+			//Get the oposite of the second suggested direction
+			Move move3 = move2.getOpposite();
+			System.out.println("Move 3 dirrr-> "+move3.direction);
+			
+			
+			if(executeScan(move3)){
+				//then go to that move, correct for it
+				placeMoveBack(move3);
+				System.out.println("Third Option direction: "+move3.direction);
+				return move3;
+			}else{
+				//Blocked from 3 sides, go back, correct for it
+				placeMoveBack(mv);
+				System.out.println("Fourth Option direction: "+mv.getOpposite().direction);
+				return mv.getOpposite();
+			}
+		}
+	}
+	
 
     private void correctAvoidanceMove(Move direction){
         //TODO implement this method
@@ -196,7 +244,7 @@ public class Traveler {
      */
     private void placeMoveBack(Move mv){
         if (mv.direction == Move.Direction.down){
-            yInstructions.add(new Move(lastDirection));
+            yInstructions.add(new Move(Move.Direction.up));
         }else if(mv.direction == Move.Direction.up){
         	yInstructions.add(new Move(Move.Direction.down));
         }else if(mv.direction == Move.Direction.right){
