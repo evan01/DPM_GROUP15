@@ -531,6 +531,7 @@ public class Traveler {
        	System.out.println("currentY : "+currentY);
     }
 
+    
     /**
      * Moves the robot down 1 tile, y-=1
      */
