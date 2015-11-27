@@ -310,7 +310,7 @@ public class Navigation {
 //				performBlackLineDetection();
 				if (isBlacklineDetected()){
 				performOdometerCorrection();
-				goForward(3);
+				goForward(6);
 				}
 			}
 			System.out.println("1 tile moved");
@@ -325,7 +325,7 @@ public class Navigation {
 //				performBlackLineDetection();
 				if (isBlacklineDetected()){
 				performOdometerCorrection();
-				goForward(3);
+				goForward(6);
 				}
 			}
 			System.out.println("1 tile moved");
@@ -340,7 +340,7 @@ public class Navigation {
 //				performBlackLineDetection();
 				if (isBlacklineDetected()){
 				performOdometerCorrection();
-				goForward(3);
+				goForward(6);
 				}
 				
 			}
@@ -357,7 +357,7 @@ public class Navigation {
 //				performBlackLineDetection();
 				if (isBlacklineDetected()){
 				performOdometerCorrection();
-				goForward(3);
+				goForward(6);
 				}
 			}
 			System.out.println("1 tile moved");

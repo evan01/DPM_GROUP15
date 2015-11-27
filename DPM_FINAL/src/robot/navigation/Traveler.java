@@ -537,7 +537,7 @@ public class Traveler {
     private void goDown(){
 
         Position p = odo.getPosition();
-        double newY = p.getY() - gridSpace;
+        double newY = p.getY() - gridSpace + 6;
 
 //        double newY =currentY*gridSpace;
         //if (nav.horizontalLinesCrossed!=nav.horizontalLinesCrossed)
