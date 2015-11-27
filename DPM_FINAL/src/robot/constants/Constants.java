@@ -44,7 +44,7 @@ public class Constants {
 
 		// LIGHT SENSOR
 		public static final int LIGHT_SENSOR_UPDATE_TIME = 200;
-		public static final int LIGHT_THRESHOLD = 58; 
+		public static final int LIGHT_THRESHOLD = 56; 
 		public static final double LIGHT_SENS_OFFSET = 7.1;
 		public static final double C_SENS_OFFSET = 2;
 		public static final double SQUARE_WIDTH = 30.48;
@@ -70,6 +70,7 @@ public class Constants {
 	public static final double ROBOT_LENTGH=12;
 	public static final double COLOR_TO_CENTER=12;
 	public static final double US_TO_CENTER=12;
+	public static final double CENTER_TO_COLOR=7;
 	
 	//Wifi values
 		public static wifi.StartCorner StartingCorner;

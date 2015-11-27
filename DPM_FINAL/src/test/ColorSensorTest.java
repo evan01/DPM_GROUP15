@@ -38,8 +38,10 @@ public class ColorSensorTest {
                 LCD.drawString("White", 0, 4);
             } else if (color.isSampleRed()) {
                 LCD.drawString("Red", 0, 4);
+            } else if(color.isSampleLightBlue()){
+                LCD.drawString("lightbluc", 0, 4);
             } else{
-                LCD.drawString("gros", 0, 4);
+            	LCD.drawString("gros", 0, 4);
             }
             try {
                 Thread.sleep(100);

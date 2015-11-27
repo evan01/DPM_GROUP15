@@ -15,7 +15,8 @@ public class Color {
 	private double B;
 	
 	
-
+	// following color detection methods: red, blue, yellow, white and light blue
+	//use proportion of RGB values to find block color
 	public boolean isSampleRed() {
 		if (this.R > this.G && this.R > this.B && (this.B/this.R)*100<=30) {
 			return true;
@@ -24,8 +25,6 @@ public class Color {
 		}
 	}
 
-	// if sample is not red or blue, it compares the ratio of each
-	// value to 90% as white colour has similar RGB values
 	public boolean isSampleWhite() {
 		if (!isSampleRed()) {
 			if ((this.R / this.G) * 100 >= 85 && (this.R / this.G) * 100 <= 140) {
@@ -38,9 +37,6 @@ public class Color {
 		}
 	}
 
-	// if sample is not blue, it compares the ratio of red and green
-	// if green is not less than 30% of red value it is yellow and
-	// red is bigger than green and blue
 	public boolean isSampleYellow() {
 		if (!isSampleBlue()) {
 			if (this.R > this.B && this.R > this.G && !isSampleWhite()

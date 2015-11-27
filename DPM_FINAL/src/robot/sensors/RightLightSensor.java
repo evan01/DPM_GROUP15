@@ -33,7 +33,6 @@ public class RightLightSensor implements Runnable{
         lightSensorR = sensorRight.getRedMode();     
         sampleRight = new float[lightSensorR.sampleSize()];
         sensorRight.setFloodlight(true);
-        this.TILE_COLOR_VALUE=scanWithAverageFilter();
     }
 	
 	@Override
