@@ -196,6 +196,17 @@ public class Navigation {
 			this.setSpeeds(0, 0);
 		}
 	}
+	
+	public void turnToSearch(double angle, boolean stop){
+		
+		leftMotor.setSpeed(FAST);
+		rightMotor.setSpeed(FAST);
+
+		double angleToTurn = Odometer.minimumAngleFromTo(this.odometer.getTheta(), angle);
+
+		leftMotor.rotate(-convertAngle(2.1, 14.2, angleToTurn), true);
+		rightMotor.rotate(convertAngle(2.1, 14.2, angleToTurn), false);
+	}
 	/**
 	 * Go foward a set distance in cm
 	 * @param distance the distance with which to move forward
@@ -287,7 +298,7 @@ public class Navigation {
 		odometer.getLeftMotor().forward();
 		odometer.getRightMotor().forward();
 
-		turnTo(theta, true);
+		turnToSearch(theta, true);
 		
 		Sound.buzz();
 		// Heading EAST (y++)

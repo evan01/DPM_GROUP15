@@ -3,7 +3,6 @@ package robot.navigation;/*
  */
 
 import robot.constants.Constants;
-
 import robot.constants.Move;
 import robot.constants.Move.Direction;
 import robot.constants.Position;
@@ -12,6 +11,7 @@ import robot.sensors.USSensor;
 import java.util.LinkedList;
 import java.util.Queue;
 import java.util.concurrent.PriorityBlockingQueue;
+
 import javax.swing.GroupLayout.Alignment;
 
 import lejos.hardware.ev3.LocalEV3;
@@ -19,6 +19,7 @@ import lejos.hardware.port.Port;
 import lejos.hardware.sensor.EV3UltrasonicSensor;
 import lejos.hardware.sensor.SensorModes;
 import lejos.robotics.SampleProvider;
+import lejos.utility.Delay;
 
 /**
  * This class will represent an object which controls the navigation of our
@@ -55,12 +56,12 @@ public class Traveler {
     private Queue<Move> xInstructions;
     private Queue<Move> yInstructions;
     private double gridSpace = 30.48;
-    
+    private boolean thirdOption = false , fourthOption = false;
 
 	private Move.Direction lastDirection=Move.Direction.up;	//should be up or right, keep it up for now
 	private Move.Direction lastDirection2=Move.Direction.right;
 	private Direction [] directionsArrayPriority1 = {Move.Direction.up,Move.Direction.right,Move.Direction.down,Move.Direction.left}; 
-	private Direction [] directionsArrayPriority2 = {Move.Direction.right,Move.Direction.up,Move.Direction.left,Move.Direction.down};
+	private Direction [] directionsArrayPriority2 = {Move.Direction.down,Move.Direction.left,Move.Direction.up,Move.Direction.right};
 	
 	private USSensor us;
 
@@ -124,7 +125,7 @@ public class Traveler {
                 executeMove(mv);
             }else{
                 //OBSTACLE AVOIDANCE ROUTINE...
-
+            	placeMoveBack(mv.getOpposite());
             	System.out.println("A7A");
                 //Depending on our robots map position, figure out if our avoidance goes, up, down, left, right
 //                Move newMove = getBestDirection(mv, lastDirection); //Should possibly do a scan in both ways... idk...
@@ -135,7 +136,29 @@ public class Traveler {
 
                 //Move to this new direction we calculated
                executeMove(newMove);
-                
+//             if (newMove.direction == Direction.down || newMove.direction == Direction.left)
+//             {
+//            	 Move correctionMove = getBestDirection(newMove ,newMove.direction);
+//            	 executeMove(correctionMove);
+//            	 placeMoveBack(correctionMove);
+//             }
+               if (thirdOption)
+               {
+            	   isMovingInY = false;
+            	   Move correctionMove = fetchInstruction();
+            	   System.out.println("Correction direction:  " + correctionMove.direction);
+            	   executeMove(correctionMove);
+            	   thirdOption = false;
+               }
+               else if (fourthOption) 
+               {
+            	   isMovingInY = true;
+            	   Move correctionMove = fetchInstruction();
+            	   System.out.println("Correction direction:  " + correctionMove.direction);
+            	   executeMove(correctionMove);
+            	   fourthOption= false;
+               }
+
                 //Add a 'correction' move onto the propper queue to compensate for this direction
 //                if (newMove.direction == Direction.down || newMove.direction == Direction.left)
 //                {          	
@@ -168,7 +191,7 @@ public class Traveler {
 		{
 			
 			//counter should probably be removed, did not get used
-			currentDirection=directionsArrayPriority1[i];
+			currentDirection=directionsArrayPriority2[i];
 			
 			if(mv.direction==currentDirection)		//skip this direction since we already checked it before even going into this method
 				continue;
@@ -220,15 +243,18 @@ public class Traveler {
 			if(executeScan(move3)){
 				//then go to that move, correct for it
 				placeMoveBack(move3);
+				thirdOption = true;
 				System.out.println("Third Option direction: "+move3.direction);
 				return move3;
 			}else{
 				//Blocked from 3 sides, go back, correct for it
-				placeMoveBack(mv);
+				placeMoveBack(mv.getOpposite());
+				fourthOption = true;
 				System.out.println("Fourth Option direction: "+mv.getOpposite().direction);
 				return mv.getOpposite();
 			}
 		}
+		//No matter what, add move back
 	}
 	
 
@@ -242,17 +268,23 @@ public class Traveler {
     /**
      *
      */
-    private void placeMoveBack(Move mv){
-        if (mv.direction == Move.Direction.down){
-            yInstructions.add(new Move(Move.Direction.up));
-        }else if(mv.direction == Move.Direction.up){
-        	yInstructions.add(new Move(Move.Direction.down));
-        }else if(mv.direction == Move.Direction.right){
-            xInstructions.add(new Move(Move.Direction.left));
-        }else{
-        	xInstructions.add(new Move(Move.Direction.right));
-        }
-    }
+	private void placeMoveBack(Move mv) {
+		switch (mv.direction) {
+		case up:
+			yInstructions.add(new Move(Move.Direction.down));
+			break;
+		case down:
+			System.out.println("UPMOVEADDED B$#%");
+			yInstructions.add(new Move(Move.Direction.up));
+			break;
+		case left:
+			xInstructions.add(new Move(Move.Direction.right));
+			break;
+		case right:
+			xInstructions.add(new Move(Move.Direction.left));
+			break;
+		}
+	}
 
     /**
      * Changes the direction that our robot is traveling, called when there is a detection
@@ -324,17 +356,17 @@ public class Traveler {
         boolean scanResult2 = true;
         switch (move.direction){
             case up:
-                nav.turnTo(90,true);
+                nav.turnToSearch(90,true);
                 break;
             case down:
-                nav.turnTo(270,true);
+                nav.turnToSearch(270,true);
 
                 break;
             case left:
-                nav.turnTo(180,true);
+                nav.turnToSearch(180,true);
                 break;
             case right:
-                nav.turnTo(0,true);
+                nav.turnToSearch(0,true);
                 break;
         }
         scanResult = scan();
