@@ -33,6 +33,8 @@ public class LeftLightSensor implements Runnable{
         lightSensorL = sensorLeft.getRedMode();     
         sampleLeft = new float[lightSensorL.sampleSize()];
         sensorLeft.setFloodlight(true);
+        //gridline will be at least 12 under tile color
+        Constants.FOUND_LIGHT_THRESHOLD=scanWithAverageFilter()-12;
     }
 	
 	@Override
@@ -69,7 +71,7 @@ public class LeftLightSensor implements Runnable{
     	double reading4=sampleLeft[0] * 100.0;
     	lightSensorL.fetchSample(sampleLeft, 0); // acquire data
     	double reading5=sampleLeft[0] * 100.0;
-        double average=(reading1+reading2+reading3+reading4+reading5);
+        double average=(reading1+reading2+reading3+reading4+reading5)/5.0;
     	return average;
     }
     

@@ -1,6 +1,7 @@
 package robot.navigation;
 
 import robot.constants.Constants;
+import robot.constants.Position;
 import robot.sensors.ColorSensor;
 import robot.sensors.LeftLightSensor;
 import robot.sensors.RightLightSensor;
@@ -10,7 +11,8 @@ import lejos.hardware.motor.EV3MediumRegulatedMotor;
 import lejos.utility.Delay;
 
 /**
- * This is another implementation of the navigation class, will travel using a direct path instead of straight path
+ * This is another implementation of the navigation class, will travel using a
+ * direct path instead of straight path
  */
 public class Navigation {
 
@@ -32,12 +34,9 @@ public class Navigation {
 	private boolean scanLeft;
 	private boolean lineDetected = false;
 
-	
 	// for odo correction
-	public static int horizontalLinesCrossed = 1;	//currentY
-	public static int verticalLinesCrossed = 1; 	//currentX
-	
-	
+	public static int horizontalLinesCrossed = 1; // currentY
+	public static int verticalLinesCrossed = 1; // currentX
 
 	// this is a singleton class
 	private static final Navigation ourInstance = new Navigation();
@@ -54,7 +53,6 @@ public class Navigation {
 		this.odometer = Odometer.getInstance();
 		this.leftLS = LeftLightSensor.getInstance();
 		this.rightLS = RightLightSensor.getInstance();
-
 
 		EV3LargeRegulatedMotor[] motors = new EV3LargeRegulatedMotor[2];
 		motors = this.odometer.getMotors();
@@ -127,41 +125,48 @@ public class Navigation {
 	 */
 	public void travelTo(double x, double y) {
 		double minAng;
-		int counter=0;
-		while (Math.abs(x - odometer.getX()) > CM_ERR || Math.abs(y - odometer.getY()) > CM_ERR) {
-			minAng = (Math.atan2(y - odometer.getY(), x - odometer.getX())) * (180.0 / Math.PI);
-			if (minAng < 0 && !(minAng>-1 && minAng<1))
+		int counter = 0;
+		while (Math.abs(x - odometer.getX()) > CM_ERR
+				|| Math.abs(y - odometer.getY()) > CM_ERR) {
+			minAng = (Math.atan2(y - odometer.getY(), x - odometer.getX()))
+					* (180.0 / Math.PI);
+			if (minAng < 0 && !(minAng > -1 && minAng < 1))
 				minAng += 360.0;
 			this.turnTo(minAng, false);
-			
-			if(counter==0){
-				if(minAng<0){
-					minAng+=360;;
+
+			if (counter == 0) {
+				if (minAng < 0) {
+					minAng += 360;
+					;
 				}
 				this.turnTo(minAng, false);
 				counter++;
 			}
-			//this.setSpeeds(FAST, FAST);
+			// this.setSpeeds(FAST, FAST);
 			// calculates magnitude to travel
-			double distance = Math.sqrt(Math.pow((y - odometer.getY()), 2) + Math.pow((x - odometer.getX()), 2));
+			double distance = Math.sqrt(Math.pow((y - odometer.getY()), 2)
+					+ Math.pow((x - odometer.getX()), 2));
 			goForward(distance);
 		}
 		this.setSpeeds(0, 0);
 	}
-	
+
 	/**
-	 * TravelTo bacwards function 
+	 * TravelTo bacwards function
 	 */
 	public void travelToBackwards(double x, double y) {
 		double minAng;
-		while (Math.abs(x - odometer.getX()) > CM_ERR || Math.abs(y - odometer.getY()) > CM_ERR) {
-			minAng = (Math.atan2(y - odometer.getY(), x - odometer.getX())) * (180.0 / Math.PI);
+		while (Math.abs(x - odometer.getX()) > CM_ERR
+				|| Math.abs(y - odometer.getY()) > CM_ERR) {
+			minAng = (Math.atan2(y - odometer.getY(), x - odometer.getX()))
+					* (180.0 / Math.PI);
 			if (minAng < 0)
 				minAng += 360.0;
 			this.turnTo(minAng, false);
 			// this.setSpeeds(FAST, FAST);
 			// calculates magnitude to travel
-			double distance = Math.sqrt(Math.pow((y - odometer.getY()), 2) + Math.pow((x - odometer.getX()), 2));
+			double distance = Math.sqrt(Math.pow((y - odometer.getY()), 2)
+					+ Math.pow((x - odometer.getX()), 2));
 			goBackward(distance);
 		}
 		this.setSpeeds(0, 0);
@@ -182,10 +187,10 @@ public class Navigation {
 			if (error < -180.0) {
 				this.setSpeeds(-SLOW, SLOW);
 			} else if (error < 0.0) {
-				//Sound.beep();
+				// Sound.beep();
 				this.setSpeeds(SLOW, -SLOW);
 			} else if (error > 180.0) {
-				//Sound.beepSequence();
+				// Sound.beepSequence();
 				this.setSpeeds(SLOW, -SLOW);
 			} else {
 				this.setSpeeds(-SLOW, SLOW);
@@ -196,20 +201,28 @@ public class Navigation {
 			this.setSpeeds(0, 0);
 		}
 	}
-	
-	public void turnToSearch(double angle, boolean stop){
-		
+
+	public void turnToSearch(double angle, boolean stop) {
+
 		leftMotor.setSpeed(FAST);
 		rightMotor.setSpeed(FAST);
 
-		double angleToTurn = Odometer.minimumAngleFromTo(this.odometer.getTheta(), angle);
+		double angleToTurn = Odometer.minimumAngleFromTo(
+				this.odometer.getTheta(), angle);
 
-		leftMotor.rotate(-convertAngle(Constants.WHEEL_RADIUS, Constants.TRACK, angleToTurn), true);
-		rightMotor.rotate(convertAngle(Constants.WHEEL_RADIUS, Constants.TRACK, angleToTurn), false);
+		leftMotor.rotate(
+				-convertAngle(Constants.WHEEL_RADIUS, Constants.TRACK,
+						angleToTurn), true);
+		rightMotor.rotate(
+				convertAngle(Constants.WHEEL_RADIUS, Constants.TRACK,
+						angleToTurn), false);
 	}
+
 	/**
 	 * Go foward a set distance in cm
-	 * @param distance the distance with which to move forward
+	 * 
+	 * @param distance
+	 *            the distance with which to move forward
 	 */
 	public void goForward(double distance) {
 		leftMotor.setSpeed(SLOW);
@@ -236,13 +249,15 @@ public class Navigation {
 
 	/**
 	 * Go Backward a set distance in cm
-	 * @param distance the distance with which to move backward
+	 * 
+	 * @param distance
+	 *            the distance with which to move backward
 	 */
 	public void goBackward(double distance) {
 
 		leftMotor.setSpeed(SLOW);
 		rightMotor.setSpeed(SLOW);
-		//Sound.beep();
+		// Sound.beep();
 		isNavigating = true;
 
 		leftMotor.rotate(-convertDistance(RADIUS, distance), true);
@@ -251,9 +266,11 @@ public class Navigation {
 		isNavigating = false;
 	}
 
-	/** Motor Setters (FOR ROTATING)
-	 *
-	 * @param speed the speed at which the robot should be rotating
+	/**
+	 * Motor Setters (FOR ROTATING)
+	 * 
+	 * @param speed
+	 *            the speed at which the robot should be rotating
 	 */
 	public void setRotationSpeed(float speed) {
 		rotationSpeed = speed;
@@ -262,7 +279,9 @@ public class Navigation {
 
 	/**
 	 * Make the robot perform a sweeping motion
-	 * @param forward whether the robot sweeps forward or backward
+	 * 
+	 * @param forward
+	 *            whether the robot sweeps forward or backward
 	 */
 	public void search(boolean forward) {
 		leftMotor.setSpeed(SEARCH_SPEED);
@@ -279,7 +298,7 @@ public class Navigation {
 	public static int convertDistance(double radius, double distance) {
 		return (int) ((180.0 * distance) / (Math.PI * radius));
 	}
-	
+
 	public static int convertAngle(double radius, double width, double angle) {
 		return convertDistance(radius, Math.PI * width * angle / 360.0);
 	}
@@ -287,11 +306,10 @@ public class Navigation {
 	public boolean isNavigating() {
 		return this.isNavigating;
 	}
-	
-	//######### CORRECTIVE NAVIGATION ########## --- Mahmood
-	
-	public void travelToWithCorrection(double x, double y, double theta)
-	{
+
+	// ######### CORRECTIVE NAVIGATION ########## --- Mahmood
+
+	public void travelToWithCorrection(double x, double y, double theta) {
 		odometer.getLeftMotor().setSpeed(Constants.SLOW);
 		odometer.getRightMotor().setSpeed(Constants.SLOW);
 
@@ -299,65 +317,57 @@ public class Navigation {
 		odometer.getRightMotor().forward();
 
 		turnToSearch(theta, true);
-		
+
 		Sound.buzz();
 		// Heading EAST (y++)
-		if(theta >= 45 && theta < 135)
-		{
-			while(odometer.getY() < y)
-			{
-				setSpeeds(Constants.SLOW,Constants.SLOW);
-//				performBlackLineDetection();
-				if (isBlacklineDetected()){
-				performOdometerCorrection();
-				goForward(6);
+		if (theta >= 45 && theta < 135) {
+			while (odometer.getY() < y) {
+				setSpeeds(Constants.SLOW, Constants.SLOW);
+				// performBlackLineDetection();
+				if (isBlacklineDetected()) {
+					performOdometerCorrection();
+					goForward(6);
 				}
 			}
 			System.out.println("1 tile moved");
 			stopMoving();
 		}
 		// Heading SOUTH (x--)
-		else if(theta >= 135 && theta < 225)
-		{
-			while(odometer.getX() > x)
-			{
-				setSpeeds(Constants.SLOW,Constants.SLOW);
-//				performBlackLineDetection();
-				if (isBlacklineDetected()){
-				performOdometerCorrection();
-				goForward(6);
+		else if (theta >= 135 && theta < 225) {
+			while (odometer.getX() > x) {
+				setSpeeds(Constants.SLOW, Constants.SLOW);
+				// performBlackLineDetection();
+				if (isBlacklineDetected()) {
+					performOdometerCorrection();
+					goForward(6);
 				}
 			}
 			System.out.println("1 tile moved");
 			stopMoving();
 		}
 		// Heading WEST (y--)
-		else if(theta >= 225 && theta < 315)
-		{
-			while(odometer.getY() > y )
-			{
-				setSpeeds(Constants.SLOW,Constants.SLOW);
-//				performBlackLineDetection();
-				if (isBlacklineDetected()){
-				performOdometerCorrection();
-				goForward(6);
+		else if (theta >= 225 && theta < 315) {
+			while (odometer.getY() > y) {
+				setSpeeds(Constants.SLOW, Constants.SLOW);
+				// performBlackLineDetection();
+				if (isBlacklineDetected()) {
+					performOdometerCorrection();
+					goForward(6);
 				}
-				
+
 			}
 			System.out.println("1 tile moved");
 			stopMoving();
 		}
 		// Heading NORTH (x++)
-		else
-		{
-			
-			while(odometer.getX() < x)
-			{
-				setSpeeds(Constants.SLOW,Constants.SLOW);
-//				performBlackLineDetection();
-				if (isBlacklineDetected()){
-				performOdometerCorrection();
-				goForward(6);
+		else {
+
+			while (odometer.getX() < x) {
+				setSpeeds(Constants.SLOW, Constants.SLOW);
+				// performBlackLineDetection();
+				if (isBlacklineDetected()) {
+					performOdometerCorrection();
+					goForward(6);
 				}
 			}
 			System.out.println("1 tile moved");
@@ -365,239 +375,279 @@ public class Navigation {
 		}
 		Delay.msDelay(500);
 	}
-	
-	public boolean isBlacklineDetected(){
-		double rightReading1,rightReading2,leftReading1,leftReading2;
-		rightReading1=rightLS.scan();
-		Delay.msDelay(50);
-		rightReading2=rightLS.scan();
 
-		leftReading1=leftLS.scan();
-		Delay.msDelay(50);
-		leftReading2=leftLS.scan();
+	public boolean isBlacklineDetected() {
+		double rightReading1, rightReading2, leftReading1, leftReading2;
+		rightReading1 = rightLS.scan();
+		rightReading2 = rightLS.scan();
 
-		scanRight=scanFilter(rightReading1,rightReading2);
-		scanLeft=scanFilter(leftReading1,leftReading2);
+		leftReading1 = leftLS.scan();
+		leftReading2 = leftLS.scan();
+
+		scanRight = scanFilter(rightReading1, rightReading2);
+		scanLeft = scanFilter(leftReading1, leftReading2);
 		isBlackLineDetected = scanRight || scanLeft;
-		
-		if(scanRight==true && scanLeft==true){
-			//do nothing
+
+		if (scanRight == true && scanLeft == true) {
+			// do nothing
 			Sound.beepSequence();
 			Delay.msDelay(500);
 			return isBlackLineDetected;
 		}
 
-		else if(scanRight==true){
-			//turn clockwise leftMotor only
-			while(scanLeft==false){
-				setSpeeds(Constants.ROTATE_SPEED,0);
-				leftReading1=leftLS.scan();
-				Delay.msDelay(50);
-				leftReading2=leftLS.scan();
-				scanLeft=scanFilter(leftReading1,leftReading2);
+		else if (scanRight == true) {
+			// save initial wheel rotation
+			int initialTachoCount = odometer.getLeftMotor().getTachoCount();
+			// turn clockwise leftMotor only
+			while (scanLeft == false
+					&& odometer.getLeftMotor().getTachoCount() < (initialTachoCount + 120)) {
+				setSpeeds(Constants.ROTATE_SPEED, 0);
+				leftReading1 = leftLS.scan();
+				leftReading2 = leftLS.scan();
+				scanLeft = scanFilter(leftReading1, leftReading2);
+			}
+			while (scanLeft == false
+					&& odometer.getLeftMotor().getTachoCount() > initialTachoCount) {
+				setSpeeds((-1) * Constants.ROTATE_SPEED, 0);
+				leftReading1 = leftLS.scan();
+				leftReading2 = leftLS.scan();
+				scanLeft = scanFilter(leftReading1, leftReading2);
 			}
 			Sound.beep();
 			setSpeeds(Constants.SLOW, Constants.SLOW);
-//			Delay.msDelay(1000);
-			return isBlackLineDetected;
+			Delay.msDelay(1000);
+			return scanLeft;
 		}
 
-		else if(scanLeft==true){
-			//turn counterclockwise rightMotor only
-			while(scanRight==false){
-				setSpeeds(0,Constants.ROTATE_SPEED);
-				rightReading1=rightLS.scan();
-				Delay.msDelay(50);
-				rightReading2=rightLS.scan();
-				scanRight=scanFilter(rightReading1,rightReading2);
+		else if (scanLeft == true) {
+			// save initial wheel rotation
+			int initialTachoCount = odometer.getRightMotor().getTachoCount();
+			// turn clockwise leftMotor only
+			while (scanRight == false
+					&& odometer.getRightMotor().getTachoCount() < (initialTachoCount + 120)) {
+				setSpeeds(0, Constants.ROTATE_SPEED);
+				rightReading1 = rightLS.scan();
+				rightReading2 = rightLS.scan();
+				scanRight = scanFilter(rightReading1, rightReading2);
+			}
+			while (scanRight == false
+					&& odometer.getRightMotor().getTachoCount() > initialTachoCount) {
+				setSpeeds(0, (-1) * Constants.ROTATE_SPEED);
+				rightReading1 = rightLS.scan();
+				rightReading2 = rightLS.scan();
+				scanRight = scanFilter(rightReading1, rightReading2);
 			}
 			Sound.beep();
 			setSpeeds(Constants.SLOW, Constants.SLOW);
-			return true;
-//			Delay.msDelay(1000);
+			Delay.msDelay(1000);
+			return scanRight;
+			// Delay.msDelay(1000);
 		}
 		return isBlackLineDetected;
 
 	}
-	
-	
-	
-  
-	public void performBlackLineDetection(){
-		double rightReading1,rightReading2,leftReading1,leftReading2;
-		while(isBlackLineDetected==false){
-			setSpeeds(Constants.SLOW,Constants.SLOW);
 
-			rightReading1=rightLS.scan();
+	public void performBlackLineDetection() {
+		double rightReading1, rightReading2, leftReading1, leftReading2;
+		while (isBlackLineDetected == false) {
+			setSpeeds(Constants.SLOW, Constants.SLOW);
+
+			rightReading1 = rightLS.scan();
 			Delay.msDelay(50);
-			rightReading2=rightLS.scan();
+			rightReading2 = rightLS.scan();
 
-			leftReading1=leftLS.scan();
+			leftReading1 = leftLS.scan();
 			Delay.msDelay(50);
-			leftReading2=leftLS.scan();
+			leftReading2 = leftLS.scan();
 
-			scanRight=scanFilter(rightReading1,rightReading2);
-			scanLeft=scanFilter(leftReading1,leftReading2);
-			isBlackLineDetected=scanRight || scanLeft;	
+			scanRight = scanFilter(rightReading1, rightReading2);
+			scanLeft = scanFilter(leftReading1, leftReading2);
+			isBlackLineDetected = scanRight || scanLeft;
 		}
 		Sound.beep();
 
-		if(scanRight==true && scanLeft==true){
-			//do nothing
+		if (scanRight == true && scanLeft == true) {
+			// do nothing
 			Sound.beepSequence();
 			Delay.msDelay(500);
 		}
 
-		else if(scanRight==true){
-			//turn clockwise leftMotor only
-			while(scanLeft==false){
-				setSpeeds(Constants.ROTATE_SPEED,0);
-				leftReading1=leftLS.scan();
-				Delay.msDelay(50);
-				leftReading2=leftLS.scan();
-				scanLeft=scanFilter(leftReading1,leftReading2);
+		else if (scanRight == true) {
+			// save initial wheel rotation
+			int initialTachoCount = odometer.getLeftMotor().getTachoCount();
+			System.out.println(initialTachoCount);
+			// turn clockwise leftMotor only
+			while (scanLeft == false
+					&& odometer.getLeftMotor().getTachoCount() < (initialTachoCount + 360)) {
+				System.out.println(odometer.getLeftMotor().getTachoCount());
+				setSpeeds(Constants.ROTATE_SPEED, 0);
+				leftReading1 = leftLS.scan();
+				leftReading2 = leftLS.scan();
+				scanLeft = scanFilter(leftReading1, leftReading2);
+			}
+			while (scanLeft == false
+					&& odometer.getLeftMotor().getTachoCount() > initialTachoCount) {
+				setSpeeds((-1) * Constants.ROTATE_SPEED, 0);
+				leftReading1 = leftLS.scan();
+				leftReading2 = leftLS.scan();
+				scanLeft = scanFilter(leftReading1, leftReading2);
 			}
 			Sound.beep();
 			setSpeeds(Constants.SLOW, Constants.SLOW);
 			Delay.msDelay(1000);
 		}
 
-		else if(scanLeft==true){
-			//turn counterclockwise rightMotor only
-			while(scanRight==false){
-				setSpeeds(0,Constants.ROTATE_SPEED);
-				rightReading1=rightLS.scan();
-				Delay.msDelay(50);
-				rightReading2=rightLS.scan();
-				scanRight=scanFilter(rightReading1,rightReading2);
+		else if (scanLeft == true) {
+			System.out.println("gros");
+			// turn counterclockwise rightMotor only
+			while (scanRight == false) {
+				setSpeeds(0, Constants.ROTATE_SPEED);
+				rightReading1 = rightLS.scan();
+				rightReading2 = rightLS.scan();
+				scanRight = scanFilter(rightReading1, rightReading2);
 			}
 			Sound.beep();
 			setSpeeds(Constants.SLOW, Constants.SLOW);
 			Delay.msDelay(1000);
 		}
 
-		scanRight=false;
-		scanLeft=false;
-		isBlackLineDetected=false;
+		scanRight = false;
+		scanLeft = false;
+		isBlackLineDetected = false;
 
 	}
 
-	public boolean scanFilter(double average1,double average2){
-		if(average1< Constants.LIGHT_THRESHOLD || average2< Constants.LIGHT_THRESHOLD){
+	public boolean scanFilter(double average1, double average2) {
+		if (average1 < Constants.FOUND_LIGHT_THRESHOLD
+				|| average2 < Constants.FOUND_LIGHT_THRESHOLD) {
 			return true;
-		} else{
+		} else {
 			return false;
 		}
 
 	}
-	//###### ODOMETRY CORRECTION ########
-	// this could have been simpler but I needed to keep count of gridline number - Mahmood
-	private void performOdometerCorrection()
-	{
-		// Updates the x, y and theta values on the Odometer according to the correction
+
+	// ###### ODOMETRY CORRECTION ########
+	// this could have been simpler but I needed to keep count of gridline
+	// number - Mahmood
+	private void performOdometerCorrection() {
+		// Updates the x, y and theta values on the Odometer according to the
+		// correction
 		double heading = odometer.getTheta();
-		
+
 		// Heading EAST (y++)
-		if(heading >= 45 && heading < 135)
-		{
-			double yActual = odometer.getY() + Math.cos(odometer.getTheta()*Constants.LIGHT_SENS_OFFSET);
-			double correctionY=0;
-			if (horizontalLinesCrossed != 1){
-			if (yActual > (horizontalLinesCrossed*Constants.SQUARE_WIDTH +Math.cos(odometer.getTheta()*Constants.LIGHT_SENS_OFFSET))){
-				correctionY = -(yActual%30.48);
-				}else {
-				correctionY = 30.48-(yActual%30.48);
+		if (heading >= 45 && heading < 135) {
+			double yActual = odometer.getY()
+					+ Math.cos(odometer.getTheta()
+							* Constants.LIGHT_SENS_OFFSET);
+			double correctionY = 0;
+			if (horizontalLinesCrossed != 1) {
+				if (yActual > (horizontalLinesCrossed * Constants.SQUARE_WIDTH + Math
+						.cos(odometer.getTheta() * Constants.LIGHT_SENS_OFFSET))) {
+					correctionY = -(yActual % 30.48);
+				} else {
+					correctionY = 30.48 - (yActual % 30.48);
 				}
 			}
 			horizontalLinesCrossed++;
-			odometer.setPosition(new double[] {0.0, correctionY + odometer.getY(), 90.0}, 
-								  new boolean[] {false,true, true});
+			odometer.setPosition(
+					new double[] { 0.0, correctionY + odometer.getY(), 90.0 },
+					new boolean[] { false, true, true });
 		}
 		// Heading SOUTH (x--)
-		else if(heading >= 135 && heading < 225)
-		{
-			double correctionX=0;
-			double xActual = odometer.getX() + Math.sin(odometer.getTheta()*Constants.LIGHT_SENS_OFFSET);
-			if (verticalLinesCrossed != 1){
-			if (xActual > (verticalLinesCrossed*Constants.SQUARE_WIDTH + Math.sin(odometer.getTheta()*Constants.LIGHT_SENS_OFFSET))){
-			correctionX = -(xActual%30.48);
-			}else {
-			correctionX = 30.48-(xActual%30.48);
-			}
+		else if (heading >= 135 && heading < 225) {
+			double correctionX = 0;
+			double xActual = odometer.getX()
+					+ Math.sin(odometer.getTheta()
+							* Constants.LIGHT_SENS_OFFSET);
+			if (verticalLinesCrossed != 1) {
+				if (xActual > (verticalLinesCrossed * Constants.SQUARE_WIDTH + Math
+						.sin(odometer.getTheta() * Constants.LIGHT_SENS_OFFSET))) {
+					correctionX = -(xActual % 30.48);
+				} else {
+					correctionX = 30.48 - (xActual % 30.48);
+				}
 			}
 			verticalLinesCrossed--;
-			//System.out.println("Curr X:"+verticalLinesCrossed);
-			odometer.setPosition(new double[] { correctionX + odometer.getX() ,0.0, 180.0}, 
-								  new boolean[] {true,false,true});
+			// System.out.println("Curr X:"+verticalLinesCrossed);
+			odometer.setPosition(new double[] { correctionX + odometer.getX(),
+					0.0, 180.0 }, new boolean[] { true, false, true });
 
 		}
 		// Heading WEST (y--)
-		else if(heading >= 225 && heading < 315)
-		{
-			double yActual = odometer.getY() + Math.cos(odometer.getTheta()*Constants.LIGHT_SENS_OFFSET);
-			double correctionY=0;
-			if (horizontalLinesCrossed != 1){
-			if (yActual > (horizontalLinesCrossed*Constants.SQUARE_WIDTH + Math.cos(odometer.getTheta()*Constants.LIGHT_SENS_OFFSET))){
-				correctionY = -(yActual%30.48);
+		else if (heading >= 225 && heading < 315) {
+			double yActual = odometer.getY()
+					+ Math.cos(odometer.getTheta()
+							* Constants.LIGHT_SENS_OFFSET);
+			double correctionY = 0;
+			if (horizontalLinesCrossed != 1) {
+				if (yActual > (horizontalLinesCrossed * Constants.SQUARE_WIDTH + Math
+						.cos(odometer.getTheta() * Constants.LIGHT_SENS_OFFSET))) {
+					correctionY = -(yActual % 30.48);
 				} else {
-				correctionY = 30.48-(yActual%30.48);
+					correctionY = 30.48 - (yActual % 30.48);
 				}
 			}
 			horizontalLinesCrossed--;
-			odometer.setPosition(new double[] {0.0, correctionY + odometer.getY(), 270.0}, 
-					  new boolean[] {false,true, true});
+			odometer.setPosition(
+					new double[] { 0.0, correctionY + odometer.getY(), 270.0 },
+					new boolean[] { false, true, true });
 
 		}
 		// Heading NORTH (x++)
-		else
-		{
-			double correctionX=0;
-			double xActual = odometer.getX() + Math.sin(odometer.getTheta()*Constants.LIGHT_SENS_OFFSET);
-			if (verticalLinesCrossed != 1){ 
-			if (xActual > (verticalLinesCrossed*Constants.SQUARE_WIDTH + Math.sin(odometer.getTheta()*Constants.LIGHT_SENS_OFFSET))){
-			correctionX = -(xActual%30.48);
-			}else {
-			correctionX = 30.48-(xActual%30.48);
-			}
+		else {
+			double correctionX = 0;
+			double xActual = odometer.getX()
+					+ Math.sin(odometer.getTheta()
+							* Constants.LIGHT_SENS_OFFSET);
+			if (verticalLinesCrossed != 1) {
+				if (xActual > (verticalLinesCrossed * Constants.SQUARE_WIDTH + Math
+						.sin(odometer.getTheta() * Constants.LIGHT_SENS_OFFSET))) {
+					correctionX = -(xActual % 30.48);
+				} else {
+					correctionX = 30.48 - (xActual % 30.48);
+				}
 			}
 			verticalLinesCrossed++;
-			odometer.setPosition(new double[] { correctionX + odometer.getX() ,0.0, 0.0}, 
-					  new boolean[] {true,false,true});
+			odometer.setPosition(new double[] { correctionX + odometer.getX(),
+					0.0, 0.0 }, new boolean[] { true, false, true });
 		}
 
 	}
-	public void clawUp(){
+
+	public void clawUp() {
 		clawMotor.backward();
 		clawMotor.setSpeed(150);
 		clawMotor.rotate(180);
 		Delay.msDelay(250);
 		clawMotor.stop();
 	}
-	public void clawDown(){
+
+	public void clawDown() {
 		clawMotor.forward();
 		clawMotor.setSpeed(150);
 		clawMotor.rotate(-150);
 		Delay.msDelay(250);
 		clawMotor.stop();
 	}
-    public void armOpen() {
-        goForward(3);
-        armMotor.forward();
-        armMotor.setSpeed(150);
-        armMotor.rotate(-120);
-        Delay.msDelay(250);
-        armMotor.stop();
-    }
-    public void grab() {
-        goForward(3);
-        armMotor.backward();
-        armMotor.setSpeed(150);
-        armMotor.rotate(240);
-        Delay.msDelay(250);
-        armMotor.stop();
-        this.hasStyro = true;
-    }
-	
-	
+
+	public void armOpen() {
+		goForward(3);
+		armMotor.forward();
+		armMotor.setSpeed(150);
+		armMotor.rotate(-120);
+		Delay.msDelay(250);
+		armMotor.stop();
+	}
+
+	public void grab() {
+		goForward(3);
+		armMotor.backward();
+		armMotor.setSpeed(150);
+		armMotor.rotate(240);
+		Delay.msDelay(250);
+		armMotor.stop();
+		this.hasStyro = true;
+	}
 
 }

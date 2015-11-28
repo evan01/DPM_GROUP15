@@ -24,10 +24,10 @@ public class Constants {
 	// Constants for Odometer and Robot
 		// Motors
 		public static final double WHEEL_RADIUS = 2.1;
-		public static final double TRACK = 13.6;
-		public static final float LIGHT_LOCALIZATION_FORWARD_SPEED=70;
+		public static final double TRACK = 14.9;
+		public static final float LIGHT_LOCALIZATION_FORWARD_SPEED=120;
 		public static final int forwardSpeed = 150;
-		public static final int ROTATE_SPEED = 70;
+		public static final int ROTATE_SPEED = 120;
 		public final static int FAST = 200;
 		public final static int SLOW = 120;
 		public final static int ACCELERATION = 4000;
@@ -45,6 +45,7 @@ public class Constants {
 		// LIGHT SENSOR
 		public static final int LIGHT_SENSOR_UPDATE_TIME = 200;
 		public static final int LIGHT_THRESHOLD = 56; 
+		public static double FOUND_LIGHT_THRESHOLD;
 		public static final double LIGHT_SENS_OFFSET = 7.1;
 		public static final double C_SENS_OFFSET = 2;
 		public static final double SQUARE_WIDTH = 30.48;
