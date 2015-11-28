@@ -24,7 +24,7 @@ public class Constants {
 	// Constants for Odometer and Robot
 		// Motors
 		public static final double WHEEL_RADIUS = 2.1;
-		public static final double TRACK = 14.9;
+		public static final double TRACK = 14.26;
 		public static final float LIGHT_LOCALIZATION_FORWARD_SPEED=120;
 		public static final int forwardSpeed = 150;
 		public static final int ROTATE_SPEED = 120;
