@@ -204,8 +204,8 @@ public class Navigation {
 
 		double angleToTurn = Odometer.minimumAngleFromTo(this.odometer.getTheta(), angle);
 
-		leftMotor.rotate(-convertAngle(2.1, 14.2, angleToTurn), true);
-		rightMotor.rotate(convertAngle(2.1, 14.2, angleToTurn), false);
+		leftMotor.rotate(-convertAngle(Constants.WHEEL_RADIUS, Constants.TRACK, angleToTurn), true);
+		rightMotor.rotate(convertAngle(Constants.WHEEL_RADIUS, Constants.TRACK, angleToTurn), false);
 	}
 	/**
 	 * Go foward a set distance in cm
