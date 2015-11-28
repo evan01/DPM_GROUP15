@@ -11,6 +11,8 @@ import robot.navigation.Odometer;
 import robot.navigation.Traveler;
 import robot.navigation.USLocalizer;
 import robot.navigation.USLocalizer.LocalizationType;
+import robot.sensors.LeftLightSensor;
+import robot.sensors.RightLightSensor;
 
 public class TravelerTest {
 	
@@ -40,14 +42,14 @@ public class TravelerTest {
     	Traveler trav = new Traveler();
 		
 //    	LightLocalizerTwo ll = new LightLocalizerTwo();
+////		ll.computeAverageLightValue(LeftLightSensor.getInstance(),RightLightSensor.getInstance());
 //    	ll.lightLocalize();
-////    	
-//
 ////        trav.goTo(7, 7);
 //    	nav.turnTo(240, true);
 //    	nav.travelTo(10 , 15);
 
-    	trav.goTo(3, 3);
+    	trav.goTo(5, 5);
+//    	trav.goTo(1, 1);
 //
 //        nav.turnTo(180, true);
 //    	int expectedColorID=1;

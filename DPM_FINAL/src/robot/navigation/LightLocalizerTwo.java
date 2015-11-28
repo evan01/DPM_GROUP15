@@ -22,6 +22,11 @@ public class LightLocalizerTwo {
 	private boolean isBlackLineDetected;
 	private boolean scanRight;
 	private boolean scanLeft;
+	public static double RECORDED_LINE_VALUE;
+	public static double RECORDED_TILE_VALUE;
+	public static double RECORDED_THRESHOLD_VALUE;
+	private int LIGHT_SAMPLES = 40;
+	public static double LightSensorThreshold;
 	//private Display display;
 
 
@@ -69,7 +74,7 @@ public class LightLocalizerTwo {
 		}
 
 		//go backwards 10 cm to avoid detecting the y-axis while correcting odometer y later
-		navigation.goBackward(Constants.LRS_TO_AXIS_DISTANCE );
+		navigation.goBackward(Constants.LRS_TO_AXIS_DISTANCE + (Constants.SQUARE_WIDTH/2));
 
 		//turn 90 degrees counterclockwise
 		leftMotor.setSpeed(Constants.ROTATE_SPEED);
@@ -77,43 +82,37 @@ public class LightLocalizerTwo {
 
 		leftMotor.rotate(-navigation.convertAngle(Constants.WHEEL_RADIUS, Constants.TRACK, 90.0), true);	//use new "TRACK" not the one in "Constants" class
 		rightMotor.rotate(+navigation.convertAngle(Constants.WHEEL_RADIUS, Constants.TRACK, 90.0), false);	//use new "TRACK" not the one in "Constants" class
-
-		performBlackLineDetection();
-
-		/*//correct theta again
-		odometer.setTheta(90);
-		//correct odometer y
-		odometer.setY(Constants.LRS_TO_AXIS_DISTANCE + Constants.SQUARE_WIDTH);
-		//Delay.msDelay(5000);
-		 */
-		
-		double newPos2[] = {0,Constants.LRS_TO_AXIS_DISTANCE + Constants.SQUARE_WIDTH,90};
-		boolean newUpdates2[] = {false,true,true};
-		odometer.setPosition(newPos2,newUpdates2);
-
-		if(odometer.getTheta()==90 && odometer.getY()==Constants.LRS_TO_AXIS_DISTANCE + Constants.SQUARE_WIDTH){
-			Sound.beepSequence();
-		}
-		navigation.goBackward(Constants.LRS_TO_AXIS_DISTANCE );
-
-		//turn 90 degrees clockwise
-		leftMotor.setSpeed(Constants.ROTATE_SPEED);
-		rightMotor.setSpeed(Constants.ROTATE_SPEED);
-
-		leftMotor.rotate(navigation.convertAngle(Constants.WHEEL_RADIUS, Constants.TRACK, 90.0), true);	//use new "TRACK" not the one in "Constants" class
-		rightMotor.rotate(-navigation.convertAngle(Constants.WHEEL_RADIUS, Constants.TRACK, 90.0), false);	//use new "TRACK" not the one in "Constants" class
+//
+//		performBlackLineDetection();
+//
+//		/*//correct theta again
+//		odometer.setTheta(90);
+//		//correct odometer y
+//		odometer.setY(Constants.LRS_TO_AXIS_DISTANCE + Constants.SQUARE_WIDTH);
+//		//Delay.msDelay(5000);
+//		 */
+//		
+//		double newPos2[] = {0,Constants.LRS_TO_AXIS_DISTANCE + Constants.SQUARE_WIDTH,90};
+//		boolean newUpdates2[] = {false,true,true};
+//		odometer.setPosition(newPos2,newUpdates2);
+//
+//		if(odometer.getTheta()==90 && odometer.getY()==Constants.LRS_TO_AXIS_DISTANCE + Constants.SQUARE_WIDTH){
+//			Sound.beepSequence();
+//		}
+//		navigation.goBackward(Constants.LRS_TO_AXIS_DISTANCE );
+//
+//		//turn 90 degrees clockwise
+//		leftMotor.setSpeed(Constants.ROTATE_SPEED);
+//		rightMotor.setSpeed(Constants.ROTATE_SPEED);
+//
+//		leftMotor.rotate(navigation.convertAngle(Constants.WHEEL_RADIUS, Constants.TRACK, 90.0), true);	//use new "TRACK" not the one in "Constants" class
+//		rightMotor.rotate(-navigation.convertAngle(Constants.WHEEL_RADIUS, Constants.TRACK, 90.0), false);	//use new "TRACK" not the one in "Constants" class
 
 		//navigation.travelTo(0, 0);
 		//navigation.turnTo(0, true);
 		//display.stop();
 
 	}
-
-
-
-
-
-
 
 	public void performBlackLineDetection(){
 		double rightReading1,rightReading2,leftReading1,leftReading2;
@@ -172,101 +171,56 @@ public class LightLocalizerTwo {
 
 	}
 
-
-
-
-
-
-
-
-
-
-
-
-
-	/*public void performBlackLineDetection(){
-		double averageRight1=0,averageRight2=0,averageLeft1=0,averageLeft2=0;
-		while(isBlackLineDetected==false){
-			navigation.setSpeeds(Constants.LIGHT_LOCALIZATION_FORWARD_SPEED,Constants.LIGHT_LOCALIZATION_FORWARD_SPEED);
-
-			averageRight1=rightLightSensor.scanWithAverageFilter();
-			averageRight2=rightLightSensor.scanWithAverageFilter();
-
-			averageLeft1=leftLightSensor.scanWithAverageFilter();
-			averageLeft2=leftLightSensor.scanWithAverageFilter();
-
-			scanRight=rightLightSensor.scanWithDiffrentialFilter(averageRight1,averageRight2,12);
-			scanLeft=leftLightSensor.scanWithDiffrentialFilter(averageLeft1,averageLeft2,12);
-			isBlackLineDetected=scanRight || scanLeft;	
-		}
-		Sound.beep();
-
-		if(scanRight==true && scanLeft==true){
-			//do nothing
-			Sound.beepSequence();
-			navigation.setSpeeds(0, 0);
-		}
-
-		else if(scanRight==true){
-			//turn clockwise leftMotor only
-			while(scanLeft==false){
-				navigation.setSpeeds(Constants.ROTATE_SPEED,0);
-				scanLeft=leftLightSensor.scanWithDiffrentialFilter(averageLeft1,averageLeft2,12);
-			}
-			Sound.beep();
-			navigation.setSpeeds(0, 0);
-		}
-
-		else if(scanLeft==true){
-			//turn counterclockwise rightMotor only
-			while(scanRight==false){
-				navigation.setSpeeds(0,Constants.ROTATE_SPEED);
-				scanRight=rightLightSensor.scanWithDiffrentialFilter(averageRight1,averageRight2,12);
-			}
-			Sound.beep();
-			navigation.setSpeeds(0, 0);
-		}
-
-		scanRight=false;
-		scanLeft=false;
-		isBlackLineDetected=false;
-
-	}*/
-
-
-
-
-	/**
-	 * Check if the rightLightSensor detected a black line
-	 * @return
-	 */
-	private boolean scanRight(RightLightSensor rs){
-		return isBlackLineDetected(rs.scan());
-	}
-
 	public boolean scanWithDiffrentialFilter(double average1,double average2){
 		if ((average1<Constants.LIGHT_THRESHOLD || average2<Constants.LIGHT_THRESHOLD) ){
-			return true;
+//		RECORDED_LINE_VALUE = Math.max(average1, average2);
+		return true;
 		}
+		else{
+//		RECORDED_TILE_VALUE = Math.min(average1, average2);
 		return false;
-
+		}
+	}	
+	
+	// This will set the minumum threshold value
+	public boolean scanDiffrentialFilter(double average1,double average2){
+		if ((average1<Constants.LIGHT_THRESHOLD || average2<Constants.LIGHT_THRESHOLD) ){
+		RECORDED_LINE_VALUE = Math.max(average1, average2);
+		System.out.println("LINE:   " + RECORDED_LINE_VALUE);
+		RECORDED_THRESHOLD_VALUE = RECORDED_TILE_VALUE - RECORDED_LINE_VALUE;
+		System.out.println("DIFFERENTIAL THRESHOLD:  " + RECORDED_THRESHOLD_VALUE);
+		Constants.NONABS_LIGHT_THRESHOLD = RECORDED_THRESHOLD_VALUE;
+		return true;
+		}
+		else{
+//		RECORDED_TILE_VALUE = Math.min(average1, average2);
+		return false;
+		}
 	}
-
-	/**
-	 * Check if the leftLightSensor detected a black line
-	 * @return
-	 */
-	private boolean scanLeft(LeftLightSensor ls){
-		return isBlackLineDetected(ls.scan());
+	
+	public void computeAverageLightValue(LeftLightSensor leftLightSensor , RightLightSensor rightLightSensor)
+	{
+		double[] lightSamples = new double[LIGHT_SAMPLES];
+		double[] lightSamples2 = new double[LIGHT_SAMPLES];
+		double totalLight = 0;
+		double totalLight2 = 0;
+		for(int i = 0; i < lightSamples.length; i++)
+		{
+			lightSamples[i] = leftLightSensor.scan();
+			lightSamples2[i]= rightLightSensor.scan();
+			totalLight = totalLight + lightSamples[i];
+			totalLight2 = totalLight2 + lightSamples2[i];
+			Delay.msDelay(10);
+		}
+		RECORDED_TILE_VALUE = Math.min(totalLight/LIGHT_SAMPLES, totalLight2/LIGHT_SAMPLES);
+		System.out.println("TILE:  "+RECORDED_TILE_VALUE);
 	}
-
-	private boolean isBlackLineDetected(double val){
-		if(val<45)
-			return true;
-		else
-			return false;
-	}
-
-
+	
+//	public void computeAverageLightValue()
+//	{
+//		LightSensorThreshold = computeAverageLightValue(leftLightSensor , rightLightSensor) - 50;
+//	}
+	
+	
 }
 
