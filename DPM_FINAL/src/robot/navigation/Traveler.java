@@ -56,7 +56,7 @@ public class Traveler {
     private Queue<Move> xInstructions;
     private Queue<Move> yInstructions;
     private double gridSpace = 30.48;
-    private boolean thirdOption = false , fourthOption = false, secondOption = false;
+    private boolean thirdOption = false , fourthOption = false;
 
 	private Move.Direction lastDirection=Move.Direction.up;	//should be up or right, keep it up for now
 	private Move.Direction lastDirection2=Move.Direction.right;
@@ -142,8 +142,6 @@ public class Traveler {
 //            	 executeMove(correctionMove);
 //            	 placeMoveBack(correctionMove);
 //             }
-               if (secondOption)
-            	   changeDirection();
                if (thirdOption)
                {
             	   isMovingInY = false;
@@ -217,22 +215,41 @@ public class Traveler {
 	private Move getBDirection(Move mv){
 		//First, if we can just switch to the other queue of instructions then do that
 		Move move2;
-		if(isMovingInY){//Then get element from x queue, best case
-			if(xInstructions.size()>=1){
-				move2 = xInstructions.element();
-			}else{
-				//Nothing in the xQueue, pick left and right
-				move2 = new Move(Move.Direction.right);
-			}
+		
+//		if(isMovingInY){
+//			if(xInstructions.size()>0){
+//				//Good case, take what we want from queue
+//z
+//				move2 = xInstructions.element();
+//			}else{
+//				//bad case, nothing left in queue
+//			}
+//		}else{
+//			if(yInstructions.size()>0){
+//				//Good case, take what we want from queue
+//			}else{
+//				//bad case, nothing left in queue
+//			}
+//		}
+//		
+//		
+//		
+//		
+//		
+		
+		
+		
+		
+		
+		
+		
+		
+		if(isMovingInY)//Then get element from x queue
+		{
+			move2 = xInstructions.element();
 		}
-		else{//Get element from the y queue
-			if(yInstructions.size()>=0){
-				move2 = yInstructions.element();
-			}
-			else{
-				move2 = new Move(Move.Direction.up);
-			}
-		}
+		else//Get element from the y queue
+			move2 = yInstructions.element();
 		
 		//Check to see if we can go in the direction of the other queue
 		if(executeScan(move2)){
@@ -240,10 +257,12 @@ public class Traveler {
 			System.out.println("Good Move, direction: "+move2.direction);
 			//This if statement is necessary to change the direction for the future moves
 			
-			placeMoveBack(move2.getOpposite());
-			placeMoveBack(move2);
-			changeDirection();
-			secondOption = true;
+			if(isMovingInY)
+				isMovingInY = false;
+			else
+				isMovingInY = true;
+			
+			
 			return fetchInstruction();//Removes the element we just peeked at
 
 		}else{
