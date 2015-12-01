@@ -8,3 +8,4 @@ robot.display
 robot.navigation
 robot.sensors
 test
+wifi
