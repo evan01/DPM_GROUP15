@@ -8,7 +8,17 @@ import robot.constants.Position;
  * stages of the game.
  */
 public interface Robot {
-	void moveTo(double x, double y);
+	/**
+	 * This will perform the object search algorithm
+	 */
+	void ObjectSearch();
+	/**
+	 * This will perform obstacle avoidance while traveling to the
+	 * specified location
+	 * @param x
+	 * @param y
+	 */
+	void goTo(int x, int y);
 	
 	/**
 	 * This will perform the standard travel to method,

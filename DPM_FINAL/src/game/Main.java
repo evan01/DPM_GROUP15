@@ -3,6 +3,8 @@ package game;
 import robot.GameRobot;
 import robot.Robot;
 import game.stage1.Stage1;
+import game.stage2.Stage2;
+import game.stage3.Stage3;
 import lejos.hardware.lcd.TextLCD;
 import lejos.hardware.motor.EV3LargeRegulatedMotor;
 import lejos.hardware.motor.EV3MediumRegulatedMotor;
@@ -22,27 +24,22 @@ import robot.navigation.Odometer;
  */
 public class Main {
 	
-	public static final EV3LargeRegulatedMotor leftMotor = new EV3LargeRegulatedMotor(LocalEV3.get().getPort("A"));
-	public static final EV3LargeRegulatedMotor rightMotor = new EV3LargeRegulatedMotor(LocalEV3.get().getPort("D"));
-	public static final EV3MediumRegulatedMotor armMotor = new EV3MediumRegulatedMotor(LocalEV3.get().getPort("C"));
-	public static final EV3LargeRegulatedMotor clawMotor = new EV3LargeRegulatedMotor(LocalEV3.get().getPort("B"));
+	
 
 	public static void main(String[] args) {
-//		Loader loader = new Loader();
-//		loader.load();
+		Loader loader = new Loader();
+		loader.load();
 
-		Odometer odo = Odometer.getInstance();
-		Navigation nav = new Navigation();
+		//start the game logic
+		Robot robot = new GameRobot();
+		Stage1 s1 = new Stage1(robot);
+		Stage2 s2 = new Stage2(robot);
+		Stage3 s3 = new Stage3(robot);
+		s1.start();
+		s2.start();
+		s3.start();
 		
-	//	odo.setPosition(new double[]{0, 0,0}, new boolean[] {true,true,true});
 		
-		
-		//Start the game!
-//		Robot robot = new GameRobot();
-//		Stage1 s1 = new Stage1(robot);
-//		s1.start();
-//		Stage2 s2 = new Stage2(robot);
-//		Stage3 s3 = new Stage3(robot);
 
 	}
 

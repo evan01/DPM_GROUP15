@@ -4,6 +4,7 @@ import java.io.IOException;
 
 import robot.Robot;
 import robot.constants.Constants;
+import wifi.StartCorner;
 import wifi.Transmission;
 import wifi.WifiConnection;
 
@@ -33,11 +34,16 @@ public class Stage1 {
 		if (t == null) {
 			//LCD.drawString("Failed to read transmission", 0, 5);
 		} else {
+			
 			Constants.StartingCorner = t.startingCorner;
 			Constants.homeZoneBL_X = t.homeZoneBL_X;
 			Constants.homeZoneBL_Y = t.homeZoneBL_Y;
+			Constants.homeZoneTR_X = t.homeZoneTR_X;
+			Constants.homeZoneTR_Y = t.homeZoneTR_Y;
 			Constants.opponentHomeZoneBL_X = t.opponentHomeZoneBL_X;
 			Constants.opponentHomeZoneBL_Y = t.opponentHomeZoneBL_Y;
+			Constants.opponentHomeZoneTR_X = t.opponentHomeZoneTR_X;
+			Constants.opponentHomeZoneTR_Y = t.opponentHomeZoneTR_Y;
 			Constants.dropZone_X = t.dropZone_X;
 			Constants.dropZone_Y = t.dropZone_Y;
 			Constants.flagType = t.flagType;
@@ -46,6 +52,8 @@ public class Stage1 {
 		
     	//Stage 1 begins by localizing
         robot.localize();
+        //reach opponents home base, top left corner tile
+        robot.goTo(Constants.opponentHomeZoneBL_X, Constants.opponentHomeZoneTR_Y);
 
     }
 
