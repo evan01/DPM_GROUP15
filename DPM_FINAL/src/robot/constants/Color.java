@@ -51,7 +51,7 @@ public class Color {
 	}
 
 	public boolean isSampleBlue() {
-		if (this.R < this.B && this.G < this.B && !isSampleLightBlue()) {
+		if (this.R < this.B && this.G < this.B) {
 			return true;
 		} else {
 			return false;
@@ -59,7 +59,7 @@ public class Color {
 	}
 
 	public boolean isSampleLightBlue() {
-		if ((this.G / this.B) * 100 >= 90 && (this.G / this.B)*100 <=145 
+		if (this.R<this.G && (this.B / this.G) * 100 >= 40 && (this.B / this.G)*100 <=90 
 				&&  !isSampleWhite()) {
 			return true;
 		} else {
