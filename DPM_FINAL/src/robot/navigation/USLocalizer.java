@@ -7,7 +7,7 @@ import robot.sensors.USSensor;
 public class USLocalizer {
 	public enum LocalizationType { FALLING_EDGE, RISING_EDGE }
 
-	public static float ROTATION_SPEED = 70;
+	public static float ROTATION_SPEED = 150;
 	
 
 	private Odometer odo;
@@ -193,9 +193,9 @@ public class USLocalizer {
 			// we have to account for distance from US to center == 1
 			double xCoord = xPrime - 1	;									// now we know where bot is with respect to arena corner
 			double yCoord = yPrime - 1  ;
-
-			odo.setX(xCoord);												// now we move (0,0) to arena corner
-			odo.setY(yCoord);
+			
+			odo.setX(0);												// now we move (0,0) to arena corner
+			odo.setY(0);
 
 			xCoord = odo.getX();											// get NEW X and Y with respect to NEW (0,0)
 			yCoord = odo.getY();

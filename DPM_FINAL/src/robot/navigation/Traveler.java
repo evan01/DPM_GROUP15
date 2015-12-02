@@ -55,8 +55,9 @@ public class Traveler {
     boolean isMovingInY = true;
     private Queue<Move> xInstructions;
     private Queue<Move> yInstructions;
-    private double gridSpace = 30.48;
-    private boolean thirdOption = false , fourthOption = false;
+    private double gridSpace = 30;
+    private boolean thirdOption = false , fourthOption = false, secondOption = false;
+    private Move dejaVu;
 
 	private Move.Direction lastDirection=Move.Direction.up;	//should be up or right, keep it up for now
 	private Move.Direction lastDirection2=Move.Direction.right;
@@ -115,8 +116,31 @@ public class Traveler {
             
             //First fetch the next instruction to execute from the correct queue
 //            if (yInstructions.size()==0)
-//            		movingInY = false;   
+//            		movingInY = false; 
+            if (xInstructions.isEmpty() && yInstructions.isEmpty())
+            {
+            	placeMoveBack(dejaVu);
+            }
             Move mv = fetchInstruction();
+            if (mv.equals(null))
+            {
+            	System.out.println("Head was null.");
+            	if(isMovingInY)
+            	{	
+            		if (currentY<finalY)
+            		mv = new Move(Direction.up);
+            		else if (currentY>finalY)
+            		mv = new Move(Direction.down);
+            	}
+            	else 
+            	{
+            		if (currentX<finalX)
+            		mv = new Move(Direction.right);
+            		else if (currentX>finalX)
+            		mv = new Move(Direction.left);
+            	}
+            }
+            
 
             //Then check to see if we can execute the move or not
             //THIS WILL ALSO ROTATE OUR ROBOT
@@ -128,8 +152,7 @@ public class Traveler {
             	placeMoveBack(mv.getOpposite());
             	System.out.println("A7A");
                 //Depending on our robots map position, figure out if our avoidance goes, up, down, left, right
-//                Move newMove = getBestDirection(mv, lastDirection); //Should possibly do a scan in both ways... idk...
-                
+//                Move newMove = getBestDirection(mv, lastDirection); //Should possibly do a scan in both ways... idk...         
                 Move newMove = getBDirection(mv);
                //Place the move we would have made back onto it's propper queue
 //               placeMoveBack(mv);
@@ -215,41 +238,46 @@ public class Traveler {
 	private Move getBDirection(Move mv){
 		//First, if we can just switch to the other queue of instructions then do that
 		Move move2;
-		
-//		if(isMovingInY){
-//			if(xInstructions.size()>0){
-//				//Good case, take what we want from queue
-//z
-//				move2 = xInstructions.element();
-//			}else{
-//				//bad case, nothing left in queue
-//			}
-//		}else{
-//			if(yInstructions.size()>0){
-//				//Good case, take what we want from queue
-//			}else{
-//				//bad case, nothing left in queue
-//			}
-//		}
+//		if(isMovingInY)//Then get element from x queue
+//			move2 = xInstructions.peek();
+//		else//Get element from the y queue
+//			move2 = yInstructions.peek();
 //		
-//		
-//		
-//		
-//		
-		
-		
-		
-		
-		
-		
-		
-		
+		//### WIP ###############################################
 		if(isMovingInY)//Then get element from x queue
 		{
-			move2 = xInstructions.element();
+			if (!xInstructions.isEmpty())
+			move2 = xInstructions.peek();
+			else
+			{
+				if (mv.direction.equals(Direction.up)){
+				Move extraMove = new Move(Direction.right);
+				placeMove(extraMove);
+				}
+				else{
+				Move extraMove = new Move(Direction.left);
+				placeMove(extraMove);
+				}
+				move2 = xInstructions.peek();
+				secondOption = true;
+				dejaVu = move2;
+			}
 		}
 		else//Get element from the y queue
-			move2 = yInstructions.element();
+		{
+			if (!yInstructions.isEmpty())
+			move2 = yInstructions.peek();
+			else
+			{	
+				Move extraMove = new Move(Direction.up);
+				placeMove(extraMove);
+				move2 = yInstructions.peek();
+				secondOption = true ;
+				dejaVu = move2;
+			}
+		}
+		
+		//##################################################
 		
 		//Check to see if we can go in the direction of the other queue
 		if(executeScan(move2)){
@@ -261,7 +289,6 @@ public class Traveler {
 				isMovingInY = false;
 			else
 				isMovingInY = true;
-			
 			
 			return fetchInstruction();//Removes the element we just peeked at
 
@@ -298,6 +325,22 @@ public class Traveler {
     	
     }
 
+	private void placeMove(Move mv) {
+		switch (mv.direction) {
+		case up:
+			yInstructions.add(new Move(Move.Direction.up));
+			break;
+		case down:
+			yInstructions.add(new Move(Move.Direction.down));
+			break;
+		case left:
+			xInstructions.add(new Move(Move.Direction.left));
+			break;
+		case right:
+			xInstructions.add(new Move(Move.Direction.right));
+			break;
+		}
+	}
 
     /**
      *
@@ -340,21 +383,27 @@ public class Traveler {
 	private Move fetchInstruction() {
 //		if(toRemoveFromQ){
 			if(isMovingInY){
-				if(yInstructions.size()>0){
-					return yInstructions.remove();
+				if(!yInstructions.isEmpty()){
+					return yInstructions.poll();
 				}
 				else {
 					isMovingInY = false;
-					return xInstructions.remove();
+					if(!xInstructions.isEmpty())
+					return xInstructions.poll();
+					else
+					return new Move(Direction.right);
 				}
 
 			}else{
-				if(xInstructions.size()>0){
-					return xInstructions.remove();
+				if(!xInstructions.isEmpty()){
+					return xInstructions.poll();
 				}
 				else {
 					isMovingInY = true;
-					return yInstructions.remove();
+					if(!yInstructions.isEmpty())
+					return yInstructions.poll();
+					else
+					return new Move(Direction.up);
 				}
 			}
 		}
@@ -404,6 +453,9 @@ public class Traveler {
                 break;
         }
         scanResult = scan() || scan2();
+
+        Delay.msDelay(30);
+
         scanResult2 = scan() || scan2();
         return (scanResult || scanResult2) ;		// will return true if field is free 
     
@@ -504,7 +556,8 @@ public class Traveler {
     public boolean scan2(){
         //TODO need to implement a scan routine that detects if tile is free or not
     	int distance;
-    	if ((distance=getFilteredData())<35){
+    	if ((distance=getFilteredData())<33){
+
     	System.out.println(distance);
         return false; 	
     	}
@@ -512,22 +565,19 @@ public class Traveler {
     	return true;}
     }
 
-
-
     /**
      * Moves the robot left 1 tile x-=1
      */
     private void goLeft(){
     	
-        Position p = odo.getPosition();
-//        double newX = (currentX-1)*gridSpace - gridSpace/2;
-        double newX = p.getX() - gridSpace;
+        double newX = Odometer.getInstance().getX() - gridSpace + 8;
+
+ //       double newX = (currentX-1)*gridSpace;
         //if (nav.verticalLinesCrossed!=nav.verticalLinesCrossed)
         //	nav.verticalLinesCrossed=nav.verticalLinesCrossed;
-
         //Make sure we are facing the correct way
         //nav.turnTo(180,true);
-        nav.travelToWithCorrection(newX,p.getY(),180);
+        nav.travelToWithCorrection(newX,Odometer.getInstance().getY(),180);
         currentX-=1;
         System.out.println("currentX : "+currentX);
       
@@ -539,9 +589,9 @@ public class Traveler {
      */
     private void goRight(){
     	
-        Position p = odo.getPosition();
-       double newX = p.getX() + gridSpace;
- //       double newX = (currentX+1)*gridSpace + gridSpace/2;
+     //   Position p = odo.getPosition();
+        double newX = Odometer.getInstance().getX() + gridSpace;
+     //   double newX = (currentX+1)*gridSpace;
         System.out.println("NewX: "+newX);
 
         //if (nav.verticalLinesCrossed!=nav.verticalLinesCrossed)
@@ -549,7 +599,7 @@ public class Traveler {
         
         //Make sure we are facing the correct way
         //nav.turnTo(0,true);
-        nav.travelToWithCorrection(newX,p.getY(),0);
+        nav.travelToWithCorrection(newX,Odometer.getInstance().getY(),0);
         currentX++;
         System.out.println("currentX : "+currentX);
     }
@@ -559,9 +609,9 @@ public class Traveler {
      */
     private void goUP(){
     	
-        Position p = odo.getPosition();
-        double newY = p.getY() + gridSpace;
-//        double newY = (currentY+1)*gridSpace + gridSpace/2;
+   //     Position p = odo.getPosition();
+        double newY = Odometer.getInstance().getY() + gridSpace;
+     //   double newY = (currentY+1)*gridSpace;
         System.out.println("NewY: "+newY);
 
         //if (nav.horizontalLinesCrossed!=nav.horizontalLinesCrossed)
@@ -569,7 +619,7 @@ public class Traveler {
         
         //Make sure we are facing the correct way
         //nav.turnTo(90,true);
-        nav.travelToWithCorrection(p.getX(),newY,90);
+        nav.travelToWithCorrection(Odometer.getInstance().getX(),newY,90);
        	currentY+=1;
 //      double newY =currentY*gridSpace;
        	System.out.println("currentY : "+currentY);
@@ -581,15 +631,15 @@ public class Traveler {
      */
     private void goDown(){
 
-        Position p = odo.getPosition();
-        double newY = p.getY() - gridSpace;
-//        double newY = (currentY-1)*gridSpace - gridSpace/2;
+        double newY = Odometer.getInstance().getY()- gridSpace + 8;
+        
+ //       double newY =(currentY-1)*gridSpace;
         //if (nav.horizontalLinesCrossed!=nav.horizontalLinesCrossed)
         //	nav.horizontalLinesCrossed=nav.horizontalLinesCrossed;
         
         //Make sure we are facing the correct way
         //nav.turnTo(270,true);
-        nav.travelToWithCorrection(p.getX(),newY,270);
+        nav.travelToWithCorrection(Odometer.getInstance().getX(),newY,270);
         currentY-=1;
         System.out.println("currentY : "+currentY);
 

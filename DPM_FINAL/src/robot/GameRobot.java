@@ -9,7 +9,6 @@ import java.util.ArrayList;
 import robot.constants.Color;
 import robot.constants.Constants;
 import robot.constants.Position;
-import robot.navigation.Capturer;
 import robot.navigation.LightLocalizerTwo;
 import robot.navigation.Navigation;
 import robot.navigation.Odometer;

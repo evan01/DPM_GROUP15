@@ -6,7 +6,6 @@ import lejos.utility.Delay;
 //import main.Lab5;
 //import main.ObjectSearch;
 import robot.display.Display;
-import robot.navigation.LightLocalizer;
 import robot.navigation.LightLocalizerTwo;
 import robot.navigation.Navigation;
 import robot.navigation.Odometer;

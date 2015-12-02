@@ -3,6 +3,7 @@ package test;/*
  */
 
 import lejos.hardware.Button;
+import lejos.utility.Delay;
 import robot.display.Display;
 import robot.navigation.LightLocalizerTwo;
 import robot.navigation.Navigation;
@@ -40,16 +41,23 @@ public class TravelerTest {
 		Odometer odo=Odometer.getInstance();
 		Navigation nav=Navigation.getInstance();
     	Traveler trav = new Traveler();
-		
-//    	LightLocalizerTwo ll = new LightLocalizerTwo();
-////		ll.computeAverageLightValue(LeftLightSensor.getInstance(),RightLightSensor.getInstance());
-//    	ll.lightLocalize();
+
+    	USLocalizer ul = new USLocalizer(odo, LocalizationType.FALLING_EDGE);
+    	ul.doLocalization();
+    	Delay.msDelay(50); 
+    	nav.turnToSearch(0, true);
+    	LightLocalizerTwo ll = new LightLocalizerTwo();
+    	ll.lightLocalize();
+    	Delay.msDelay(50);
+//
 ////        trav.goTo(7, 7);
 //    	nav.turnTo(240, true);
 //    	nav.travelTo(10 , 15);
-
-    	trav.goTo(5, 5);
-//    	trav.goTo(1, 1);
+//
+    	trav.goTo(9, 9);
+    	trav.goTo(4, 4);
+    	
+//    	trav.goTo(2, 4);
 //
 //        nav.turnTo(180, true);
 //    	int expectedColorID=1;

@@ -181,7 +181,7 @@ public class ObjectSearch {
 		nav.grab();
 		nav.clawUp();
 		try {
-			Thread.sleep(1500);
+			Thread.sleep(700);
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -189,14 +189,14 @@ public class ObjectSearch {
 		nav.goBackward(27);
 		nav.clawDown();
 		try {
-			Thread.sleep(1500);
+			Thread.sleep(700);
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		nav.armOpen();
 		try {
-			Thread.sleep(1500);
+			Thread.sleep(700);
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -204,7 +204,7 @@ public class ObjectSearch {
 		nav.goForward(14);
 		nav.grab();
 		try {
-			Thread.sleep(1500);
+			Thread.sleep(700);
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
