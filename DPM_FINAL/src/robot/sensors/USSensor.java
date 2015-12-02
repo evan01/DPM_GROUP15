@@ -1,9 +1,14 @@
 package robot.sensors;
 
+import java.util.ArrayList;
+
 import lejos.hardware.port.Port;
 import lejos.hardware.sensor.EV3UltrasonicSensor;
 import lejos.robotics.SampleProvider;
+import robot.constants.Color;
 import robot.constants.Constants;
+import robot.constants.Vector;
+import robot.navigation.Odometer;
 
 /**
  * This class represents the Ultrasonic sensor, you can order the sensor to continuously sense things or only scan at
@@ -23,6 +28,13 @@ public class USSensor implements Runnable{
     private static float[] usData;
     private int distance;
     int collisionsDetected;
+    private boolean isSweepMode;
+    private double currentClosestObstacleDistance;
+    private Vector sweepingClosestPosition;
+    private Odometer odo;
+    //private int distanceCounter;
+    private double lastDistance;
+    ArrayList<Vector> sweepingClosestConsecutivesPositions;
 
     private boolean threadRunning;
 
@@ -31,12 +43,25 @@ public class USSensor implements Runnable{
         usSensor = new EV3UltrasonicSensor(port);
         us = usSensor.getDistanceMode();
         usData = new float[usSensor.sampleSize()];
+        
+        isSweepMode=false;
+        sweepingClosestPosition=new Vector();
+        odo=Odometer.getInstance();
+        currentClosestObstacleDistance=500000;
+        lastDistance=500000;
+        
+        sweepingClosestConsecutivesPositions= new ArrayList<Vector>();
+        //distanceCounter=0;
     }
 
-    /**
+	public void setSweepMode(boolean isSweepMode) {
+		this.isSweepMode = isSweepMode;
+	}
+
+	/**
      * When you want to run the sensor as a thread you have the option, but you aren't limited to doing so
      */
-    @Override
+    /*@Override
     public void run() {
         threadRunning = true;
         while (threadRunning) {
@@ -46,9 +71,61 @@ public class USSensor implements Runnable{
             } catch (Exception e) {
             }
         }
+    }*/
+    
+    
+    @Override
+    public void run() {
+        threadRunning = true;
+        while (threadRunning) {
+            fetchSample();
+            
+            if(isSweepMode==true){
+            	if(distance<currentClosestObstacleDistance){
+            		sweepingClosestPosition.setAngle(odo.getTheta());
+            		sweepingClosestPosition.setDistance(distance);
+    				currentClosestObstacleDistance=distance;
+    				lastDistance=distance;
+    			}
+            	/*else if(distance==currentClosestObstacleDistance) {
+            		if (lastDistance==distance){
+            			Vector currentVector=new Vector();
+            			currentVector.setAngle(odo.getTheta());
+            			currentVector.setDistance(distance);
+            			sweepingClosestConsecutivesPositions.add(currentVector);
+            			double firstVectorAngle=sweepingClosestConsecutivesPositions.get(0).getAngle();
+            			double lastVectorAngle=sweepingClosestConsecutivesPositions.get(sweepingClosestConsecutivesPositions.size()-1).getAngle();
+            			sweepingClosestPosition.setAngle((firstVectorAngle+lastVectorAngle)/2);
+                		sweepingClosestPosition.setDistance((int)currentClosestObstacleDistance);
+            		}
+            	}*/
+            }
+            else{
+            	currentClosestObstacleDistance=5000000;
+            	lastDistance=5000000;
+            }
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            try {
+                Thread.sleep(40);
+            } catch (Exception e) {
+            }
+            
+        }
     }
 
-    public synchronized void fetchSample(){
+    public Vector getSweepingClosestPosition() {
+		return sweepingClosestPosition;
+	}
+
+	public synchronized void fetchSample(){
         us.fetchSample(usData, 0); // acquire data
         distance = (int) (usData[0] * 100.0);
     }

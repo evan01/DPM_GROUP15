@@ -95,15 +95,15 @@ public class Color {
 				color.setB(bVal);
 
 				if (color.isSampleBlue()) {
-					return 0;
+					return 5;
 				} else if (color.isSampleYellow()) {
-					return 1;
-				} else if (color.isSampleWhite()) {
-					return 2;
-				} else if (color.isSampleRed()) {
 					return 3;
-				} else if (color.isSampleLightBlue()) {
+				} else if (color.isSampleWhite()) {
 					return 4;
+				} else if (color.isSampleRed()) {
+					return 2;
+				} else if (color.isSampleLightBlue()) {
+					return 1;
 				} else {
 					// bad sample was taken
 					return -1;

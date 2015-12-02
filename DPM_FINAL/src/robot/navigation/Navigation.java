@@ -16,15 +16,16 @@ import lejos.utility.Delay;
  */
 public class Navigation {
 
-	final static int FAST = 200, SLOW = 100, ACCELERATION = 4000;
-	final static double DEG_ERR = 3.2, CM_ERR = 1.0;
+	final int FAST = 200, SLOW = Constants.SLOW, ACCELERATION = 2000;
+	final static double DEG_ERR = 1.2, CM_ERR = 1.0;
 	public static Odometer odometer;
 	private EV3LargeRegulatedMotor leftMotor, rightMotor, clawMotor;
 	private EV3MediumRegulatedMotor armMotor;
 	private Traveler path;
 	private float rotationSpeed;
 	private double RADIUS = Constants.WHEEL_RADIUS, TRACK = Constants.TRACK;
-	private int SEARCH_SPEED = 20;
+	private int SEARCH_SPEED = 60;
+	private boolean isSearchingBlock;
 	private boolean isNavigating;
 	public boolean hasStyro = false;
 	private static LeftLightSensor leftLS;
@@ -33,10 +34,12 @@ public class Navigation {
 	private boolean scanRight;
 	private boolean scanLeft;
 	private boolean lineDetected = false;
+	private boolean isSweepMode;
+
 
 	// for odo correction
-	public static int horizontalLinesCrossed = 1; // currentY
-	public static int verticalLinesCrossed = 1; // currentX
+	public static int horizontalLinesCrossed = 1;	//currentY
+	public static int verticalLinesCrossed = 1; 	//currentX
 
 	// this is a singleton class
 	private static final Navigation ourInstance = new Navigation();
@@ -66,12 +69,29 @@ public class Navigation {
 		// set acceleration
 		this.leftMotor.setAcceleration(ACCELERATION);
 		this.rightMotor.setAcceleration(ACCELERATION);
+
+		isSearchingBlock=false;
+		isSweepMode=false;
 	}
+
+	public void setSweepMode(boolean isSweepMode) {
+		this.isSweepMode = isSweepMode;
+	}
+
+	public void setSearchingBlock(boolean isSearchingBlock) {
+		this.isSearchingBlock = isSearchingBlock;
+	}
+
+	public void setIsNavigating(boolean isNavigating) {
+		this.isNavigating = isNavigating;
+	}
+
 
 	/**
 	 * Functions to set the motor speeds jointly
 	 */
-	public void setSpeeds(float lSpd, float rSpd) {
+	public synchronized void setSpeeds(float lSpd, float rSpd) {
+	//public void setSpeeds(float lSpd, float rSpd) {
 		this.leftMotor.setSpeed(lSpd);
 		this.rightMotor.setSpeed(rSpd);
 		if (lSpd < 0)
@@ -84,6 +104,7 @@ public class Navigation {
 			this.rightMotor.forward();
 	}
 
+	//public synchronized void setSpeeds(int lSpd, int rSpd) {
 	public void setSpeeds(int lSpd, int rSpd) {
 		this.leftMotor.setSpeed(lSpd);
 		this.rightMotor.setSpeed(rSpd);
@@ -100,6 +121,7 @@ public class Navigation {
 	/**
 	 * Float the two motors jointly
 	 */
+	//public synchronized void setFloat() {
 	public void setFloat() {
 		this.leftMotor.stop();
 		this.rightMotor.stop();
@@ -110,8 +132,8 @@ public class Navigation {
 	/**
 	 * Stop the motors of the robot
 	 */
+	///public synchronized void stopMoving() {
 	public void stopMoving() {
-
 		this.rightMotor.setSpeed(0);
 		this.leftMotor.setSpeed(0);
 		this.leftMotor.forward();
@@ -123,30 +145,37 @@ public class Navigation {
 	 * Will travel to designated position, while constantly updating it's
 	 * heading
 	 */
+	//public synchronized void travelTo(double x, double y) {
 	public void travelTo(double x, double y) {
 		double minAng;
-		int counter = 0;
-		while (Math.abs(x - odometer.getX()) > CM_ERR
-				|| Math.abs(y - odometer.getY()) > CM_ERR) {
-			minAng = (Math.atan2(y - odometer.getY(), x - odometer.getX()))
-					* (180.0 / Math.PI);
-			if (minAng < 0 && !(minAng > -1 && minAng < 1))
-				minAng += 360.0;
-			this.turnTo(minAng, false);
+		int counter=0;
+		//this should not be a while loop , it should be an if statement
+		//if we want to have a while loop, we have to turn to the expected angle again
 
-			if (counter == 0) {
-				if (minAng < 0) {
-					minAng += 360;
-					;
+		//while (Math.abs(x - odometer.getX()) > CM_ERR || Math.abs(y - odometer.getY()) > CM_ERR) {
+		if (Math.abs(x - odometer.getX()) > CM_ERR || Math.abs(y - odometer.getY()) > CM_ERR) {
+			minAng = (Math.atan2(y - odometer.getY(), x - odometer.getX())) * (180.0 / Math.PI);
+			if (minAng < 0 && !(minAng>-1 && minAng<1))
+				minAng += 360.0;
+			//this.turnTo(minAng, false);
+
+			//this.turnTo(minAng, true);
+			turnToSearch2(odometer.getTheta(), minAng);
+
+			/*if(counter==0){
+				if(minAng<0){
+					minAng+=360;;
 				}
 				this.turnTo(minAng, false);
 				counter++;
-			}
-			// this.setSpeeds(FAST, FAST);
+			}*/
+
+			//this.setSpeeds(FAST, FAST);
 			// calculates magnitude to travel
 			double distance = Math.sqrt(Math.pow((y - odometer.getY()), 2)
 					+ Math.pow((x - odometer.getX()), 2));
 			goForward(distance);
+
 		}
 		this.setSpeeds(0, 0);
 	}
@@ -154,6 +183,7 @@ public class Navigation {
 	/**
 	 * TravelTo bacwards function
 	 */
+	//public synchronized void travelToBackwards(double x, double y) {
 	public void travelToBackwards(double x, double y) {
 		double minAng;
 		while (Math.abs(x - odometer.getX()) > CM_ERR
@@ -176,6 +206,7 @@ public class Navigation {
 	 * TurnTo function which takes an angle and boolean as arguments The boolean
 	 * controls whether or not to stop the motors when the turn is completed
 	 */
+	//public synchronized void turnTo(double angle, boolean stop) {
 	public void turnTo(double angle, boolean stop) {
 
 		double error = angle - this.odometer.getTheta();
@@ -214,6 +245,66 @@ public class Navigation {
 		rightMotor.rotate(convertAngle(Constants.WHEEL_RADIUS, Constants.TRACK, angleToTurn), false);
 		Delay.msDelay(20);
 	}
+	
+	
+	
+	public void turnToSearch1(double angle, boolean stop, boolean clockwiseTurn){
+		double angleToTurn;
+			if(isSweepMode==true){
+				leftMotor.setSpeed(SEARCH_SPEED);
+				rightMotor.setSpeed(SEARCH_SPEED);
+			}
+			else{
+				leftMotor.setSpeed(Constants.SLOW);
+				rightMotor.setSpeed(Constants.SLOW);
+			}
+			angleToTurn=Math.abs(angle);
+			if(clockwiseTurn==true){
+				leftMotor.rotate(convertAngle(Constants.WHEEL_RADIUS, Constants.TRACK, angleToTurn), true);
+				rightMotor.rotate(-convertAngle(Constants.WHEEL_RADIUS, Constants.TRACK, angleToTurn), false);
+			}
+			else{
+				leftMotor.rotate(-convertAngle(Constants.WHEEL_RADIUS, Constants.TRACK, angleToTurn), true);
+				rightMotor.rotate(convertAngle(Constants.WHEEL_RADIUS, Constants.TRACK, angleToTurn), false);
+			}
+	}
+	
+
+	public void turnToSearch2(double odometerAngle,double destinationAngle){
+		double angle=odometer.fixDegAngle(odometerAngle-destinationAngle);
+		leftMotor.setSpeed(Constants.SLOW);
+		rightMotor.setSpeed(Constants.SLOW);
+		if(angle<180){
+			leftMotor.rotate(convertAngle(Constants.WHEEL_RADIUS, Constants.TRACK, angle), true);
+			rightMotor.rotate(-convertAngle(Constants.WHEEL_RADIUS, Constants.TRACK, angle), false);
+		}
+		else{
+			leftMotor.rotate(-convertAngle(Constants.WHEEL_RADIUS, Constants.TRACK, (360-angle)), true);
+			rightMotor.rotate(convertAngle(Constants.WHEEL_RADIUS, Constants.TRACK, (360-angle)), false);
+		}
+	}
+
+
+
+	/**
+	 * Keep on going forward - This method is expected to be followed by another operation 
+	 * that is supposed to stop the motors when a certain condition is met 
+	 */
+	//public synchronized void goForward() {
+	public void goForward() {
+		if(isSearchingBlock==true){
+			leftMotor.setSpeed(FAST);
+			rightMotor.setSpeed(FAST);
+		}
+		else{
+			leftMotor.setSpeed(SLOW);
+			rightMotor.setSpeed(SLOW);
+		}
+		leftMotor.forward();
+		rightMotor.forward();
+		isNavigating = true;
+	}
+
 
 	/**
 	 * Go foward a set distance in cm
@@ -221,9 +312,16 @@ public class Navigation {
 	 * @param distance
 	 *            the distance with which to move forward
 	 */
+	//public synchronized void goForward(double distance) {
 	public void goForward(double distance) {
-		leftMotor.setSpeed(Constants.SLOW);
-		rightMotor.setSpeed(Constants.SLOW);
+		if(isSearchingBlock==true){
+			leftMotor.setSpeed(SLOW);
+			rightMotor.setSpeed(SLOW);
+		}
+		else{
+			leftMotor.setSpeed(SLOW);
+			rightMotor.setSpeed(SLOW);
+		}
 		isNavigating = true;
 
 		leftMotor.rotate(convertDistance(RADIUS, distance), true);
@@ -232,6 +330,7 @@ public class Navigation {
 		isNavigating = false;
 	}
 
+	//public synchronized void goForward(double distance, boolean returnImmediately) {
 	public void goForward(double distance, boolean returnImmediately) {
 
 		leftMotor.setSpeed(SLOW);
@@ -250,11 +349,17 @@ public class Navigation {
 	 * @param distance
 	 *            the distance with which to move backward
 	 */
+	//public synchronized void goBackward(double distance) {
 	public void goBackward(double distance) {
-
-		leftMotor.setSpeed(SLOW);
-		rightMotor.setSpeed(SLOW);
-		// Sound.beep();
+		if(isSearchingBlock==true){
+			leftMotor.setSpeed(FAST);
+			rightMotor.setSpeed(FAST);
+		}
+		else{
+			leftMotor.setSpeed(SLOW);
+			rightMotor.setSpeed(SLOW);
+		}
+		//Sound.beep();
 		isNavigating = true;
 
 		leftMotor.rotate(-convertDistance(RADIUS, distance), true);
@@ -269,6 +374,7 @@ public class Navigation {
 	 * @param speed
 	 *            the speed at which the robot should be rotating
 	 */
+	//public synchronized void setRotationSpeed(float speed) {
 	public void setRotationSpeed(float speed) {
 		rotationSpeed = speed;
 		setSpeeds(rotationSpeed, -rotationSpeed);
@@ -280,6 +386,7 @@ public class Navigation {
 	 * @param forward
 	 *            whether the robot sweeps forward or backward
 	 */
+	//public synchronized void search(boolean forward) {
 	public void search(boolean forward) {
 		leftMotor.setSpeed(SEARCH_SPEED);
 		rightMotor.setSpeed(SEARCH_SPEED);
@@ -292,10 +399,12 @@ public class Navigation {
 		}
 	}
 
+	//public synchronized static int convertDistance(double radius, double distance) {
 	public static int convertDistance(double radius, double distance) {
 		return (int) ((180.0 * distance) / (Math.PI * radius));
 	}
 
+	//public synchronized static int convertAngle(double radius, double width, double angle) {
 	public static int convertAngle(double radius, double width, double angle) {
 		return convertDistance(radius, Math.PI * width * angle / 360.0);
 	}
@@ -304,10 +413,11 @@ public class Navigation {
 		return this.isNavigating;
 	}
 
+	//######### CORRECTIVE NAVIGATION ########## --- Mahmood
+	//public synchronized void travelToWithCorrection(double x, double y, double theta){
 	public void travelToWithCorrection(double x, double y, double theta)
 	{
 		Delay.msDelay(10);
-
 		odometer.getLeftMotor().setSpeed(Constants.SLOW);
 		odometer.getRightMotor().setSpeed(Constants.SLOW);
 
@@ -326,6 +436,7 @@ public class Navigation {
 					performOdometerCorrection();
 					goForward(6);
 				}
+
 			}
 			System.out.println("1 tile moved");
 			Delay.msDelay(20);
@@ -336,7 +447,7 @@ public class Navigation {
 			while(odometer.getX() > x)
 			{
 				setSpeeds(Constants.SLOW,Constants.SLOW);
-//				performBlackLineDetection();
+				//				performBlackLineDetection();
 				if (isBlacklineDetected()){
 				performOdometerCorrection();
 				goForward(2);
@@ -353,7 +464,7 @@ public class Navigation {
 			while(odometer.getY() > y )
 			{
 				setSpeeds(Constants.SLOW,Constants.SLOW);
-//				performBlackLineDetection();
+				//				performBlackLineDetection();
 				if (isBlacklineDetected()){
 				performOdometerCorrection();
 				goForward(2);
@@ -374,6 +485,7 @@ public class Navigation {
 					performOdometerCorrection();
 					goForward(6);
 				}
+
 			}
 			System.out.println("1 tile moved");
 			Delay.msDelay(20);
@@ -382,110 +494,68 @@ public class Navigation {
 		Delay.msDelay(500);
 	}
 
-	public boolean isBlacklineDetected() {
-		double rightReading1, rightReading2, leftReading1, leftReading2;
-		rightReading1 = rightLS.scan();
-		rightReading2 = rightLS.scan();
+	//public synchronized boolean isBlacklineDetected(){
+	public boolean isBlacklineDetected(){
+		double rightReading1,rightReading2,leftReading1,leftReading2;
+		rightReading1=rightLS.scan();
+		Delay.msDelay(50);
+		rightReading2=rightLS.scan();
 
-		leftReading1 = leftLS.scan();
-		leftReading2 = leftLS.scan();
+		leftReading1=leftLS.scan();
+		Delay.msDelay(50);
+		leftReading2=leftLS.scan();
 
-		scanRight = scanFilter(rightReading1, rightReading2);
-		scanLeft = scanFilter(leftReading1, leftReading2);
+		scanRight=scanFilter(rightReading1,rightReading2);
+		scanLeft=scanFilter(leftReading1,leftReading2);
+
 		isBlackLineDetected = scanRight || scanLeft;
 
-		if (scanRight == true && scanLeft == true) {
-			// do nothing
+
+		if(scanRight==true && scanLeft==true){
+			//do nothing
 			Sound.beepSequence();
-	//		Delay.msDelay(500);
+			Delay.msDelay(500);
 			return isBlackLineDetected;
 		}
 
-//<<<<<<< Updated upstream
-//		else if (scanRight == true) {
-//			// save initial wheel rotation
-//			int initialTachoCount = odometer.getLeftMotor().getTachoCount();
-//			// turn clockwise leftMotor only
-//			while (scanLeft == false
-//					&& odometer.getLeftMotor().getTachoCount() < (initialTachoCount + 120)) {
-//				setSpeeds(Constants.ROTATE_SPEED, 0);
-//				leftReading1 = leftLS.scan();
-//				leftReading2 = leftLS.scan();
-//				scanLeft = scanFilter(leftReading1, leftReading2);
-//			}
-//			while (scanLeft == false
-//					&& odometer.getLeftMotor().getTachoCount() > initialTachoCount) {
-//				setSpeeds((-1) * Constants.ROTATE_SPEED, 0);
-//				leftReading1 = leftLS.scan();
-//				leftReading2 = leftLS.scan();
-//				scanLeft = scanFilter(leftReading1, leftReading2);
-//=======
-		else if(scanRight==true){		//turn clockwise leftMotor only
-			
-			int initialTachoCount = odometer.getLeftMotor().getTachoCount();	//get initial tachocount
-			
-			while(scanLeft==false && odometer.getLeftMotor().getTachoCount()<(initialTachoCount+150)){
-				
-				setSpeeds(Constants.SLOW,0);
+		else if(scanRight==true){
+			//turn clockwise leftMotor only
+			while(scanLeft==false){
+				setSpeeds(Constants.ROTATE_SPEED,0);
 				leftReading1=leftLS.scan();
 				Delay.msDelay(50);
 				leftReading2=leftLS.scan();
 				scanLeft=scanFilter(leftReading1,leftReading2);
-
 			}
 			Sound.beep();
-			Delay.msDelay(25);
 			setSpeeds(Constants.SLOW, Constants.SLOW);
-			Delay.msDelay(1000);
-			return scanLeft;
+			//			Delay.msDelay(1000);
+			return isBlackLineDetected;
+
 		}
 
-//<<<<<<< Updated upstream
-//		else if (scanLeft == true) {
-//			// save initial wheel rotation
-//			int initialTachoCount = odometer.getRightMotor().getTachoCount();
-//			// turn clockwise leftMotor only
-//			while (scanRight == false
-//					&& odometer.getRightMotor().getTachoCount() < (initialTachoCount + 120)) {
-//				setSpeeds(0, Constants.ROTATE_SPEED);
-//				rightReading1 = rightLS.scan();
-//				rightReading2 = rightLS.scan();
-//				scanRight = scanFilter(rightReading1, rightReading2);
-//			}
-//			while (scanRight == false
-//					&& odometer.getRightMotor().getTachoCount() > initialTachoCount) {
-//				setSpeeds(0, (-1) * Constants.ROTATE_SPEED);
-//				rightReading1 = rightLS.scan();
-//				rightReading2 = rightLS.scan();
-//				scanRight = scanFilter(rightReading1, rightReading2);
-//=======
 		else if(scanLeft==true){
 			//turn counterclockwise rightMotor only
-			int initialTachoCount = odometer.getLeftMotor().getTachoCount();
-			while(scanRight==false  && odometer.getRightMotor().getTachoCount()<(initialTachoCount+150)){
-				setSpeeds(0,Constants.SLOW);
+			while(scanRight==false){
+				setSpeeds(0,Constants.ROTATE_SPEED);
 				rightReading1=rightLS.scan();
 				Delay.msDelay(50);
 				rightReading2=rightLS.scan();
 				scanRight=scanFilter(rightReading1,rightReading2);
-
 			}
 			Sound.beep();
-			Delay.msDelay(25);
 			setSpeeds(Constants.SLOW, Constants.SLOW);
-			Delay.msDelay(1000);
-			return scanRight;
-			// Delay.msDelay(1000);
+			return true;
+			//			Delay.msDelay(1000);
 		}
 		return isBlackLineDetected;
 
 	}
 
-//	public boolean scanFilter(double average1, double average2) {
-//		if (average1 < Constants.FOUND_LIGHT_THRESHOLD
-//				|| average2 < Constants.FOUND_LIGHT_THRESHOLD) {
-//=======
-	
+
+
+
+
 	public boolean scanFilter(double average1,double average2){
 		if(average1< Constants.LIGHT_THRESHOLD || average2< Constants.LIGHT_THRESHOLD){
 			return true;
@@ -587,7 +657,9 @@ public class Navigation {
 		clawMotor.backward();
 		clawMotor.setSpeed(150);
 		clawMotor.rotate(180);
+		Sound.beep();
 		Delay.msDelay(250);
+		Sound.beepSequence();
 		clawMotor.stop();
 	}
 
@@ -595,7 +667,9 @@ public class Navigation {
 		clawMotor.forward();
 		clawMotor.setSpeed(150);
 		clawMotor.rotate(-150);
+		Sound.beep();
 		Delay.msDelay(250);
+		Sound.beepSequence();
 		clawMotor.stop();
 	}
 
@@ -632,5 +706,6 @@ public class Navigation {
     	clawUp();
     	Delay.msDelay(50);
     }
+
 
 }

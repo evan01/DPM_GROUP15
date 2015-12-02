@@ -1,6 +1,9 @@
+
+
 package robot.navigation;
 
 import java.util.ArrayList;
+
 
 
 import lejos.hardware.Button;
@@ -10,6 +13,7 @@ import lejos.hardware.ev3.LocalEV3;
 import lejos.hardware.lcd.TextLCD;
 import lejos.utility.Delay;
 import robot.GameRobot;
+import robot.constants.Constants;
 import robot.constants.Position;
 //import robot.display.LCDDisplay;
 import robot.navigation.Navigation;
@@ -29,7 +33,7 @@ import robot.display.Display;
  *	3. Capture, push styrofoam block to upper right corner of floor section
  */
 
-public class ObjectSearch {
+public class ObjectSearch{
 
 	private Odometer odo;
 	private Navigation nav;
@@ -37,18 +41,23 @@ public class ObjectSearch {
 	private GameRobot gameRobot =new GameRobot();
 	private int expectedColorID;
 	private ColorSensor cs;
+	private double currentClosestObstacleDistance=50000;
+	private double startingXPosition;
+	private double startingYPosition;
+	private int detectedColorID;
+	private int distance;
+	private int scanCounter;
+	private int checkingDistanceCounter;
+	private double distanceTraveled;
+	private int searchCounter;
+	private double distance1;
+	private double distance2;
+	private boolean requiredBlockFound;
 	Vector position;
 	TextLCD lcd = LocalEV3.get().getTextLCD();
 
-	/*//This is a singleton class
-	private static ObjectSearch instance = new ObjectSearch(Navigation.getInstance(),Odometer.getInstance());
-	public static synchronized ObjectSearch getInstance(){
-		return instance;
-	}
-	 */
 
 	public ObjectSearch(Navigation nav, Odometer odo,int expectedColorID){
-		//USSensor.getInstance();
 		this.us = USSensor.getInstance();
 		new Thread(this.us).start();//Start the ultrasonic sensor
 		us.setThreadRunning(true);
@@ -56,11 +65,20 @@ public class ObjectSearch {
 		this.cs = ColorSensor.getInstance();
 		cs.setThreadRunning(true);
 		new Thread(cs).start();
-		this.nav = nav;
 		this.odo = odo;
+		this.nav = nav;
 		this.expectedColorID=expectedColorID;
 		position = new Vector();
-
+		startingXPosition=odo.getX();
+		startingYPosition=odo.getY();
+		nav.setSearchingBlock(true);
+		scanCounter=0;
+		checkingDistanceCounter=0;
+		distanceTraveled=0;
+		searchCounter=0;
+		distance1=0;
+		distance2=0;
+		requiredBlockFound=false;
 
 		(new Thread() {
 			public void run() {
@@ -73,146 +91,182 @@ public class ObjectSearch {
 		}).start();
 	}
 
+
 	public void begin() {
-		//do the three actions that our robot needs to do
-		searchRight(); //Searches the first thing we find and visits it, will leave us in front of first block
-		if(scan()==true){
-			capture();
-		}else{
-			redo();
+		scanCounter=0;
+		while(searchCounter<2 && requiredBlockFound==false){
+			searchRight(); 
+			requiredBlockFound=scan();
+			nav.turnToSearch2(odo.getTheta(), 0);
+			nav.goBackward(distance1+distance2);
+			startingXPosition=odo.getX();
+			startingYPosition=odo.getY();
+			scanCounter=0;
+			distance1=0;
+			distance2=0;
+			if(searchCounter==2 || requiredBlockFound==true){
+				break;
+			}
+			else{
+				nav.turnToSearch2(odo.getTheta(), 270);
+				nav.goForward(30);
+			}
 		}
+		Sound.beepSequence();
+		Sound.beepSequence();
+		Sound.beepSequence();
+		Sound.beepSequence();
+		Sound.beepSequence();
+		nav.setSearchingBlock(false);
 	}
 
-	public void redo(){
-		nav.goBackward(position.getDistance()-10);
-		double currentAng = odo.getTheta();
-		double newAng = currentAng +20;
-		nav.turnTo(newAng, true);
-		//Delay.msDelay(3000);
-		
-		begin();
-	}
-
-
-	/*
-	 * SEARCH ROUTINE
-	 */
+	// SEARCH ROUTINE
 	public void searchRight(){
-		int distance;
-		int numDetections = 0;
-		nav.search(false); //Now we are rotating left
 		lcd.clear();
+		nav.turnToSearch2(odo.getTheta(),0);
+		sweep(25);
+		nav.turnToSearch2(odo.getTheta(),position.getAngle()+2);
 
-		//lcd.drawString("Odometer Angle: "+odo.getTheta(),0,0);
-
-		while((odo.getTheta() < 300 && numDetections<1) || (odo.getTheta() > 170 && numDetections<1)){
-			distance = us.scan();
-			/*try {
-				Thread.sleep(1000);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
+		distance = position.getDistance();
+		if(distance<90){
+			if(distance>20){
+				distanceTraveled = Math.sqrt(Math.pow((startingYPosition - odo.getY()), 2) + Math.pow((startingXPosition - odo.getX()), 2));
+				while(distance>20 && distanceTraveled<position.getDistance()-15){
+					nav.setSpeeds(Constants.FAST, Constants.FAST);
+					distance=us.scan();
+					distanceTraveled = Math.sqrt(Math.pow((startingYPosition - odo.getY()), 2) + Math.pow((startingXPosition - odo.getX()), 2));
+				}
+				distance1=distanceTraveled;
 			}
-			*/
-			
-			//lcd.drawString("US Reading: "+distance,0,0);
-			//lcd.drawString("Detections: "+numDetections,0,7);
-			if (distance < 80){
-				//Then we have a detection! Add vector to our array to return
-				Button.LEDPattern(5);
-				position.setAngle(odo.getTheta());
-				position.setDistance(distance);
-				//lcd.drawString("Dist "+position.getDistance(), 0, 6);
-				//lcd.drawString("Ang "+position.getAngle(), 0, 7);
-				numDetections++;
-				Sound.beep();
-				nav.stopMoving();
-
-			}
+			nav.setIsNavigating(false);
+			nav.stopMoving();
+			sweep(80);
+			visit(position);
 		}
+		else{
+			nav.turnToSearch2(odo.getTheta(), 270);
+			nav.goForward(30);
+			searchCounter++;
+			startingXPosition=odo.getX();
+			startingYPosition=odo.getY();
+			searchRight();
 
-		visit(position);
+		}
+		nav.stopMoving();
 	}
+
+	//if the sweeping angle is for example 80, then the robot will turn from 320 to 40
+	public void sweep(double sweepingAngle){
+		nav.stopMoving();
+
+		double angleBeforeSweep =odo.getTheta();
+		nav.setSweepMode(true);
+		nav.turnToSearch1((sweepingAngle/2), true, true);
+		us.setSweepMode(true);
+		nav.turnToSearch1(sweepingAngle, true, false);
+		us.setSweepMode(false);
+		nav.setSweepMode(false);
+		position=us.getSweepingClosestPosition();
+
+		nav.stopMoving();
+	}
+
+
 
 
 	public void visit(Vector position){
-		//TextLCD lcd = LocalEV3.get().getTextLCD();
 		lcd.clear();
-		nav.turnTo(position.getAngle(), true);
-		nav.goForward(position.getDistance());
-		Delay.msDelay(2000);
-		
-
+		nav.turnToSearch2(odo.getTheta(), position.getAngle()+4);
+		distance2=position.getDistance()+2;
+		nav.goForward(distance2);
+		Delay.msDelay(50);
 	}
 
 	public boolean scan(){
-
 		//return true if the object is what we want
 
-
-		/*if(cs.getColor().isBadSample()){
-			//will probably need to come a bit more closer to the object, i.e go forward a bit
-
-			//Sound.buzz();
-			//return scan();
-			return false;
+		//Bad Sample, don't pick up anything
+		detectedColorID=gameRobot.colorScan();
+		int detectedColorID2= gameRobot.colorScan();
+		if(detectedColorID!=-1 || detectedColorID2!=-1 ){
+			if (detectedColorID==expectedColorID){
+				Sound.beepSequence();
+				searchCounter++;
+				capture();
+				scanCounter=0;
+				return true;
+			}else{
+				Sound.twoBeeps();
+				scanCounter=0;
+				searchCounter++;
+				if(searchCounter==2){
+					capture();
+				}
+				return false;
+			}
 		}
-		else{
-		 */	
-
-		if (gameRobot.colorScan()==expectedColorID){
-			Sound.twoBeeps();
-			//cs.setThreadRunning(false);
-			return true;
-		}else{
-			Sound.beepSequence();
-			//cs.setThreadRunning(false);
-			return false;
+		if(scanCounter==0){
+			scanCounter++;
+			nav.goBackward(18);
+			sweep(80);
+			visit(position);
+			scan();		
 		}
-		//}
+		Sound.beep();
+		Sound.beep();
+		Sound.beep();
+		Sound.beep();
+		searchCounter++;
+		if(searchCounter==2){
+			capture();
+		}
+		return false;
 	}
 
-	/*
-	 * CAPTURE ROUTINES 
-	 */
+
+	//CAPTURE ROUTINES 
 	public void capture() {
 		// Assuming that we know where the block is, and that we can capture the block
 		//Find a path to the top corner of the field
-		
+
 		nav.grab();
+		try {
+			Thread.sleep(1500);
+		} catch (InterruptedException e) {
+		}
 		nav.clawUp();
 		try {
 			Thread.sleep(700);
 		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		}
 		nav.goBackward(27);
+		try {
+			Thread.sleep(300);
+		} catch (InterruptedException e) {
+		}
 		nav.clawDown();
 		try {
 			Thread.sleep(700);
 		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		}
 		nav.armOpen();
 		try {
 			Thread.sleep(700);
 		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		}
-		nav.goForward(14);
+		nav.goForward(20);
+		try {
+			Thread.sleep(300);
+		} catch (InterruptedException e) {
+		}
 		nav.grab();
+		//nav.grab();
 		try {
 			Thread.sleep(700);
 		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		}
 		nav.clawUp();
-		nav.stopMoving();
-
-		//First start the 
+		Delay.msDelay(300);
 
 	}
 
